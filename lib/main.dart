@@ -4,11 +4,11 @@ import 'views/home.dart';
 import 'views/recipe_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ModolaRecipe());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class ModolaRecipe extends StatelessWidget {
+  // const ModolaRecipe({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override

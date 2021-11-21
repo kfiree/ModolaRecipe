@@ -10,6 +10,42 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Stack(children: <Widget>[
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.deepPurpleAccent, Colors.blue])),
+        ),
+        Container(
+            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+            child: Column(children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const <Widget>[
+                  Text(
+                    "ModolaR",
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    "Recipies",
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 23,
+                        fontWeight: FontWeight.w500),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text("What will you cock today?"),
+              Text("So.. what ingredients do you have?")
+            ])),
+      ]),
+    );
   }
 }
