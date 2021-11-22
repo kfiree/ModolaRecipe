@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -20,7 +21,7 @@ class _HomeState extends State<Home> {
                   colors: [Colors.deepPurpleAccent, Colors.blue])),
         ),
         Container(
-            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+            padding: EdgeInsets.symmetric(vertical: Platform.isIOS? 60 : 30, horizontal: 30),
             child: Column(children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
