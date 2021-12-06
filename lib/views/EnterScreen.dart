@@ -1,121 +1,144 @@
-// ignore_for_file: deprecated_member_use
-
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:modolar_recipe/Widgets/recipeBox.dart';
+import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class EnterScreen extends StatefulWidget {
-    static const String idScreen = "EnterScreen";
+  // const EnterScreen({Key? key}) : super(key: key);
+  static const String idScreen = "EnterScreen";
 
   @override
   _EnterScreenState createState() => _EnterScreenState();
 }
 
 class _EnterScreenState extends State<EnterScreen> {
+  TextEditingController textEditingController = new TextEditingController();
+
+  String applicationId = "41ca25af";
+  String applicationKey = "ab51bad1b862188631ce612a9b1787a9";
+
+  // search for recipe
+  search(String query) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          child: Stack(
-            children: [
+      body: Stack(children: <Widget>[
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [Colors.blue, Colors.black87])),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Modula",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.center,
+                  ),
+                  GradientText("R",
+                      style: TextStyle(fontSize: 35),
+                      colors: const [Colors.black, Colors.white]),
+                  Text(
+                    "ecipies",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "What will you cock today?",
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Text(
+                "Insert what ingredients you have?",
+                style: TextStyle(fontSize: 13, color: Colors.white),
+              ),
               Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xff65b0bb),
-                      Color(0xff5a9ea8),
-                      Color(0xff508c95),
-                      Color(0xff467b82),
-                      Color(0xff3c6970),
-                      Color(0xff32585d),
-                      Color(0xff28464a),
-                    ],
-                  ),
-                ),
-                child: Expanded(
-                  // padding: const EdgeInsets.only(right: 20, left: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 50,
-                        ),
-                        Text(
-                          "Hello User!",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 35,
-                        ),
-                        Text(
-                          "Top recipes for today",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              buildPostRecipe(),
-                              buildSearchRecipe(),
-                            ],
-                          ),
-                        )
-                      ],
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: textEditingController,
+                        decoration: InputDecoration(
+                            hintText: "Enter Ingrideints",
+                            hintStyle: TextStyle(
+                              fontSize: 18,
+                            )),
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (textEditingController.text.isNotEmpty) {
+                          print("just do it");
+                        } else {
+                          print(" dont");
+                        }
+                      },
+                      child: Container(
+                        child: Icon(Icons.search, color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: textEditingController,
+                        decoration: InputDecoration(
+                            hintText: "Enter Recipe Name",
+                            hintStyle: TextStyle(
+                              fontSize: 18,
+                            )),
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (textEditingController.text.isNotEmpty) {
+                          print("just do it");
+                        } else {
+                          print(" dont");
+                        }
+                      },
+                      child: Container(
+                        child: Icon(Icons.search, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
-      ),
-    );
-  }
-  Widget buildPostRecipe() {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: RaisedButton(
-        onPressed: (){
-          // Post ride
-        },
-        child: Image.asset("assets/facebook.png",),
-      ),
-    );
-  }
-
-  Widget buildSearchRecipe() {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: RaisedButton(
-        onPressed: (){
-          // Search ride
-        },
-        child: Image.asset("assets/facebook.png",),
-      ),
+      ]),
     );
   }
 }

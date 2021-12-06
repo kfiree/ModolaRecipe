@@ -9,8 +9,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
-
 }
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,13 +18,15 @@ class MyApp extends StatelessWidget {
       title: "ModulaRecipe",
       initialRoute: LoginScreen.idScreen,
       routes: {
-      // '/': (context) => LoginScreen(),
+        // '/': (context) => LoginScreen(),
         LoginScreen.idScreen: (context) => LoginScreen(),
         EnterScreen.idScreen: (context) => EnterScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
-      } ,
+      },
       debugShowCheckedModeBanner: false,
     );
   }
 }
-DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("users");
+
+DatabaseReference usersRef =
+    FirebaseDatabase.instance.reference().child("users");
