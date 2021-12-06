@@ -1,14 +1,24 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:modolar_recipe/Widgets/progressDialog.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:modolar_recipe/views/EnterScreen.dart';
+import 'package:modolar_recipe/views/signup.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+import '../main.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+  static const String idScreen = "login";
 
   @override
-  _HomeState createState() => _HomeState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailTextEdittingController = TextEditingController();
   TextEditingController passwordTextEdittingController = TextEditingController();
 
@@ -24,7 +34,6 @@ class _HomeState extends State<Home> {
     color: Color(0xff4c5166),
   );
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,8 +97,6 @@ class _HomeState extends State<Home> {
               SizedBox(
                 height: 30,
               ),
-              Text("What will you cock today?"),
-              Text("So.. what ingredients do you have?")
             ])),
       ]),
     );
@@ -101,7 +108,7 @@ class _HomeState extends State<Home> {
       child: TextButton(
         child: Text("Still not s user? Sign-Up",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      onPressed: () => {},
+        onPressed: () => Navigator.pushNamedAndRemoveUntil(context, SignupScreen.idScreen, (route) => false),
       ),
     );
   }
@@ -212,7 +219,7 @@ class _HomeState extends State<Home> {
                 activeColor: Colors.white,
                 onChanged: (value) {
                   setState(() {
-                    rememberpwd = value;
+                    rememberpwd = value!;
                   });
                 },
               )),
@@ -232,7 +239,7 @@ class _HomeState extends State<Home> {
           child: Text("Forget Password !",
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-          onPressed: () => Navigator.pushNamed(context, '/ridePost')),
+          onPressed: () => {}),
     );
   }
 
@@ -266,4 +273,47 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  void loginUserAndAuthenticate(BuildContext context) async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return ProgressDialog(
+            "Authenticating, please wait...",
+          );
+        });
+    final User? firebaseUser = (await _firebaseAuth
+    .signInWithEmailAndPassword(
+      email: emailTextEdittingController.text, 
+      password: passwordTextEdittingController.text
+    ).catchError((errMsg){
+        Navigator.pop(context);
+        displayToastMessage("Error: " + errMsg.toString(), context);
+    })).user;
+    
+    if (firebaseUser != null) {
+      usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
+        if (snap.value != null) {
+          Navigator.pushNamedAndRemoveUntil(context, EnterScreen.idScreen, (route) => false);
+          displayToastMessage("Welcome! you are now logged in.", context);
+        } else {
+          _firebaseAuth.signOut();
+          displayToastMessage(
+              "Account not exist. Please create new account.", context);
+        }
+      });
+    } else {
+      //Error accured.
+      displayToastMessage(
+          "Error occured, cannot sign-in. Please try again later.", context);
+    }
+  }
+
+  displayToastMessage(String msg, BuildContext context) {
+    Fluttertoast.showToast(msg: msg);
+  }
 }
+
+
