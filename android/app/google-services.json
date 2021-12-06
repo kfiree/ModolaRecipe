@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "276894985344",
+    "project_id": "modularrecipe",
+    "storage_bucket": "modularrecipe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276894985344:android:d128e28224004e30cd8a65",
+        "android_client_info": {
+          "package_name": "com.example.modolarrecipe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "276894985344-cm046rp1dm5ltg21a4ca89diaa9vvgba.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeR7nmzy52oEZNKtnpK3EG5TNYZCslJj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "276894985344-cm046rp1dm5ltg21a4ca89diaa9vvgba.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

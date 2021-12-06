@@ -9,6 +9,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController emailTextEdittingController = TextEditingController();
+  TextEditingController passwordTextEdittingController = TextEditingController();
+
+  bool rememberpwd = false;
+  bool sec = true;
+
+  var visable = Icon(
+    Icons.visibility,
+    color: Color(0xff4c5166),
+  );
+  var visableoff = Icon(
+    Icons.visibility_off,
+    color: Color(0xff4c5166),
+  );
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +37,8 @@ class _HomeState extends State<Home> {
                   colors: [Colors.deepPurpleAccent, Colors.blue])),
         ),
         Container(
-            padding: EdgeInsets.symmetric(vertical: Platform.isIOS? 60 : 30, horizontal: 30),
+            padding: EdgeInsets.symmetric(
+                vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
             child: Column(children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -40,6 +57,34 @@ class _HomeState extends State<Home> {
                   )
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  buildSignupQuestion(),
+                ],
+              ),
+              SizedBox(
+                height: 100,
+              ),
+              buildEmail(),
+              SizedBox(
+                height: 50,
+              ),
+              buildPassword(),
+              SizedBox(
+                height: 50,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [buildRememberassword(), buildForgetPassword()],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              buildLoginButton(),
+              SizedBox(
+                height: 30,
+              ),
               SizedBox(
                 height: 30,
               ),
@@ -47,6 +92,178 @@ class _HomeState extends State<Home> {
               Text("So.. what ingredients do you have?")
             ])),
       ]),
+    );
+  }
+
+  Widget buildSignupQuestion() {
+    return Container(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        child: Text("Still not s user? Sign-Up",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      onPressed: () => {},
+      ),
+    );
+  }
+
+  Widget buildEmail() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Email",
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 60,
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+              color: Color(0xffebefff),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 2),
+                )
+              ]),
+          child: TextField(
+            controller: emailTextEdittingController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14),
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Color(0xff4c5166),
+                ),
+                hintText: 'Email',
+                hintStyle: TextStyle(color: Colors.black38)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildPassword() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Password",
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: Color(0xffebefff),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            ],
+          ),
+          height: 60,
+          child: TextField(
+            controller: passwordTextEdittingController,
+            obscureText: sec,
+            style: TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      sec = !sec;
+                    });
+                  },
+                  icon: sec ? visableoff : visable,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14),
+                prefixIcon: Icon(
+                  Icons.vpn_key,
+                  color: Color(0xff4c5166),
+                ),
+                hintText: "password",
+                hintStyle: TextStyle(color: Colors.black38)),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildRememberassword() {
+    return Container(
+      height: 20,
+      child: Row(
+        children: [
+          Theme(
+              data: ThemeData(unselectedWidgetColor: Colors.white),
+              child: Checkbox(
+                value: rememberpwd,
+                checkColor: Colors.blueGrey,
+                activeColor: Colors.white,
+                onChanged: (value) {
+                  setState(() {
+                    rememberpwd = value;
+                  });
+                },
+              )),
+          Text(
+            "Remember me",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildForgetPassword() {
+    return Container(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+          child: Text("Forget Password !",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          onPressed: () => Navigator.pushNamed(context, '/ridePost')),
+    );
+  }
+
+  Widget buildLoginButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      child: Container(
+        width: double.infinity,
+        child: RaisedButton(
+          onPressed: () {
+            if (!emailTextEdittingController.text.contains("@")) {
+              displayToastMessage("Email is not valid.", context);
+            } else if (passwordTextEdittingController.text.isEmpty) {
+              displayToastMessage("Password is missing.", context);
+            } else {
+              loginUserAndAuthenticate(context);
+            }
+          },
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          color: Color(0xff3c6970),
+          padding: EdgeInsets.all(30),
+          child: Text(
+            "Login",
+            style: TextStyle(
+                fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
     );
   }
 }
