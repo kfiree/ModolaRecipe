@@ -18,7 +18,9 @@ class _EnterScreenState extends State<EnterScreen> {
   String applicationKey = "ab51bad1b862188631ce612a9b1787a9";
 
   // search for recipe
-  search(String query) {}
+  search(String query) {
+    https://api.edamam.com/api/recipes/v2?type=public&q=Sodium&app_id=41ca25af&app_key=ab51bad1b862188631ce612a9b1787a9
+  }
 
   @override
   Widget build(BuildContext context) {
