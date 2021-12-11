@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/signup.dart';
-import 'package:modolar_recipe/views/EnterScreen.dart';
+import 'package:modolar_recipe/views/enterScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +12,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,7 +22,7 @@ class MyApp extends StatelessWidget {
       routes: {
         // '/': (context) => LoginScreen(),
         LoginScreen.idScreen: (context) => LoginScreen(),
-        EnterScreen.idScreen: (context) => EnterScreen(),
+        enterScreen.idScreen: (context) => enterScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
       },
       debugShowCheckedModeBanner: false,

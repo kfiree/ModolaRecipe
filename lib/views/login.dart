@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:modolar_recipe/views/EnterScreen.dart';
+import 'package:modolar_recipe/views/enterScreen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 
 import '../main.dart';
@@ -20,7 +20,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailTextEdittingController = TextEditingController();
-  TextEditingController passwordTextEdittingController = TextEditingController();
+  TextEditingController passwordTextEdittingController =
+      TextEditingController();
 
   bool rememberpwd = false;
   bool sec = true;
@@ -108,7 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextButton(
         child: Text("Still not s user? Sign-Up",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(context, SignupScreen.idScreen, (route) => false),
+        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+            context, SignupScreen.idScreen, (route) => false),
       ),
     );
   }
@@ -285,18 +287,20 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         });
     final User? firebaseUser = (await _firebaseAuth
-    .signInWithEmailAndPassword(
-      email: emailTextEdittingController.text, 
-      password: passwordTextEdittingController.text
-    ).catchError((errMsg){
-        Navigator.pop(context);
-        displayToastMessage("Error: " + errMsg.toString(), context);
-    })).user;
-    
+            .signInWithEmailAndPassword(
+                email: emailTextEdittingController.text,
+                password: passwordTextEdittingController.text)
+            .catchError((errMsg) {
+      Navigator.pop(context);
+      displayToastMessage("Error: " + errMsg.toString(), context);
+    }))
+        .user;
+
     if (firebaseUser != null) {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
-          Navigator.pushNamedAndRemoveUntil(context, EnterScreen.idScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, enterScreen.idScreen, (route) => false);
           displayToastMessage("Welcome! you are now logged in.", context);
         } else {
           _firebaseAuth.signOut();
@@ -315,5 +319,3 @@ class _LoginScreenState extends State<LoginScreen> {
     Fluttertoast.showToast(msg: msg);
   }
 }
-
-

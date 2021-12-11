@@ -1,24 +1,54 @@
+// ignore: file_names
+// ignore_for_file: avoid_print, file_names, camel_case_types
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'package:modolar_recipe/Widgets/recipe_card.dart';
 
-class EnterScreen extends StatefulWidget {
-  // const EnterScreen({Key? key}) : super(key: key);
+// ignore: use_key_in_widget_constructors
+class enterScreen extends StatefulWidget {
+  const enterScreen({Key? key}) : super(key: key);
+
   static const String idScreen = "EnterScreen";
+  // static const String idScreen = "login";
+  // static const String idScreen = "register";
 
   @override
-  _EnterScreenState createState() => _EnterScreenState();
+  _enterScreenState createState() => _enterScreenState();
 }
 
-class _EnterScreenState extends State<EnterScreen> {
-  TextEditingController textEditingController = new TextEditingController();
+class _enterScreenState extends State<enterScreen> {
+  List<recipe_card> recipes = <recipe_card>[];
+
+  TextEditingController textEditingController_Engrideints =
+      new TextEditingController();
+  TextEditingController textEditingController_recipe =
+      new TextEditingController();
 
   String applicationId = "41ca25af";
   String applicationKey = "ab51bad1b862188631ce612a9b1787a9";
 
   // search for recipe
-  search(String query) {}
+  search(String query) async {
+    String url =
+        "https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey";
+
+    var response = await http.get(Uri.parse(url));
+
+    //build recipeMap
+    Map<String, dynamic> jsonData = jsonDecode((response.body));
+
+    jsonData["hits"].forEach((element) {
+      print(element.toString());
+
+      // recipe_card recipe = new recipe_card(
+      //     image: "image", url: "url", label: "label", source: "source");
+      // recipe_card = recipe_card.fromMap(element["recipe"]);
+    });
+    print("${response.toString()} this is the response");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +105,7 @@ class _EnterScreenState extends State<EnterScreen> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
-                        controller: textEditingController,
+                        controller: textEditingController_Engrideints,
                         decoration: InputDecoration(
                             hintText: "Enter Ingrideints",
                             hintStyle: TextStyle(
@@ -88,13 +118,14 @@ class _EnterScreenState extends State<EnterScreen> {
                       width: 16,
                     ),
                     InkWell(
-                      onTap: () {
-                        if (textEditingController.text.isNotEmpty) {
-                          print("just do it");
-                        } else {
-                          print(" dont");
-                        }
-                      },
+                      // onTap: () async{} {
+                      //   if (textEditingController_Engrideints.text.isNotEmpty) {
+                      //     print("just do it");
+                      //   } else {
+                      //     print(" dont");
+                      //   }
+                      // },
+                      // ignore: avoid_unnecessary_containers
                       child: Container(
                         child: Icon(Icons.search, color: Colors.white),
                       ),
@@ -108,7 +139,7 @@ class _EnterScreenState extends State<EnterScreen> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
-                        controller: textEditingController,
+                        controller: textEditingController_recipe,
                         decoration: InputDecoration(
                             hintText: "Enter Recipe Name",
                             hintStyle: TextStyle(
@@ -122,15 +153,13 @@ class _EnterScreenState extends State<EnterScreen> {
                     ),
                     InkWell(
                       onTap: () {
-                        if (textEditingController.text.isNotEmpty) {
+                        if (textEditingController_recipe.text.isNotEmpty) {
                           print("just do it");
                         } else {
                           print(" dont");
                         }
                       },
-                      child: Container(
-                        child: Icon(Icons.search, color: Colors.white),
-                      ),
+                      child: Icon(Icons.search, color: Colors.white),
                     ),
                   ],
                 ),
