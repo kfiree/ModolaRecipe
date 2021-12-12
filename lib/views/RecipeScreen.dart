@@ -5,6 +5,8 @@ import 'package:modolar_recipe/Widgets/Buttons.dart';
 import 'package:modolar_recipe/Widgets/CircleImage.dart';
 import 'package:modolar_recipe/Widgets/DetailEntries.dart';
 
+import 'package:modolar_recipe/views/EnterScreen.dart';
+
 class RecipeScreen extends StatefulWidget {
   static String idScreen = 'recipe_screen';
   @override
@@ -43,8 +45,10 @@ class DetailHeaderCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                CircleButton(
-                  icon: Icons.keyboard_arrow_left,
+                IconButton(
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                      context, EnterScreen.idScreen, (route) => false),
+                  icon: Icon(Icons.keyboard_arrow_left),
                 ),
                 CircleButton(
                   icon: Icons.share,
