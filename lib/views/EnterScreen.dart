@@ -43,9 +43,10 @@ class _enterScreenState extends State<enterScreen> {
     jsonData["hits"].forEach((element) {
       print(element.toString());
 
-      // recipe_card recipe = new recipe_card(
-      //     image: "image", url: "url", label: "label", source: "source");
-      // recipe_card = recipe_card.fromMap(element["recipe"]);
+      recipe_card recipe = new recipe_card(
+          image: "image", url: "url", label: "label", source: "source");
+
+      recipe_card.fromMap(element["recipe"]);
     });
     print("${response.toString()} this is the response");
   }
@@ -118,13 +119,15 @@ class _enterScreenState extends State<enterScreen> {
                       width: 16,
                     ),
                     InkWell(
-                      // onTap: () async{} {
-                      //   if (textEditingController_Engrideints.text.isNotEmpty) {
-                      //     print("just do it");
-                      //   } else {
-                      //     print(" dont");
-                      //   }
-                      // },
+                      onTap: () async {
+                        if (textEditingController_Engrideints.text.isNotEmpty) {
+                          search(textEditingController_Engrideints.text);
+                          print("just do it");
+                          search(textEditingController_Engrideints.toString());
+                        } else {
+                          print(" dont");
+                        }
+                      },
                       // ignore: avoid_unnecessary_containers
                       child: Container(
                         child: Icon(Icons.search, color: Colors.white),

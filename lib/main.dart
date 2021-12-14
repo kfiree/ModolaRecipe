@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: "ModulaRecipe",
       initialRoute: LoginScreen.idScreen,
       routes: {
-        // '/': (context) => LoginScreen(),
+        '/': (context) => LoginScreen(),
         LoginScreen.idScreen: (context) => LoginScreen(),
         enterScreen.idScreen: (context) => enterScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
