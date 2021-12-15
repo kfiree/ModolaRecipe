@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modolar_recipe/Widgets/progressDialog.dart';
 import 'package:modolar_recipe/main.dart';
 import 'package:modolar_recipe/views/enterScreen.dart';
+import 'package:modolar_recipe/views/recipe_view.dart';
 
 import '../main.dart';
 
@@ -455,8 +456,10 @@ class _SignupScreenState extends State<SignupScreen> {
       usersRef.child(firebaseUser.uid).set(userDataMap);
 
       displayToastMessage("New user created succesffuly!", context);
+      // Navigator.pushNamedAndRemoveUntil(
+      //     context, enterScreen.idScreen, (route) => false);
       Navigator.pushNamedAndRemoveUntil(
-          context, enterScreen.idScreen, (route) => false);
+          context, DetailRecipe.idScreen, (route) => false);
     } else {
       //Error accured.
       Navigator.pop(context);

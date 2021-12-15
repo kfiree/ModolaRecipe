@@ -5,6 +5,7 @@ import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/RecipeScreen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/views/enterScreen.dart';
+import 'package:modolar_recipe/views/recipe_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginScreen(),
         LoginScreen.idScreen: (context) => LoginScreen(),
         enterScreen.idScreen: (context) => enterScreen(),
+        DetailRecipe.idScreen: (context) => DetailRecipe(),
         SignupScreen.idScreen: (context) => SignupScreen(),
         RecipeScreen.idScreen: (context) => RecipeScreen(),
       },
