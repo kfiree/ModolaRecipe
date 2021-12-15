@@ -59,7 +59,13 @@ class _enterScreenState extends State<enterScreen> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.blue, Colors.black87])),
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFFFFECD9),
+                  const Color(0xFFFFECD9),
+                ]
+              )
+          ),
         ),
         Container(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:modolar_recipe/Widgets/progressDialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -43,8 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.deepPurpleAccent, Colors.blue])),
+              gradient: LinearGradient(colors: [
+            const Color(0xFFECD9FF),
+            const Color(0xFFECD9FF),
+          ])),
         ),
         Container(
             padding: EdgeInsets.symmetric(
@@ -108,9 +111,15 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
         child: Text("Still not s user? Sign-Up",
+// <<<<<<< HEAD
+//             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+//         onPressed: () => Navigator.pushNamedAndRemoveUntil(
+//             context, SignupScreen.idScreen, (route) => false),
+// =======
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         onPressed: () => Navigator.pushNamedAndRemoveUntil(
             context, SignupScreen.idScreen, (route) => false),
+// >>>>>>> 77e4aab821149dbcc40c7062650d37e32c138514
       ),
     );
   }

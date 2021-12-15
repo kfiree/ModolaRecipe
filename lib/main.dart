@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:modolar_recipe/views/login.dart';
+import 'package:modolar_recipe/views/RecipeScreen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/views/enterScreen.dart';
 
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         LoginScreen.idScreen: (context) => LoginScreen(),
         enterScreen.idScreen: (context) => enterScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
+        RecipeScreen.idScreen: (context) => RecipeScreen(),
       },
       debugShowCheckedModeBanner: false,
     );
