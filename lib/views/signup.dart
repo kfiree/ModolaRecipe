@@ -1,18 +1,22 @@
+// ignore_for_file: unused_import
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:modolar_recipe/Widgets/progressDialog.dart';
+import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
-import 'package:modolar_recipe/views/enterScreen.dart';
+import 'package:modolar_recipe/views/enter_screen.dart';
 import 'package:modolar_recipe/views/recipe_view.dart';
 
 import '../main.dart';
 
 class SignupScreen extends StatefulWidget {
   static const String idScreen = "register";
+
+  const SignupScreen({Key? key}) : super(key: key);
 
   @override
   _SignupScreenState createState() => _SignupScreenState();
@@ -53,6 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
+                    // ignore: prefer_const_literals_to_create_immutables
                     colors: [
                       Color(0xff65b0bb),
                       Color(0xff5a9ea8),
@@ -152,7 +157,7 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
               color: Color(0xffebefff),
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   offset: Offset(0, 2),
@@ -195,7 +200,7 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
               color: Color(0xffebefff),
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   offset: Offset(0, 2),
@@ -238,7 +243,7 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
               color: Color(0xffebefff),
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   offset: Offset(0, 2),
@@ -280,7 +285,7 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
             color: Color(0xffebefff),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                   color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
             ],
@@ -330,7 +335,7 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
             color: Color(0xffebefff),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                   color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
             ],
@@ -366,8 +371,11 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget buildSignupButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 25),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
+        //TODO replace with elavated button
+
+        // ignore: deprecated_member_use
         child: RaisedButton(
           onPressed: () {
             if (nameTextEdittingController.text.length < 3) {

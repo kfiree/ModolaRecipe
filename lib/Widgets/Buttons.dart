@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class CircleButton extends StatelessWidget {
-  CircleButton({required this.icon, Future<Object?> Function()? onTap, Icon? child});
+  CircleButton(
+      {required this.icon, Future<Object?> Function()? onTap, Icon? child});
 
   final IconData icon;
 

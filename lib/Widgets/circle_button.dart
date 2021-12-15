@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class CircleButton extends StatelessWidget {
-  CircleButton({required this.icon});
+  const CircleButton({required this.icon});
 
   final IconData icon;
 
@@ -15,7 +15,10 @@ class CircleButton extends StatelessWidget {
           shape: CircleBorder(),
         ),
         child: IconButton(
-            icon: Icon(this.icon),
+            icon: Icon(
+              icon,
+              color: HexColor('#F9AF9C'),
+            ),
             color: Colors.white,
             iconSize: 40,
             onPressed: () {

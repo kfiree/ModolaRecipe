@@ -1,30 +1,30 @@
-// ignore: file_names
-// ignore_for_file: avoid_print, file_names, camel_case_types
+// ignore_for_file: avoid_print
+/*      === REMOTE ===    */
+// import 'dart:html';
+// import 'dart:io';
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+
+/*      === LOCAL ===    */
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:modolar_recipe/Widgets/recipe_card.dart';
+import 'package:modolar_recipe/views/recipe_view.dart';
 
-// ignore: use_key_in_widget_constructors
-class enterScreen extends StatefulWidget {
-  const enterScreen({Key? key}) : super(key: key);
+class EnterScreen extends StatefulWidget {
+  const EnterScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "EnterScreen";
 
   @override
-  _enterScreenState createState() => _enterScreenState();
+  _EnterScreenState createState() => _EnterScreenState();
 }
 
-class _enterScreenState extends State<enterScreen> {
+class _EnterScreenState extends State<EnterScreen> {
   List<recipe_card> recipes = <recipe_card>[];
 
-  TextEditingController textEditingController_Engrideints =
-      new TextEditingController();
-  TextEditingController textEditingController_recipe =
-      new TextEditingController();
+  TextEditingController engrideintsTextController = TextEditingController();
+  TextEditingController recipesTextController = TextEditingController();
 
   String applicationId = "41ca25af";
   String applicationKey = "ab51bad1b862188631ce612a9b1787a9";
@@ -38,9 +38,8 @@ class _enterScreenState extends State<enterScreen> {
         " =========================================================================================");
   }
 
-  // search for recipe
+  // get recipe with api call
   fetchRecipe(String query) async {
-    // debugFlag("search");
     String url =
         "https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey";
 
@@ -53,6 +52,7 @@ class _enterScreenState extends State<enterScreen> {
 
       jsonData["hits"].forEach((element) {
         print(element.toString());
+        // ignore: unused_local_variable
         recipe_card recipe = recipe_card(
             image: "image", url: "url", label: "label", source: "source");
         recipe_card.fromMap(element["recipe"]);
@@ -75,8 +75,8 @@ class _enterScreenState extends State<enterScreen> {
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
               gradient: LinearGradient(colors: [
-            const Color(0xFFFFECD9),
-            const Color(0xFFFFECD9),
+            Color(0xFFFFECD9),
+            Color(0xFFFFECD9),
           ])),
         ),
         Container(
@@ -118,13 +118,13 @@ class _enterScreenState extends State<enterScreen> {
                 "Insert what ingredients you have?",
                 style: TextStyle(fontSize: 13, color: Colors.white),
               ),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Row(
                   children: <Widget>[
                     Expanded(
                       child: TextField(
-                        controller: textEditingController_Engrideints,
+                        controller: engrideintsTextController,
                         decoration: InputDecoration(
                             hintText: "Enter Ingrideints",
                             hintStyle: TextStyle(
@@ -138,27 +138,29 @@ class _enterScreenState extends State<enterScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        if (textEditingController_Engrideints.text.isNotEmpty) {
-                          fetchRecipe(textEditingController_Engrideints.text);
+                        if (engrideintsTextController.text.isNotEmpty) {
+                          fetchRecipe(engrideintsTextController.text);
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, DetailRecipe.idScreen, (route) => false);
                         } else {
                           print("text box is empty");
                         }
                       },
-                      // ignore: avoid_unnecessary_containers
-                      child: Container(
-                        child: Icon(Icons.search, color: Colors.white),
-                      ),
+                      child: Icon(Icons.search, color: Colors.white),
+                      // child: Container(
+                      //   child: Icon(Icons.search, color: Colors.white),
+                      // ),
                     ),
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Row(
                   children: <Widget>[
                     Expanded(
                       child: TextField(
-                        controller: textEditingController_recipe,
+                        controller: recipesTextController,
                         decoration: InputDecoration(
                             hintText: "Enter Recipe Name",
                             hintStyle: TextStyle(
@@ -172,7 +174,7 @@ class _enterScreenState extends State<enterScreen> {
                     ),
                     InkWell(
                       onTap: () {
-                        if (textEditingController_recipe.text.isNotEmpty) {
+                        if (recipesTextController.text.isNotEmpty) {
                           print("just do it");
                         } else {
                           print(" dont");
@@ -183,36 +185,18 @@ class _enterScreenState extends State<enterScreen> {
                   ],
                 ),
               ),
-              // Sized
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                  child: GridView(
-                children: [],
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 3 / 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-              )
-                  // child: GridView(
-                  //     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  //         mainAxisSpacing: 10.0, maxCrossAxisExtent: 200.0),
-                  //     shrinkWrap: true,
-                  //     scrollDirection: Axis.vertical,
-                  //     physics: ClampingScrollPhysics(),
-                  //     children: List.generate(recipies.length, (index) {
-                  //       return GridTile(
-                  //           child: RecipieTile(
-                  //         title: recipies[index].label,
-                  //         imgUrl: recipies[index].image,
-                  //         desc: recipies[index].source,
-                  //         url: recipies[index].url,
-                  //       ));
-                  //     })),
-                  ),
+              // SizedBox(
+              //   height: 30,
+              // ),
+              // GridView(
+              //   children: [],
+              //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              // maxCrossAxisExtent: 200,
+              // childAspectRatio: 3 / 2,
+              // crossAxisSpacing: 20,
+              // mainAxisSpacing: 20,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -221,24 +205,31 @@ class _enterScreenState extends State<enterScreen> {
   }
 }
 
-class RecipeTile extends StatelessWidget {
-  late String url, source, title, postUrl;
+class RecipeTile extends StatefulWidget {
+  String url, source, title, postUrl;
 
   RecipeTile(
-      {required this.url,
+      {Key? key,
+      required this.url,
       required this.source,
       required this.title,
-      required this.postUrl});
+      required this.postUrl})
+      : super(key: key);
 
+  @override
+  State<RecipeTile> createState() => _RecipeTileState();
+}
+
+class _RecipeTileState extends State<RecipeTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Stack(
       children: <Widget>[
-        Image.network(url),
+        Image.network(widget.url),
         Container(
           child: Column(
-            children: <Widget>[Text(title), Text(source)],
+            children: <Widget>[Text(widget.title), Text(widget.source)],
           ),
         )
       ],
