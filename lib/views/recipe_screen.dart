@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:modolar_recipe/Utils/constants.dart';
-import 'package:modolar_recipe/Widgets/Buttons.dart';
-import 'package:modolar_recipe/Widgets/CircleImage.dart';
-import 'package:modolar_recipe/Widgets/DetailEntries.dart';
+import 'package:modolar_recipe/Widgets/buttons.dart';
+import 'package:modolar_recipe/Widgets/circle_image.dart';
+import 'package:modolar_recipe/Widgets/detail_entries.dart';
 
-import 'package:modolar_recipe/views/EnterScreen.dart';
+import 'package:modolar_recipe/views/enter_screen.dart';
 
 class RecipeScreen extends StatefulWidget {
   static String idScreen = 'recipe_screen';
+
+  const RecipeScreen({Key? key}) : super(key: key);
   @override
   _RecipeScreenState createState() => _RecipeScreenState();
 }
@@ -20,7 +22,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
         backgroundColor: HexColor('#FFECD9'),
         body: SafeArea(
           child: Column(
-            children: <Widget>[
+            children: const <Widget>[
               DetailHeaderCard(),
               DetailInfoCard(),
             ],
@@ -30,6 +32,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
 }
 
 class DetailHeaderCard extends StatelessWidget {
+  const DetailHeaderCard({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -48,7 +52,7 @@ class DetailHeaderCard extends StatelessWidget {
                 IconButton(
                   onPressed: () => Navigator.pushNamedAndRemoveUntil(
                       context, EnterScreen.idScreen, (route) => false),
-                  icon: Icon(Icons.keyboard_arrow_left),
+                  icon: Icon(Icons.keyboard_arrow_left, color: Colors.blue),
                 ),
                 CircleButton(
                   icon: Icons.share,
@@ -58,7 +62,9 @@ class DetailHeaderCard extends StatelessWidget {
           ),
           //TODO Need to figure out how to do overlapping oversized photos so we can follow the design
           Stack(
-            overflow: Overflow.clip,
+            // overflow: Overflow.clip,
+            // children: <Widget>[
+            clipBehavior: Clip.hardEdge,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(
@@ -81,6 +87,8 @@ class DetailHeaderCard extends StatelessWidget {
 }
 
 class DetailInfoCard extends StatelessWidget {
+  const DetailInfoCard({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -102,7 +110,8 @@ class DetailInfoCard extends StatelessWidget {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+              //TODO check if const needed
+              children: const <Widget>[
                 Text(
                   'Pancakes',
                   style: kHeaderTextStyle,

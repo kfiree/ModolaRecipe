@@ -1,12 +1,14 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:modolar_recipe/Widgets/progressDialog.dart';
+import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:modolar_recipe/views/EnterScreen.dart';
+import 'package:modolar_recipe/views/enter_screen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 
 import '../main.dart';
@@ -21,7 +23,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailTextEdittingController = TextEditingController();
-  TextEditingController passwordTextEdittingController = TextEditingController();
+  TextEditingController passwordTextEdittingController =
+      TextEditingController();
 
   bool rememberpwd = false;
   bool sec = true;
@@ -38,18 +41,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
         Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFFECD9FF),
-                    const Color(0xFFECD9FF),
-                  ]
-              )
-          ),
+              gradient: LinearGradient(colors: [
+            Color(0xFFECD9FF),
+            Color(0xFFECD9FF),
+          ])),
         ),
         Container(
             padding: EdgeInsets.symmetric(
@@ -113,9 +114,15 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
         child: Text("Still not s user? Sign-Up",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
-        ),
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(context, SignupScreen.idScreen, (route) => false),
+// <<<<<<< HEAD
+//             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+//         onPressed: () => Navigator.pushNamedAndRemoveUntil(
+//             context, SignupScreen.idScreen, (route) => false),
+// =======
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+            context, SignupScreen.idScreen, (route) => false),
+// >>>>>>> 77e4aab821149dbcc40c7062650d37e32c138514
       ),
     );
   }
@@ -138,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: BoxDecoration(
               color: Color(0xffebefff),
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   offset: Offset(0, 2),
@@ -180,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: BoxDecoration(
             color: Color(0xffebefff),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                   color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
             ],
@@ -292,18 +299,20 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         });
     final User? firebaseUser = (await _firebaseAuth
-    .signInWithEmailAndPassword(
-      email: emailTextEdittingController.text, 
-      password: passwordTextEdittingController.text
-    ).catchError((errMsg){
-        Navigator.pop(context);
-        displayToastMessage("Error: " + errMsg.toString(), context);
-    })).user;
-    
+            .signInWithEmailAndPassword(
+                email: emailTextEdittingController.text,
+                password: passwordTextEdittingController.text)
+            .catchError((errMsg) {
+      Navigator.pop(context);
+      displayToastMessage("Error: " + errMsg.toString(), context);
+    }))
+        .user;
+
     if (firebaseUser != null) {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
-          Navigator.pushNamedAndRemoveUntil(context, EnterScreen.idScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, EnterScreen.idScreen, (route) => false);
           displayToastMessage("Welcome! you are now logged in.", context);
         } else {
           _firebaseAuth.signOut();
@@ -322,5 +331,3 @@ class _LoginScreenState extends State<LoginScreen> {
     Fluttertoast.showToast(msg: msg);
   }
 }
-
-
