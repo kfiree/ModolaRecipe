@@ -22,6 +22,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool loading = false;
   TextEditingController emailTextEdittingController = TextEditingController();
   TextEditingController passwordTextEdittingController =
       TextEditingController();
@@ -113,17 +114,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
-        child: Text("Still not s user? Sign-Up",
-// <<<<<<< HEAD
-//             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-//         onPressed: () => Navigator.pushNamedAndRemoveUntil(
-//             context, SignupScreen.idScreen, (route) => false),
-// =======
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(
-            context, SignupScreen.idScreen, (route) => false),
-// >>>>>>> 77e4aab821149dbcc40c7062650d37e32c138514
-      ),
+          child: Text("Still not s user? Sign-Up",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          onPressed: () {
+            setState(() => loading = true);
+            Navigator.pushNamedAndRemoveUntil(
+                context, SignupScreen.idScreen, (route) => false);
+          }),
     );
   }
 
@@ -202,6 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     setState(() {
                       sec = !sec;
+                      loading = true;
                     });
                   },
                   icon: sec ? visableoff : visable,
@@ -264,6 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
         width: double.infinity,
         child: RaisedButton(
           onPressed: () {
+            // setState(()=>loading = true);
             if (!emailTextEdittingController.text.contains("@")) {
               displayToastMessage("Email is not valid.", context);
             } else if (passwordTextEdittingController.text.isEmpty) {

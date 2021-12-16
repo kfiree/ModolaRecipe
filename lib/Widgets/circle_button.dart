@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:modolar_recipe/views/enter_screen.dart';
 
 class CircleButton extends StatelessWidget {
   const CircleButton({required this.icon});
@@ -17,12 +18,14 @@ class CircleButton extends StatelessWidget {
         child: IconButton(
             icon: Icon(
               icon,
-              color: HexColor('#F9AF9C'),
+              color: HexColor('##785ac7'),
             ),
             color: Colors.white,
             iconSize: 40,
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushNamedAndRemoveUntil(
+                  context, EnterScreen.idScreen, (route) => false);
+              // Navigator.pop(context);
             }),
       ),
     );

@@ -5,6 +5,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 /*      === LOCAL ===    */
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -74,10 +75,8 @@ class _EnterScreenState extends State<EnterScreen> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [
-            Color(0xFFFFECD9),
-            Color(0xFFFFECD9),
-          ])),
+              gradient:
+                  LinearGradient(colors: [Colors.teal, Colors.greenAccent])),
         ),
         Container(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
