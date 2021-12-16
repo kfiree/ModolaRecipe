@@ -39,6 +39,8 @@ dependencies:
   firebase_database: ^8.1.0
   fluttertoast: ^8.0.8
   http: ^0.13.1
+  duration: ^3.0.8
+  hexcolor: ^2.0.5
 
   webview_flutter:
   url_launcher: # for the web version, we're intrested in the mobile version 

@@ -1,28 +1,34 @@
+// ignore_for_file: unused_import
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:modolar_recipe/Widgets/progressDialog.dart';
+import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
 import 'package:modolar_recipe/views/enter_screen.dart';
+import 'package:modolar_recipe/views/recipe_view.dart';
 
 import '../main.dart';
 
 class SignupScreen extends StatefulWidget {
   static const String idScreen = "register";
 
+  const SignupScreen({Key? key}) : super(key: key);
+
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-
   TextEditingController nameTextEdittingController = TextEditingController();
   TextEditingController emailTextEdittingController = TextEditingController();
-  TextEditingController passwordTextEdittingController = TextEditingController();
-  TextEditingController repesatedPasswordTextEdittingController = TextEditingController();
+  TextEditingController passwordTextEdittingController =
+      TextEditingController();
+  TextEditingController repesatedPasswordTextEdittingController =
+      TextEditingController();
   TextEditingController phoneTextEdittingController = TextEditingController();
 
   bool rememberpwd = false;
@@ -51,6 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
+                    // ignore: prefer_const_literals_to_create_immutables
                     colors: [
                       Color(0xff65b0bb),
                       Color(0xff5a9ea8),
@@ -138,7 +145,8 @@ class _SignupScreenState extends State<SignupScreen> {
       children: [
         Text(
           "Name",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -146,12 +154,15 @@ class _SignupScreenState extends State<SignupScreen> {
         Container(
           height: 60,
           alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(color: Color(0xffebefff), borderRadius: BorderRadius.circular(10), boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-            )
-          ]),
+          decoration: BoxDecoration(
+              color: Color(0xffebefff),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 2),
+                )
+              ]),
           child: TextField(
             controller: nameTextEdittingController,
             keyboardType: TextInputType.name,
@@ -177,7 +188,8 @@ class _SignupScreenState extends State<SignupScreen> {
       children: [
         Text(
           "Email",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -185,12 +197,15 @@ class _SignupScreenState extends State<SignupScreen> {
         Container(
           height: 60,
           alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(color: Color(0xffebefff), borderRadius: BorderRadius.circular(10), boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-            )
-          ]),
+          decoration: BoxDecoration(
+              color: Color(0xffebefff),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 2),
+                )
+              ]),
           child: TextField(
             controller: emailTextEdittingController,
             keyboardType: TextInputType.emailAddress,
@@ -216,7 +231,8 @@ class _SignupScreenState extends State<SignupScreen> {
       children: [
         Text(
           "Phone",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -224,12 +240,15 @@ class _SignupScreenState extends State<SignupScreen> {
         Container(
           height: 60,
           alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(color: Color(0xffebefff), borderRadius: BorderRadius.circular(10), boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-            )
-          ]),
+          decoration: BoxDecoration(
+              color: Color(0xffebefff),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 2),
+                )
+              ]),
           child: TextField(
             controller: phoneTextEdittingController,
             keyboardType: TextInputType.phone,
@@ -255,7 +274,8 @@ class _SignupScreenState extends State<SignupScreen> {
       children: [
         Text(
           "Password",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -265,8 +285,9 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
             color: Color(0xffebefff),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
             ],
           ),
           height: 60,
@@ -303,7 +324,8 @@ class _SignupScreenState extends State<SignupScreen> {
       children: [
         Text(
           "Repeat password",
-          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -313,8 +335,9 @@ class _SignupScreenState extends State<SignupScreen> {
           decoration: BoxDecoration(
             color: Color(0xffebefff),
             borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
             ],
           ),
           height: 60,
@@ -348,26 +371,28 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget buildSignupButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 25),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
+        //TODO replace with elavated button
+
+        // ignore: deprecated_member_use
         child: RaisedButton(
           onPressed: () {
-            if(nameTextEdittingController.text.length < 3){
-              displayToastMessage("Name must be at least 3 characters.", context);
-            }
-            else if(!emailTextEdittingController.text.contains("@")){
+            if (nameTextEdittingController.text.length < 3) {
+              displayToastMessage(
+                  "Name must be at least 3 characters.", context);
+            } else if (!emailTextEdittingController.text.contains("@")) {
               displayToastMessage("Email is not valid.", context);
-            }
-            else if(!phoneTextEdittingController.text.startsWith("05") || phoneTextEdittingController.text.length < 10){
+            } else if (!phoneTextEdittingController.text.startsWith("05") ||
+                phoneTextEdittingController.text.length < 10) {
               displayToastMessage("Phone number is not valid.", context);
-            }
-            else if(passwordTextEdittingController.text.length < 8 ){
-              displayToastMessage("Password need to be at least 8 characters long.", context);
-            }
-            else if(repesatedPasswordTextEdittingController.text != passwordTextEdittingController.text){
+            } else if (passwordTextEdittingController.text.length < 8) {
+              displayToastMessage(
+                  "Password need to be at least 8 characters long.", context);
+            } else if (repesatedPasswordTextEdittingController.text !=
+                passwordTextEdittingController.text) {
               displayToastMessage("Password dont match.", context);
-            }
-            else{
+            } else {
               registerNewUser(context);
             }
           },
@@ -379,7 +404,8 @@ class _SignupScreenState extends State<SignupScreen> {
           padding: EdgeInsets.all(30),
           child: Text(
             "Sign-Up",
-            style: TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -411,19 +437,23 @@ class _SignupScreenState extends State<SignupScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   void registerNewUser(BuildContext context) async {
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context){
-        return ProgressDialog("Registering, please wait...",);
-      });
-    final User? firebaseUser = (await _firebaseAuth.createUserWithEmailAndPassword(
-      email: emailTextEdittingController.text,
-      password: passwordTextEdittingController.text
-    ).catchError((errMsg){
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return ProgressDialog(
+            "Registering, please wait...",
+          );
+        });
+    final User? firebaseUser = (await _firebaseAuth
+            .createUserWithEmailAndPassword(
+                email: emailTextEdittingController.text,
+                password: passwordTextEdittingController.text)
+            .catchError((errMsg) {
       displayToastMessage("Error: " + errMsg.toString(), context);
-    })).user;
+    }))
+        .user;
 
-    if(firebaseUser != null){
+    if (firebaseUser != null) {
       // User created succesffully.
       // Insert to DB.
       Map userDataMap = {
@@ -434,18 +464,18 @@ class _SignupScreenState extends State<SignupScreen> {
       usersRef.child(firebaseUser.uid).set(userDataMap);
 
       displayToastMessage("New user created succesffuly!", context);
-      Navigator.pushNamedAndRemoveUntil(context, EnterScreen.idScreen, (route) => false);
-    }
-    else{
+      // Navigator.pushNamedAndRemoveUntil(
+      //     context, enterScreen.idScreen, (route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+          context, DetailRecipe.idScreen, (route) => false);
+    } else {
       //Error accured.
       Navigator.pop(context);
       displayToastMessage("New user has not been created.", context);
     }
   }
-
 }
-displayToastMessage(String msg, BuildContext context){
+
+displayToastMessage(String msg, BuildContext context) {
   Fluttertoast.showToast(msg: msg);
 }
-
-

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:modolar_recipe/Widgets/circle_button.dart';
+import 'package:modolar_recipe/Utils/constants.dart';
+import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
-import 'package:modolar_recipe/Widgets/ingredient_card.dart';
+import 'package:modolar_recipe/Widgets/detail_entries.dart';
 
-class DetailRecipe extends StatefulWidget {
-  const DetailRecipe({Key? key}) : super(key: key);
+import 'package:modolar_recipe/views/enter_screen.dart';
 
-  static const String idScreen = "detail_recipe";
+class RecipeScreen extends StatefulWidget {
+  static String idScreen = 'recipe_screen';
 
+  const RecipeScreen({Key? key}) : super(key: key);
   @override
-  _DetailRecipeState createState() => _DetailRecipeState();
+  _RecipeScreenState createState() => _RecipeScreenState();
 }
 
-class _DetailRecipeState extends State<DetailRecipe> {
+class _RecipeScreenState extends State<RecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,8 +49,10 @@ class DetailHeaderCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                CircleButton(
-                  icon: Icons.keyboard_arrow_left,
+                IconButton(
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                      context, EnterScreen.idScreen, (route) => false),
+                  icon: Icon(Icons.keyboard_arrow_left, color: Colors.blue),
                 ),
                 CircleButton(
                   icon: Icons.share,
@@ -58,7 +62,7 @@ class DetailHeaderCard extends StatelessWidget {
           ),
           //TODO Need to figure out how to do overlapping oversized photos so we can follow the design
           Stack(
-            //            overflow: Overflow.clip,
+            // overflow: Overflow.clip,
             // children: <Widget>[
             clipBehavior: Clip.hardEdge,
             children: <Widget>[
@@ -83,7 +87,6 @@ class DetailHeaderCard extends StatelessWidget {
 }
 
 class DetailInfoCard extends StatelessWidget {
-  // TODO check why this line is for
   const DetailInfoCard({Key? key}) : super(key: key);
 
   @override
@@ -107,22 +110,15 @@ class DetailInfoCard extends StatelessWidget {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //TODO check if const needed
               children: const <Widget>[
                 Text(
-                  'Pancakes !',
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Quicksand",
-                  ),
+                  'Pancakes',
+                  style: kHeaderTextStyle,
                 ),
                 Text(
                   '10 mins',
-                  style: TextStyle(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFBFBFBF),
-                  ),
+                  style: kSecondaryTextStyle,
                 ),
               ],
             ),
@@ -131,33 +127,29 @@ class DetailInfoCard extends StatelessWidget {
             ),
             Text(
               'Ingredients',
-              style: TextStyle(
-                color: Color(0xff909090),
-                fontWeight: FontWeight.w700,
-                fontFamily: "Quicksand",
-              ),
+              style: kSubHeaderTextStyle,
             ),
             SizedBox(
               height: 10,
             ),
             Column(
               children: <Widget>[
-                IngredientCard(
+                IngredientsEntry(
                   name: 'All Purpose Flour',
                   quantity: '2',
                   unit: 'cups',
                 ),
-                IngredientCard(
+                IngredientsEntry(
                   name: 'Milk',
                   quantity: '2',
                   unit: 'cups',
                 ),
-                IngredientCard(
+                IngredientsEntry(
                   name: 'Eggs',
                   quantity: '2',
                   unit: 'cups',
                 ),
-                IngredientCard(
+                IngredientsEntry(
                   name: 'Blueberries',
                   quantity: '2',
                   unit: 'cups',
@@ -167,14 +159,9 @@ class DetailInfoCard extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Text('Steps',
-                style: TextStyle(
-                  color: Color(0xff909090),
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Quicksand",
-                )),
+            Text('Steps', style: kSubHeaderTextStyle),
             Column(
-              children: const <Widget>[
+              children: <Widget>[
                 StepEntry(
                   text: 'Preheat the oven to 450 degrees',
                   initialStep: true,
@@ -190,71 +177,6 @@ class DetailInfoCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class StepEntry extends StatelessWidget {
-  final String text;
-  final bool initialStep;
-
-  //TODO check original
-  //StepEntry({required this.text, this.initialStep = false});
-  const StepEntry({Key? key, required this.text, this.initialStep = false})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        right: 25,
-        left: 10.0,
-        top: 0.0,
-      ),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  width: 5.0,
-                  height: initialStep ? 0 : 40,
-                  decoration: BoxDecoration(
-                    color: HexColor('#F9AF9C'),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 69,
-                child: SizedBox(
-                  height: 10.0,
-                ),
-              )
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                height: 5.0,
-                width: 5.0,
-                decoration: BoxDecoration(
-                  color: HexColor('#F9AF9C'),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              SizedBox(
-                width: 40.0,
-              ),
-              Flexible(
-                child: Text(text),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
