@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RecipeView extends StatefulWidget {
-  const RecipeView({Key? key}) : super(key: key);
-
+//   const RecipeView({Key? key}) : super(key: key);
   @override
   _RecipeViewState createState() => _RecipeViewState();
 }

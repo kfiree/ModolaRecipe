@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modolar_recipe/Widgets/progressDialog.dart';
 import 'package:modolar_recipe/main.dart';
-import 'package:modolar_recipe/views/EnterScreen.dart';
+import 'package:modolar_recipe/views/enter_screen.dart';
 
 import '../main.dart';
 

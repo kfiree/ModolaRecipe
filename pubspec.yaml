@@ -41,7 +41,7 @@ dependencies:
   http: ^0.13.1
 
   webview_flutter:
-  url_launcher:
+  url_launcher: # for the web version, we're intrested in the mobile version 
   simple_gradient_text: ^1.2.2
 
   

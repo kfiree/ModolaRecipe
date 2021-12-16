@@ -1,6 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:modolar_recipe/views/recipe_view.dart';
+import 'package:modolar_recipe/models/recipe_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class EnterScreen extends StatefulWidget {
@@ -12,14 +19,34 @@ class EnterScreen extends StatefulWidget {
 }
 
 class _EnterScreenState extends State<EnterScreen> {
+  List<RecipeModel> recipes = <RecipeModel>[];
   TextEditingController textEditingController = new TextEditingController();
-
   String applicationId = "41ca25af";
   String applicationKey = "ab51bad1b862188631ce612a9b1787a9";
 
   // search for recipe
-  search(String query) {
-    https://api.edamam.com/api/recipes/v2?type=public&q=Sodium&app_id=41ca25af&app_key=ab51bad1b862188631ce612a9b1787a9
+  search(String query) async {
+    // String path = "https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey";
+    // Uri url = Uri.parse(path);
+
+    final response = await http.get(Uri.parse(
+        'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      jsonData["hits"].forEach((Element) {
+        RecipeModel recipeModel = RecipeModel.fromMap(Element["recipe"]);
+
+        recipes.add(recipeModel);
+        int i = 0;
+      });
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   @override
@@ -92,9 +119,20 @@ class _EnterScreenState extends State<EnterScreen> {
                     InkWell(
                       onTap: () {
                         if (textEditingController.text.isNotEmpty) {
-                          print("just do it");
+                          int a = 0;
+                          print(
+                              "=========================================================");
+                          print(
+                              "=========================================================");
+                          print(textEditingController.text);
+                          print(
+                              "=========================================================");
+                          print(
+                              "=========================================================");
+
+                          search(textEditingController.text);
                         } else {
-                          print(" dont");
+                          print("text box is empty");
                         }
                       },
                       child: Container(
@@ -141,6 +179,15 @@ class _EnterScreenState extends State<EnterScreen> {
           ),
         ),
       ]),
+    );
+  }
+}
+
+class RecipeBox extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+
     );
   }
 }
