@@ -46,15 +46,23 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
         Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Colors.white,
-              Color.fromARGB(255, 248, 191, 176),
-            ]),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/chef.jpg"),
+              fit: BoxFit.fill,
+            ),
           ),
         ),
+        // Container(
+        //   height: MediaQuery.of(context).size.height,
+        //   width: MediaQuery.of(context).size.width,
+        //   decoration: const BoxDecoration(
+        //     gradient: LinearGradient(colors: [
+        //       Colors.white,
+        //       Color.fromARGB(255, 248, 191, 176),
+        //     ]),
+        //   ),
+        // ),
         Container(
             padding: EdgeInsets.symmetric(
                 vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
@@ -64,23 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 color2: Colors.white,
                 size: 40,
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: const <Widget>[
-              //     Text(
-              //       "ModolaR",
-              //       style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500),
-              //       textAlign: TextAlign.center,
-              //     ),
-              //     Text(
-              //       "Recipies",
-              //       style: TextStyle(
-              //           color: Colors.blue,
-              //           fontSize: 23,
-              //           fontWeight: FontWeight.w500),
-              //     )
-              //   ],
-              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -139,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           "Email",
           style: TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -182,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           "Password",
           style: TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -203,23 +194,24 @@ class _LoginScreenState extends State<LoginScreen> {
             obscureText: sec,
             style: TextStyle(color: Colors.black),
             decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      sec = !sec;
-                      loading = true;
-                    });
-                  },
-                  icon: sec ? visableoff : visable,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14),
-                prefixIcon: Icon(
-                  Icons.vpn_key,
-                  color: Color(0xff4c5166),
-                ),
-                hintText: "password",
-                hintStyle: TextStyle(color: Colors.black38)),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    sec = !sec;
+                    loading = true;
+                  });
+                },
+                icon: sec ? visableoff : visable,
+              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.vpn_key,
+                color: Color(0xff4c5166),
+              ),
+              hintText: "password",
+              hintStyle: TextStyle(color: Colors.black38),
+            ),
           ),
         )
       ],
