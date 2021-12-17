@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:modolar_recipe/Widgets/circle_button.dart';
+
+import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Widgets/ingredient_card.dart';
+import 'package:modolar_recipe/Views/main_screen.dart';
+import 'package:modolar_recipe/Widgets/rating.dart';
 
-class DetailRecipe extends StatefulWidget {
-  const DetailRecipe({Key? key}) : super(key: key);
+class ShowScreen extends StatefulWidget {
+  const ShowScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "detail_recipe";
 
   @override
-  _DetailRecipeState createState() => _DetailRecipeState();
+  _ShowScreenState createState() => _ShowScreenState();
 }
 
-class _DetailRecipeState extends State<DetailRecipe> {
+class _ShowScreenState extends State<ShowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,10 +51,22 @@ class DetailHeaderCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 CircleButton(
-                  icon: Icons.share,
+                  color: HexColor('##785ac7'),
+                  icon: Icons.star,
+                  callback: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => RateRecipe(),
+                    );
+                  },
                 ),
                 CircleButton(
+                  color: HexColor('##785ac7'),
                   icon: Icons.keyboard_arrow_left,
+                  callback: () => {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, MainScreen.idScreen, (route) => false)
+                  },
                 ),
               ],
             ),

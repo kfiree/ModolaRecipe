@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
-import 'package:modolar_recipe/views/enter_screen.dart';
+import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/recipe_view.dart';
 
 import '../main.dart';
@@ -467,7 +467,7 @@ class _SignupScreenState extends State<SignupScreen> {
       // Navigator.pushNamedAndRemoveUntil(
       //     context, enterScreen.idScreen, (route) => false);
       Navigator.pushNamedAndRemoveUntil(
-          context, DetailRecipe.idScreen, (route) => false);
+          context, ShowScreen.idScreen, (route) => false);
     } else {
       //Error accured.
       Navigator.pop(context);

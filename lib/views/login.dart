@@ -8,8 +8,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:modolar_recipe/views/enter_screen.dart';
+import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/signup.dart';
+import 'package:modolar_recipe/Widgets/headers.dart';
 
 import '../main.dart';
 
@@ -48,32 +49,38 @@ class _LoginScreenState extends State<LoginScreen> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [
-            Color(0xFFECD9FF),
-            Color(0xFFECD9FF),
-          ])),
+            gradient: LinearGradient(colors: [
+              Colors.white,
+              Color.fromARGB(255, 248, 191, 176),
+            ]),
+          ),
         ),
         Container(
             padding: EdgeInsets.symmetric(
                 vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
             child: Column(children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
-                  Text(
-                    "ModolaR",
-                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    "Recipies",
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 23,
-                        fontWeight: FontWeight.w500),
-                  )
-                ],
+              RecipeHeader(
+                color1: Colors.black,
+                color2: Colors.white,
+                size: 40,
               ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: const <Widget>[
+              //     Text(
+              //       "ModolaR",
+              //       style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500),
+              //       textAlign: TextAlign.center,
+              //     ),
+              //     Text(
+              //       "Recipies",
+              //       style: TextStyle(
+              //           color: Colors.blue,
+              //           fontSize: 23,
+              //           fontWeight: FontWeight.w500),
+              //     )
+              //   ],
+              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -272,19 +279,63 @@ class _LoginScreenState extends State<LoginScreen> {
               loginUserAndAuthenticate(context);
             }
           },
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          color: Color(0xff3c6970),
-          padding: EdgeInsets.all(30),
-          child: Text(
-            "Login",
-            style: TextStyle(
-                fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+          elevation: 0.0,
+          padding: EdgeInsets.all(0.0),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: [
+                    Color.fromARGB(255, 248, 191, 176),
+                    Color.fromARGB(255, 248, 137, 99),
+                    // Colors.white,
+                  ]),
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
+              alignment: Alignment.center,
+              child: Text(
+                "Login!",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26.0,
+                    fontWeight: FontWeight.w300),
+              ),
+            ),
           ),
         ),
       ),
+
+      // Container(
+      //   width: double.infinity,
+      //   child: RaisedButton(
+      //     onPressed: () {
+      //       // setState(()=>loading = true);
+      //       if (!emailTextEdittingController.text.contains("@")) {
+      //         displayToastMessage("Email is not valid.", context);
+      //       } else if (passwordTextEdittingController.text.isEmpty) {
+      //         displayToastMessage("Password is missing.", context);
+      //       } else {
+      //         loginUserAndAuthenticate(context);
+      //       }
+      //     },
+      //     elevation: 5,
+      //     shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.circular(15),
+      //     ),
+      //     color: Color(0xff3c6970),
+      //     padding: EdgeInsets.all(30),
+      //     child: Text(
+      //       "Login",
+      //       style: TextStyle(
+      //           fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -312,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
           Navigator.pushNamedAndRemoveUntil(
-              context, EnterScreen.idScreen, (route) => false);
+              context, MainScreen.idScreen, (route) => false);
           displayToastMessage("Welcome! you are now logged in.", context);
         } else {
           _firebaseAuth.signOut();
