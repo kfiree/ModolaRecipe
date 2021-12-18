@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
-import 'package:modolar_recipe/views/recipe_view.dart';
+import 'package:modolar_recipe/views/recipe_full_view.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/views/profile_screen.dart';
 
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         LoginScreen.idScreen: (context) => LoginScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
         MainScreen.idScreen: (context) => MainScreen(),
-        ShowScreen.idScreen: (context) => ShowScreen(),
+        // ShowScreen.idScreen: (context) => ShowScreen(name: 'Pancakes'),
         AddScreen.idScreen: (context) => AddScreen(),
         ProfileScreen.idScreen: (context) => ProfileScreen(),
         // test.idScreen: (context) => test(),

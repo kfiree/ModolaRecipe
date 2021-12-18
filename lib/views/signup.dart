@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
-import 'package:modolar_recipe/views/recipe_view.dart';
+import 'package:modolar_recipe/views/recipe_full_view.dart';
 
 import '../main.dart';
 

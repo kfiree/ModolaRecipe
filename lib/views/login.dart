@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
-          child: Text("Still not s user? Sign-Up",
+          child: Text("Still not s user?! Sign-Up",
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
           onPressed: () {

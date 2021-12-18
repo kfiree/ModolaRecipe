@@ -8,7 +8,9 @@ import 'package:modolar_recipe/Views/main_screen.dart';
 import 'package:modolar_recipe/Widgets/rating.dart';
 
 class ShowScreen extends StatefulWidget {
-  const ShowScreen({Key? key}) : super(key: key);
+  const ShowScreen({Key? key, required this.name}) : super(key: key);
+
+  final String name;
 
   static const String idScreen = "detail_recipe";
 

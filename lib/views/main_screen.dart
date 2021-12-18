@@ -1,21 +1,15 @@
-// ignore_for_file: avoid_print, unused_import
 import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/profile_screen.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:modolar_recipe/Widgets/circle_button.dart';
 import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
-import 'package:modolar_recipe/views/recipe_view.dart';
+import 'package:modolar_recipe/views/recipe_full_view.dart';
 import 'package:modolar_recipe/models/recipe_model.dart';
 import 'package:modolar_recipe/Widgets/recipe_card.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
@@ -102,6 +96,7 @@ class _MainScreenState extends State<MainScreen> {
     //     List.generate(recipeNum, (int i) => MediumRecipeView());
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
         Container(
           height: MediaQuery.of(context).size.height,
@@ -141,12 +136,12 @@ class _MainScreenState extends State<MainScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleButton(
-                    color: Colors.black,
-                    icon: Icons.account_box,
-                    callback: () => {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, ProfileScreen.idScreen, (route) => false)
-                        }),
+                  color: Colors.black,
+                  icon: Icons.account_box,
+                  callback: () => {
+                    Navigator.of(context).pushNamed(ProfileScreen.idScreen),
+                  },
+                ),
               ),
             ),
             // add recipe
@@ -251,13 +246,9 @@ class _MainScreenState extends State<MainScreen> {
                                 if (engrideintsTextController.text.isNotEmpty) {
                                   //TODO fix before commit
 
-                                  setState(() => loading = true);
-                                  sleep(Duration(seconds: 3));
-                                  loading = true;
-                                  setState(() => loading = false);
                                   // fetchRecipes(engrideintsTextController.text);
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      ShowScreen.idScreen, (route) => false);
+                                  Navigator.of(context)
+                                      .pushNamed(ShowScreen.idScreen);
                                 } else {
                                   print("text box is empty");
                                 }
@@ -369,8 +360,9 @@ class MediumRecipeView extends StatelessWidget {
       children: <Widget>[
         GestureDetector(
           onTap: () => {
-            Navigator.pushNamedAndRemoveUntil(
-                context, ShowScreen.idScreen, (route) => false)
+            Navigator.of(context).pushNamed(ShowScreen.idScreen)
+            // Navigator.pushNamedAndRemoveUntil(
+            //     context, ShowScreen.idScreen, (route) => false)
           },
           child: RecipeBigView(
             cookTime: cookTime,

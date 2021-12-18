@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:modolar_recipe/Widgets/buttons.dart';
+import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Views/main_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -32,12 +33,10 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage(
-                          'assets/shaniProfile.png',
-                          // "https://www.trendrr.net/wp-content/uploads/2017/06/Deepika-Padukone-1.jpg",
-                        ),
-                        radius: 50.0,
+                      CircleNetworkImage(
+                        radius: 130,
+                        imageURL:
+                            'https://scontent.ftlv1-1.fna.fbcdn.net/v/t1.18169-9/10151952_10203690787413476_8739758980547261236_n.jpg?_nc_cat=111&ccb=1-5&_nc_sid=cdbe9c&_nc_ohc=GgT6-iP6Wc0AX_cd0Ip&_nc_ht=scontent.ftlv1-1.fna&oh=00_AT9em3xvGi6HMFAVAUGCUglWYydbeWu_zbyM0JhK6wM7wg&oe=61E1E285',
                       ),
                       SizedBox(
                         height: 10.0,
