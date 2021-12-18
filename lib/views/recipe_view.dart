@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:modolar_recipe/Widgets/circle_button.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Widgets/ingredient_card.dart';
+import 'package:flutter/foundation.dart';
 
 class DetailRecipe extends StatefulWidget {
   const DetailRecipe({Key? key}) : super(key: key);
@@ -256,6 +259,53 @@ class StepEntry extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class SmallRecipeView extends StatefulWidget {
+  final String postUrl;
+
+  SmallRecipeView({required this.postUrl});
+
+  @override
+  _SmallRecipeViewState createState() => _SmallRecipeViewState();
+}
+
+class _SmallRecipeViewState extends State<SmallRecipeView> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: <Widget> [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child:Row(
+                mainAxisAlignment: kIsWeb
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "AppGuy",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'Overpass'),
+                  ),
+                  Text(
+                    "Recipes",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blue,
+                        fontFamily: 'Overpass'),
+                  )
+                ],
+              )
+        )
+
+        ],),
     );
   }
 }

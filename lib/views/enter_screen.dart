@@ -26,7 +26,7 @@ class _EnterScreenState extends State<EnterScreen> {
   List<RecipeModel> recipes = <RecipeModel>[];
 
   //text controllers
-  TextEditingController engrideintsTextController = TextEditingController();
+  TextEditingController ingrideintsTextController = TextEditingController();
   TextEditingController recipesTextController = TextEditingController();
 
   //api access data
@@ -67,7 +67,7 @@ class _EnterScreenState extends State<EnterScreen> {
             Color(0xFFFFECD9),
           ])),
         ),
-        Container(
+        SingleChildScrollView(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +112,7 @@ class _EnterScreenState extends State<EnterScreen> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
-                        controller: engrideintsTextController,
+                        controller: ingrideintsTextController,
                         decoration: InputDecoration(
                             hintText: "Enter Ingrideints",
                             hintStyle: TextStyle(
@@ -126,8 +126,9 @@ class _EnterScreenState extends State<EnterScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        if (engrideintsTextController.text.isNotEmpty) {
-                          // fetchRecipes(engrideintsTextController.text);
+                        if (ingrideintsTextController.text.isNotEmpty) {
+                          print("text box is not empty");
+                          fetchRecipes(ingrideintsTextController.text);
                           Navigator.pushNamedAndRemoveUntil(
                               context, DetailRecipe.idScreen, (route) => false);
                         } else {
@@ -170,31 +171,39 @@ class _EnterScreenState extends State<EnterScreen> {
                   ],
                 ),
               ),
-              // SizedBox(
-              //   height: 30,
-              // ),
-              // GridView(
-              //   children: [],
-              //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              // maxCrossAxisExtent: 200,
-              // childAspectRatio: 3 / 2,
-              // crossAxisSpacing: 20,
-              // mainAxisSpacing: 20,
-              //   ),
-              // ),
             ],
           ),
         ),
+        Container(
+        child: GridView(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                mainAxisSpacing: 10.0, maxCrossAxisExtent: 200.0),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            physics: ClampingScrollPhysics(),
+            children: List.generate(recipes.length, (index) {
+              return GridTile(
+                  child: RecipieTile(
+                  title: recipes[index].label,
+                  imgUrl: recipes[index].image,
+                  desc: recipes[index].source,
+                  url: recipes[index].url,
+              ));
+            })),
+        )
       ]),
     );
   }
 }
 
-
 class RecipieTile extends StatefulWidget {
   final String title, desc, imgUrl, url;
 
-  RecipieTile({required this.title, required this.desc, required this.imgUrl, required this.url});
+  RecipieTile(
+      {required this.title,
+      required this.desc,
+      required this.imgUrl,
+      required this.url});
 
   @override
   _RecipieTileState createState() => _RecipieTileState();
@@ -223,7 +232,7 @@ class _RecipieTileState extends State<RecipieTile> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => RecipeView(
+                      builder: (context) => SmallRecipeView(
                             postUrl: widget.url,
                           )));
             }
@@ -263,7 +272,8 @@ class _RecipieTileState extends State<RecipieTile> {
                           style: TextStyle(
                               fontSize: 10,
                               color: Colors.black54,
-                              fontFamily: 'OverpassRegular'),
+                              // fontFamily: 'OverpassRegular'
+                              ),
                         )
                       ],
                     ),
