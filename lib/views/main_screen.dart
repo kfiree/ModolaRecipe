@@ -39,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
 
   // return recipes
   fetchRecipes(String query) async {
+    print("======================  in fetch =============================");
     String queryUrl =
         'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
     var response = await http.get(Uri.parse(queryUrl));
@@ -95,9 +96,20 @@ class _MainScreenState extends State<MainScreen> {
     // List<Widget> recipesScrollView =
     //     List.generate(recipeNum, (int i) => MediumRecipeView());
 
+    List<Widget> smallTileList = List.generate(
+        50,
+        (int i) => RecipeTile(
+              desc: 'source',
+              title: 'title',
+              imgUrl:
+                  'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
+              url: 'url',
+            ));
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
+        // design data
         Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -112,6 +124,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
         ),
+
+        // screen content
         Stack(
           children: [
             // logout
@@ -130,6 +144,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
 
+            // profile
             Positioned(
               top: 30.0,
               left: 0.0,
@@ -144,6 +159,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
+
             // add recipe
             Positioned(
               bottom: 30.0,
@@ -156,44 +172,6 @@ class _MainScreenState extends State<MainScreen> {
                             context, AddScreen.idScreen, (route) => false)
                       }),
             ),
-            // Row(
-            //   children: <Widget>[
-            //     Container(
-            //       margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
-            //       height: 30.0,
-            //       width: 200.0,
-            //       decoration: BoxDecoration(
-            //         color: HexColor("#2a522a"),
-            //         borderRadius: BorderRadius.only(
-            //           topLeft: Radius.circular(10),
-            //           bottomLeft: Radius.circular(10),
-            //           bottomRight: Radius.elliptical(50, 18),
-            //           topRight: Radius.elliptical(50, 18),
-            //         ),
-            //       ),
-            //       child: Center(
-            //         child: Text(
-            //           "Add new recipe",
-            //           style: TextStyle(
-            //             fontSize: 20.0,
-            //             color: Colors.white,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     IconButton(
-            //       iconSize: 40,
-            //       color: HexColor("#2a522a"),
-            //       icon: Icon(
-            //         Icons.add,
-            //       ),
-            //       onPressed: () {
-            //         Navigator.pushNamedAndRemoveUntil(
-            //             context, AddScreen.idScreen, (route) => false);
-            //       },
-            //     ),
-            //   ],
-            // )),
 
             Stack(
               children: <Widget>[
@@ -262,13 +240,19 @@ class _MainScreenState extends State<MainScreen> {
                       SizedBox(
                         height: 50,
                       ),
-                      Container(
-                        height: 400,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          //TODO stack overflow: Overflow.clip
-                          children: recipesScrollView,
-                        ),
+
+                      // Container(
+                      //   height: 400,
+                      //   child: ListView(
+                      //     scrollDirection: Axis.horizontal,
+                      //     //TODO stack overflow: Overflow.clip
+                      //     children: recipesScrollView,
+                      //   ),
+                      // ),
+
+                      GridView.count(
+                        crossAxisCount: 3,
+                        children: smallTileList,
                       ),
                     ],
                   ),
@@ -283,35 +267,58 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class RecipeTile extends StatefulWidget {
-  String url, source, title, postUrl;
-
-  RecipeTile(
+class RecipeTile extends StatelessWidget {
+  const RecipeTile(
       {Key? key,
-      required this.url,
-      required this.source,
       required this.title,
-      required this.postUrl})
+      required this.desc,
+      required this.imgUrl,
+      required this.url})
       : super(key: key);
 
-  @override
-  State<RecipeTile> createState() => _RecipeTileState();
-}
-
-class _RecipeTileState extends State<RecipeTile> {
+  final String title, desc, imgUrl, url;
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Stack(
-      children: <Widget>[
-        Image.network(widget.url),
-        Container(
+    return Stack(children: <Widget>[
+      Image.network(
+        imgUrl,
+        height: 200,
+        width: 200,
+        fit: BoxFit.cover,
+      ),
+      Container(
+        width: 200,
+        alignment: Alignment.bottomLeft,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.white30, Colors.white],
+                begin: FractionalOffset.centerRight,
+                end: FractionalOffset.centerLeft)),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-            children: <Widget>[Text(widget.title), Text(widget.source)],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black54,
+                    fontFamily: 'Overpass'),
+              ),
+              Text(
+                desc,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.black54,
+                  // fontFamily: 'OverpassRegular'
+                ),
+              )
+            ],
           ),
-        )
-      ],
-    ));
+        ),
+      ),
+    ]);
   }
 }
 

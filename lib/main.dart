@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:modolar_recipe/views/enter_screen.dart';
 
 import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/signup.dart';
@@ -22,8 +23,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "ModulaRecipe",
-      initialRoute: LoginScreen.idScreen,
-      // initialRoute: MainScreen.idScreen,
+      // initialRoute: LoginScreen.idScreen,
+      initialRoute: MainScreen.idScreen,
+      // initialRoute: EnterScreen.idScreen,
 
       routes: {
         // '/': (context) => LoginScreen(),
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         // ShowScreen.idScreen: (context) => ShowScreen(name: 'Pancakes'),
         AddScreen.idScreen: (context) => AddScreen(),
         ProfileScreen.idScreen: (context) => ProfileScreen(),
-        // test.idScreen: (context) => test(),
+        EnterScreen.idScreen: (context) => EnterScreen(),
       },
       debugShowCheckedModeBanner: false,
     );
