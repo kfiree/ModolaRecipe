@@ -169,6 +169,71 @@ class RecipeMediumView extends StatelessWidget {
   }
 }
 
+class RecipeTile extends StatelessWidget {
+  const RecipeTile(
+      {Key? key,
+      required this.title,
+      required this.desc,
+      required this.imgUrl,
+      required this.url})
+      : super(key: key);
+
+  final String title, desc, imgUrl, url;
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(30.0),
+          child: Image.network(
+            imgUrl,
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
+          ),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
+          child: Container(
+            width: 200,
+            height: 50,
+            alignment: Alignment.bottomLeft,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.white30, Colors.white],
+                    begin: FractionalOffset.centerRight,
+                    end: FractionalOffset.centerLeft)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    title,
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black54,
+                        fontFamily: 'Overpass'),
+                  ),
+                  Text(
+                    desc,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.black54,
+                      // fontFamily: 'OverpassRegular'
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class RecipeModel {
   final String label;
   final String image;
