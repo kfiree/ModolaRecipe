@@ -11,6 +11,7 @@ import 'package:modolar_recipe/models/recipe_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:modolar_recipe/Widgets/recipe_card.dart';
+import 'package:modolar_recipe/views/main_screen.dart';
 
 class EnterScreen extends StatefulWidget {
   const EnterScreen({Key? key}) : super(key: key);
@@ -57,141 +58,155 @@ class _EnterScreenState extends State<EnterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: <Widget>[
-        Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [
-            Color(0xFFFFECD9),
-            Color(0xFFFFECD9),
-          ])),
-        ),
-        SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Modula",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
-                  ),
-                  GradientText("R",
-                      style: TextStyle(fontSize: 35),
-                      colors: const [Colors.black, Colors.white]),
-                  Text(
-                    "ecipies",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Text(
-                "What will you cock today?",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Text(
-                "Insert what ingredients you have?",
-                style: TextStyle(fontSize: 13, color: Colors.white),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: ingrideintsTextController,
-                        decoration: InputDecoration(
-                            hintText: "Enter Ingrideints",
-                            hintStyle: TextStyle(
-                              fontSize: 18,
-                            )),
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        if (ingrideintsTextController.text.isNotEmpty) {
-                          print("text box is not empty");
-                          fetchRecipes(ingrideintsTextController.text);
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, DetailRecipe.idScreen, (route) => false);
-                        } else {
-                          print("text box is empty");
-                        }
-                      },
-                      child: Icon(Icons.search, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: recipesTextController,
-                        decoration: InputDecoration(
-                            hintText: "Enter Recipe Name",
-                            hintStyle: TextStyle(
-                              fontSize: 18,
-                            )),
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if (recipesTextController.text.isNotEmpty) {
-                          print("just do it");
-                        } else {
-                          print(" dont");
-                        }
-                      },
-                      child: Icon(Icons.search, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      body: Stack(
+        children: <Widget>[
+          //backgroud design
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Color(0xFFFFECD9),
+              Color(0xFFFFECD9),
+            ])),
           ),
-        ),
-        Container(
-        child: GridView(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                mainAxisSpacing: 10.0, maxCrossAxisExtent: 200.0),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            physics: ClampingScrollPhysics(),
-            children: List.generate(recipes.length, (index) {
-              return GridTile(
-                  child: RecipieTile(
-                  title: recipes[index].label,
-                  imgUrl: recipes[index].image,
-                  desc: recipes[index].source,
-                  url: recipes[index].url,
-              ));
-            })),
-        )
-      ]),
+          // screen content
+          SingleChildScrollView(
+            padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Modula",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.center,
+                    ),
+                    GradientText("R",
+                        style: TextStyle(fontSize: 35),
+                        colors: const [Colors.black, Colors.white]),
+                    Text(
+                      "ecipies",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  "What will you cock today?",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  "Insert what ingredients you have?",
+                  style: TextStyle(fontSize: 13, color: Colors.white),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: ingrideintsTextController,
+                          decoration: InputDecoration(
+                              hintText: "Enter Ingrideints",
+                              hintStyle: TextStyle(
+                                fontSize: 18,
+                              )),
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          if (ingrideintsTextController.text.isNotEmpty) {
+                            print("text box is not empty");
+                            fetchRecipes(ingrideintsTextController.text);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, MainScreen.idScreen, (route) => false);
+                          } else {
+                            print("text box is empty");
+                          }
+                        },
+                        child: Icon(Icons.search, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          controller: recipesTextController,
+                          decoration: InputDecoration(
+                              hintText: "Enter Recipe Name",
+                              hintStyle: TextStyle(
+                                fontSize: 18,
+                              )),
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          if (recipesTextController.text.isNotEmpty) {
+                            print("just do it");
+                          } else {
+                            print(" dont");
+                          }
+                        },
+                        child: Icon(Icons.search, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            child: GridView(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  mainAxisSpacing: 10.0, maxCrossAxisExtent: 200.0),
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              physics: ClampingScrollPhysics(),
+              children: List.generate(
+                recipes.length,
+                (index) {
+                  print("recipe details: ");
+                  print(
+                      "label -  ${recipes[index].label}, image - ${recipes[index].image}, source - ${recipes[index].source}, url - ${recipes[index].url}");
+
+                  return GridTile(
+                    child: RecipieTile(
+                      title: recipes[index].label,
+                      imgUrl: recipes[index].image,
+                      desc: recipes[index].source,
+                      url: recipes[index].url,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -270,10 +285,10 @@ class _RecipieTileState extends State<RecipieTile> {
                         Text(
                           widget.desc,
                           style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.black54,
-                              // fontFamily: 'OverpassRegular'
-                              ),
+                            fontSize: 10,
+                            color: Colors.black54,
+                            // fontFamily: 'OverpassRegular'
+                          ),
                         )
                       ],
                     ),

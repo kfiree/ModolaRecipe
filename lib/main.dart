@@ -1,11 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:modolar_recipe/views/login.dart';
-import 'package:modolar_recipe/views/recipe_screen.dart';
-import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/views/enter_screen.dart';
+
+import 'package:modolar_recipe/views/login.dart';
+import 'package:modolar_recipe/views/signup.dart';
+import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/recipe_view.dart';
+import 'package:modolar_recipe/views/add_recipe.dart';
+import 'package:modolar_recipe/views/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,17 +23,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "ModulaRecipe",
-      initialRoute: LoginScreen.idScreen,
-      // initialRoute: DetailRecipe.idScreen,
+      // initialRoute: LoginScreen.idScreen,
+      initialRoute: MainScreen.idScreen,
+      // initialRoute: EnterScreen.idScreen,
 
       routes: {
-
         // '/': (context) => LoginScreen(),
         LoginScreen.idScreen: (context) => LoginScreen(),
-        EnterScreen.idScreen: (context) => EnterScreen(),
-        DetailRecipe.idScreen: (context) => DetailRecipe(),
         SignupScreen.idScreen: (context) => SignupScreen(),
-        RecipeScreen.idScreen: (context) => RecipeScreen(),
+        MainScreen.idScreen: (context) => MainScreen(),
+        ShowScreen.idScreen: (context) => ShowScreen(),
+        AddScreen.idScreen: (context) => AddScreen(),
+        ProfileScreen.idScreen: (context) => ProfileScreen(),
+        EnterScreen.idScreen: (context) => EnterScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

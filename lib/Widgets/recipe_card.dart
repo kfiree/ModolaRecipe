@@ -1,137 +1,111 @@
-class recipe_card {
-  final String image;
-  final String url;
-  final String source;
-  final String label;
+import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
-  recipe_card(
-      {required this.image,
-      required this.url,
-      required this.label,
-      required this.source});
+import 'package:modolar_recipe/Widgets/circle_image.dart';
+import 'package:modolar_recipe/Utils/constants.dart';
+// class recipe_card {
+//   final String image;
+//   final String url;
+//   final String source;
+//   final String label;
 
-  factory recipe_card.fromMap(Map<String, dynamic> parsedJson) {
-    return recipe_card(
-        image: parsedJson["image"],
-        url: parsedJson["url"],
-        source: parsedJson["source"],
-        label: parsedJson["label"]);
-  }
-}
+//   recipe_card(
+//       {required this.image,
+//       required this.url,
+//       required this.label,
+//       required this.source});
 
-
-
-
-
-
-
-// import 'package:flutter/material.dart';
-
-// class RecipeCard extends StatelessWidget {
-//   final String title;
-//   final String rating;
-//   final String cookTime;
-//   final String thumbnailUrl;
-//   RecipeCard({
-//     required this.title,
-//     required this.cookTime,
-//     required this.rating,
-//     required this.thumbnailUrl,
-//   });
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       margin: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-//       width: MediaQuery.of(context).size.width,
-//       height: 180,
-//       decoration: BoxDecoration(
-//         color: Colors.black,
-//         borderRadius: BorderRadius.circular(15),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.6),
-//             offset: Offset(
-//               0.0,
-//               10.0,
-//             ),
-//             blurRadius: 10.0,
-//             spreadRadius: -6.0,
-//           ),
-//         ],
-//         image: DecorationImage(
-//           colorFilter: ColorFilter.mode(
-//             Colors.black.withOpacity(0.35),
-//             BlendMode.multiply,
-//           ),
-//           image: NetworkImage(thumbnailUrl),
-//           fit: BoxFit.cover,
-//         ),
-//       ),
-//       child: Stack(
-//         children: [
-//           Align(
-//             child: Padding(
-//               padding: EdgeInsets.symmetric(horizontal: 5.0),
-//               child: Text(
-//                 title,
-//                 style: TextStyle(
-//                   fontSize: 19,
-//                 ),
-//                 overflow: TextOverflow.ellipsis,
-//                 maxLines: 2,
-//                 textAlign: TextAlign.center,
-//               ),
-//             ),
-//             alignment: Alignment.center,
-//           ),
-//           Align(
-//             child: Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Container(
-//                   padding: EdgeInsets.all(5),
-//                   margin: EdgeInsets.all(10),
-//                   decoration: BoxDecoration(
-//                     color: Colors.black.withOpacity(0.4),
-//                     borderRadius: BorderRadius.circular(15),
-//                   ),
-//                   child: Row(
-//                     children: [
-//                       Icon(
-//                         Icons.star,
-//                         color: Colors.yellow,
-//                         size: 18,
-//                       ),
-//                       SizedBox(width: 7),
-//                       Text(rating),
-//                     ],
-//                   ),
-//                 ),
-//                 Container(
-//                   padding: EdgeInsets.all(5),
-//                   margin: EdgeInsets.all(10),
-//                   decoration: BoxDecoration(
-//                     color: Colors.black.withOpacity(0.4),
-//                     borderRadius: BorderRadius.circular(15),
-//                   ),
-//                   child: Row(
-//                     children: [
-//                       Icon(
-//                         Icons.schedule,
-//                         color: Colors.yellow,
-//                         size: 18,
-//                       ),
-//                       SizedBox(width: 7),
-//                       Text(cookTime),
-//                     ],
-//                   ),
-//                 )
-//               ],
-//             ),
-//             alignment: Alignment.bottomLeft,
-//           ),
-//         ],
-//       ),
-//     );
+//   factory recipe_card.fromMap(Map<String, dynamic> parsedJson) {
+//     return recipe_card(
+//         image: parsedJson["image"],
+//         url: parsedJson["url"],
+//         source: parsedJson["source"],
+//         label: parsedJson["label"]);
 //   }
 // }
+
+class RecipeBigView extends StatelessWidget {
+  RecipeBigView({
+    required this.recipeImageURL,
+    required this.name,
+    required this.cookTime,
+    required this.energy,
+  });
+
+  final String recipeImageURL;
+  final String name;
+  final int cookTime;
+  final int energy;
+  // final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: <Widget>[
+        Container(
+          height: 375.0,
+          width: 300.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50.0),
+            color: HexColor("#f9af9c"),
+          ),
+        ),
+        Positioned(
+          top: -13.0,
+          left: -13.0,
+          child: Container(
+            width: 200.0,
+            height: 200.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 0.0,
+          left: 0.0,
+          child: CircleNetworkImage(
+            radius: 175,
+            imageURL: recipeImageURL,
+          ),
+        ),
+        Positioned(
+          left: 10,
+          bottom: 130.0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                name,
+                style: kMainTextStyle,
+              ),
+              Text(
+                "$cookTime min",
+                style: kSubHeaderTextStyle,
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          right: 30.0,
+          bottom: 20.0,
+          child: Row(
+            children: <Widget>[
+              Text(
+                "$energy",
+                style: kSmallTextStyle,
+              ),
+              SizedBox(width: 5.0),
+              Text(
+                "cal",
+                style: kSubHeaderTextStyle,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

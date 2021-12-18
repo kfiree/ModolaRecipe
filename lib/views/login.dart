@@ -8,8 +8,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:modolar_recipe/views/enter_screen.dart';
+import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/signup.dart';
+import 'package:modolar_recipe/Widgets/headers.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
 
 import '../main.dart';
 
@@ -22,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool loading = false;
   TextEditingController emailTextEdittingController = TextEditingController();
   TextEditingController passwordTextEdittingController =
       TextEditingController();
@@ -44,34 +47,33 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
         Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [
-            Color(0xFFECD9FF),
-            Color(0xFFECD9FF),
-          ])),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/chef.jpg"),
+              fit: BoxFit.fill,
+            ),
+          ),
         ),
+        // Container(
+        //   height: MediaQuery.of(context).size.height,
+        //   width: MediaQuery.of(context).size.width,
+        //   decoration: const BoxDecoration(
+        //     gradient: LinearGradient(colors: [
+        //       Colors.white,
+        //       Color.fromARGB(255, 248, 191, 176),
+        //     ]),
+        //   ),
+        // ),
+
         Container(
-            padding: EdgeInsets.symmetric(
-                vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
-            child: Column(children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
-                  Text(
-                    "ModolaR",
-                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    "Recipies",
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 23,
-                        fontWeight: FontWeight.w500),
-                  )
-                ],
+          padding: EdgeInsets.symmetric(
+              vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
+          child: Column(
+            children: <Widget>[
+              RecipeHeader(
+                color1: Colors.black,
+                color2: Colors.white,
+                size: 40,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -104,7 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 30,
               ),
-            ])),
+            ],
+          ),
+        ),
       ]),
     );
   }
@@ -113,17 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
-        child: Text("Still not s user? Sign-Up",
-// <<<<<<< HEAD
-//             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-//         onPressed: () => Navigator.pushNamedAndRemoveUntil(
-//             context, SignupScreen.idScreen, (route) => false),
-// =======
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        onPressed: () => Navigator.pushNamedAndRemoveUntil(
-            context, SignupScreen.idScreen, (route) => false),
-// >>>>>>> 77e4aab821149dbcc40c7062650d37e32c138514
-      ),
+          child: Text("Still not s user? Sign-Up",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          onPressed: () {
+            // setState(() => loading = true);
+            Navigator.pushNamedAndRemoveUntil(
+                context, SignupScreen.idScreen, (route) => false);
+          }),
     );
   }
 
@@ -134,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           "Email",
           style: TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -177,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           "Password",
           style: TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         SizedBox(
           height: 10,
@@ -198,22 +199,24 @@ class _LoginScreenState extends State<LoginScreen> {
             obscureText: sec,
             style: TextStyle(color: Colors.black),
             decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      sec = !sec;
-                    });
-                  },
-                  icon: sec ? visableoff : visable,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14),
-                prefixIcon: Icon(
-                  Icons.vpn_key,
-                  color: Color(0xff4c5166),
-                ),
-                hintText: "password",
-                hintStyle: TextStyle(color: Colors.black38)),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    sec = !sec;
+                    sec = !sec;
+                  });
+                },
+                icon: sec ? visableoff : visable,
+              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14),
+              prefixIcon: Icon(
+                Icons.vpn_key,
+                color: Color(0xff4c5166),
+              ),
+              hintText: "password",
+              hintStyle: TextStyle(color: Colors.black38),
+            ),
           ),
         )
       ],
@@ -264,6 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
         width: double.infinity,
         child: RaisedButton(
           onPressed: () {
+            setState(() => loading = true);
             if (!emailTextEdittingController.text.contains("@")) {
               displayToastMessage("Email is not valid.", context);
             } else if (passwordTextEdittingController.text.isEmpty) {
@@ -271,20 +275,65 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               loginUserAndAuthenticate(context);
             }
+            sleep(Duration(seconds: 3));
+            setState(() => loading = true);
           },
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          color: Color(0xff3c6970),
-          padding: EdgeInsets.all(30),
-          child: Text(
-            "Login",
-            style: TextStyle(
-                fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+          elevation: 0.0,
+          padding: EdgeInsets.all(0.0),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: const [
+                    Color.fromARGB(255, 248, 191, 176),
+                    Color.fromARGB(255, 248, 137, 99),
+                  ]),
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
+              alignment: Alignment.center,
+              child: Text(
+                "Login!",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26.0,
+                    fontWeight: FontWeight.w300),
+              ),
+            ),
           ),
         ),
       ),
+
+      // Container(
+      //   width: double.infinity,
+      //   child: RaisedButton(
+      //     onPressed: () {
+      //       // setState(()=>loading = true);
+      //       if (!emailTextEdittingController.text.contains("@")) {
+      //         displayToastMessage("Email is not valid.", context);
+      //       } else if (passwordTextEdittingController.text.isEmpty) {
+      //         displayToastMessage("Password is missing.", context);
+      //       } else {
+      //         loginUserAndAuthenticate(context);
+      //       }
+      //     },
+      //     elevation: 5,
+      //     shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.circular(15),
+      //     ),
+      //     color: Color(0xff3c6970),
+      //     padding: EdgeInsets.all(30),
+      //     child: Text(
+      //       "Login",
+      //       style: TextStyle(
+      //           fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -294,9 +343,10 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return ProgressDialog(
-            "Authenticating, please wait...",
-          );
+          return Loading();
+          // ProgressDialog(
+          //   "Authenticating, please wait...",
+          // );
         });
     final User? firebaseUser = (await _firebaseAuth
             .signInWithEmailAndPassword(
@@ -312,7 +362,7 @@ class _LoginScreenState extends State<LoginScreen> {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
           Navigator.pushNamedAndRemoveUntil(
-              context, EnterScreen.idScreen, (route) => false);
+              context, MainScreen.idScreen, (route) => false);
           displayToastMessage("Welcome! you are now logged in.", context);
         } else {
           _firebaseAuth.signOut();

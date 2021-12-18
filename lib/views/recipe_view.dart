@@ -2,25 +2,28 @@
 
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:modolar_recipe/Widgets/circle_button.dart';
+
+import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Widgets/ingredient_card.dart';
 import 'package:flutter/foundation.dart';
+import 'package:modolar_recipe/Views/main_screen.dart';
+import 'package:modolar_recipe/Widgets/rating.dart';
 
-class DetailRecipe extends StatefulWidget {
-  const DetailRecipe({Key? key}) : super(key: key);
+class ShowScreen extends StatefulWidget {
+  const ShowScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "detail_recipe";
 
   @override
-  _DetailRecipeState createState() => _DetailRecipeState();
+  _ShowScreenState createState() => _ShowScreenState();
 }
 
-class _DetailRecipeState extends State<DetailRecipe> {
+class _ShowScreenState extends State<ShowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: HexColor('#FFECD9'),
+        backgroundColor: HexColor('#998fb3'),
         body: SafeArea(
           child: Column(
             children: const <Widget>[
@@ -51,10 +54,22 @@ class DetailHeaderCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 CircleButton(
-                  icon: Icons.keyboard_arrow_left,
+                  color: HexColor('##785ac7'),
+                  icon: Icons.star,
+                  callback: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => RateRecipe(),
+                    );
+                  },
                 ),
                 CircleButton(
-                  icon: Icons.share,
+                  color: HexColor('##785ac7'),
+                  icon: Icons.keyboard_arrow_left,
+                  callback: () => {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, MainScreen.idScreen, (route) => false)
+                  },
                 ),
               ],
             ),
@@ -72,8 +87,8 @@ class DetailHeaderCard extends StatelessWidget {
                 child: Center(
                   child: CircleNetworkImage(
                     imageURL:
-                        "https://res.cloudinary.com/norgesgruppen/images/c_scale,dpr_auto,f_auto,q_auto:eco,w_1600/a9ezar46fbxjvuyd8r2z/hjemmelaget-italiensk-pizza-med-bacon",
-                    radius: 225.0,
+                        "https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg",
+                    radius: 250.0,
                   ),
                 ),
               ),
@@ -112,13 +127,15 @@ class DetailInfoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const <Widget>[
                 Text(
-                  'Pancakes !',
+                  'Pancakes',
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
                     fontFamily: "Quicksand",
                   ),
                 ),
+                Icon(Icons.no_food, color: Colors.green, size: 20),
+                Icon(Icons.local_drink, color: Colors.green, size: 20),
                 Text(
                   '10 mins',
                   style: TextStyle(
@@ -226,7 +243,7 @@ class StepEntry extends StatelessWidget {
                   width: 5.0,
                   height: initialStep ? 0 : 40,
                   decoration: BoxDecoration(
-                    color: HexColor('#F9AF9C'),
+                    color: HexColor('#998fb3'),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
@@ -245,7 +262,7 @@ class StepEntry extends StatelessWidget {
                 height: 5.0,
                 width: 5.0,
                 decoration: BoxDecoration(
-                  color: HexColor('#F9AF9C'),
+                  color: HexColor('#998fb3'),
                   shape: BoxShape.circle,
                 ),
               ),

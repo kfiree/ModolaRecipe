@@ -23,9 +23,10 @@ class _Ingredient_cardState extends State<IngredientCard> {
 
   @override
   Widget build(BuildContext context) {
-    // dropdownValue = widget.name;
-    String dropdownValue = 'One';
-
+    String dropdownValue = widget.name;
+    List<String> subs = [widget.name, 'sub2', 'sub3', 'sub4', 'sub5'];
+    // String dropdownValue = 'All Porpuse Flour';
+    // subs[0] = widget.name;
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 10,
@@ -33,34 +34,29 @@ class _Ingredient_cardState extends State<IngredientCard> {
       ),
       child: Row(
         children: <Widget>[
-          // DropdownButton(
-          //   hint: Text("change ingredient: "),
-          //   value: dropdownValue,
-          //   onChanged: (newVal) {
-          //     setState(() {
-          //       dropdownValue = newVal.toString();
-          //     });
-          //   },
-          //   items: subs.map((valueItem) {
-          //     return DropdownMenuItem(
-          //       value: valueItem,
-          //       child: Text(valueItem),
-          //     );
-          //   }).toList(),
-          // ),
-
-          // Expanded(
-          //   flex: 5,
-          //   child: Text(
-          //     widget.name,
-          //     style: TextStyle(
-          //       fontFamily: "Quicksand",
-          //       fontWeight: FontWeight.w700,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          // ),
-          DropDownList(),
+          DropdownButton<String>(
+            value: dropdownValue,
+            icon: const Icon(Icons.arrow_drop_down),
+            elevation: 16,
+            style: const TextStyle(
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue = newValue!;
+              });
+            },
+            items: //<String>['All Porpuse Flour', 'Two', 'three', 'Four']
+                subs.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+          // DropDownList(),
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
@@ -89,37 +85,6 @@ class _Ingredient_cardState extends State<IngredientCard> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class DropDownList extends StatelessWidget {
-  String dropdownValue = 'One';
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? newValue) {
-        print("value is now $newValue");
-        // setState(() {
-        //   dropdownValue = newValue!;
-        // });
-      },
-      items: <String>['One', 'Two', 'Free', 'Four']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 }
