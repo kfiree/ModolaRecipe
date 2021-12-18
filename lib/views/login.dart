@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
 
 import '../main.dart';
 
@@ -63,10 +64,12 @@ class _LoginScreenState extends State<LoginScreen> {
         //     ]),
         //   ),
         // ),
+
         Container(
-            padding: EdgeInsets.symmetric(
-                vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
-            child: Column(children: <Widget>[
+          padding: EdgeInsets.symmetric(
+              vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
+          child: Column(
+            children: <Widget>[
               RecipeHeader(
                 color1: Colors.black,
                 color2: Colors.white,
@@ -103,7 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 30,
               ),
-            ])),
+            ],
+          ),
+        ),
       ]),
     );
   }
@@ -116,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
           onPressed: () {
-            setState(() => loading = true);
+            // setState(() => loading = true);
             Navigator.pushNamedAndRemoveUntil(
                 context, SignupScreen.idScreen, (route) => false);
           }),
@@ -198,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   setState(() {
                     sec = !sec;
-                    loading = true;
+                    sec = !sec;
                   });
                 },
                 icon: sec ? visableoff : visable,
@@ -262,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
         width: double.infinity,
         child: RaisedButton(
           onPressed: () {
-            // setState(()=>loading = true);
+            setState(() => loading = true);
             if (!emailTextEdittingController.text.contains("@")) {
               displayToastMessage("Email is not valid.", context);
             } else if (passwordTextEdittingController.text.isEmpty) {
@@ -270,6 +275,8 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               loginUserAndAuthenticate(context);
             }
+            sleep(Duration(seconds: 3));
+            setState(() => loading = true);
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
@@ -280,10 +287,9 @@ class _LoginScreenState extends State<LoginScreen> {
               gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [
+                  colors: const [
                     Color.fromARGB(255, 248, 191, 176),
                     Color.fromARGB(255, 248, 137, 99),
-                    // Colors.white,
                   ]),
               borderRadius: BorderRadius.circular(30.0),
             ),
@@ -337,9 +343,10 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return ProgressDialog(
-            "Authenticating, please wait...",
-          );
+          return Loading();
+          // ProgressDialog(
+          //   "Authenticating, please wait...",
+          // );
         });
     final User? firebaseUser = (await _firebaseAuth
             .signInWithEmailAndPassword(

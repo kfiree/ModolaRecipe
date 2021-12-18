@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
+import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/profile_screen.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,6 +30,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool loading = false;
+
   //recipe list
   List<RecipeModel> recipes = <RecipeModel>[];
 
@@ -45,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
     String queryUrl =
         'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
     var response = await http.get(Uri.parse(queryUrl));
-
+    Loading();
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -66,8 +69,37 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     //build recipe card for scroll view
     int recipeNum = 4;
-    List<Widget> recipesScrollView =
-        List.generate(recipeNum, (int i) => MediumRecipeView(i));
+    List<Widget> recipesScrollView = [
+      MediumRecipeView(
+        cookTime: 10,
+        energy: 420,
+        name: 'Pancakes',
+        recipeUrl:
+            'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
+      ),
+      MediumRecipeView(
+        cookTime: 20,
+        energy: 1000000,
+        name: 'Hamburger',
+        recipeUrl:
+            'https://www.keziefoods.co.uk/wp-content/uploads/2021/01/Kangaroo-Jalapeno-Burgers-228g-2-in-a-pack.jpg',
+      ),
+      MediumRecipeView(
+        cookTime: 5,
+        energy: 50,
+        name: 'Mandarin Orange Salad',
+        recipeUrl:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkT6qXEFkfXaJMqUzgDpiCyav-ueCcdcKP1g&usqp=CAU',
+      ),
+      MediumRecipeView(
+          cookTime: 0,
+          energy: 88,
+          name: 'Banana',
+          recipeUrl:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEZ_666h1r5_BQTw1uM2Q1LjM6_5qaiOEkeg&usqp=CAU'),
+    ];
+    // List<Widget> recipesScrollView =
+    //     List.generate(recipeNum, (int i) => MediumRecipeView());
 
     return Scaffold(
       body: Stack(children: <Widget>[
@@ -168,80 +200,90 @@ class _MainScreenState extends State<MainScreen> {
             //   ],
             // )),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 50,
-                  ),
+            Stack(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 50,
+                      ),
 
-                  // headers
-                  RecipeHeader(
-                      color1: Colors.black, color2: Colors.white, size: 40),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  SubHeader(text: "What will you cock today?", size: 20),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  SubHeader(
-                    text:
-                        "Search recipe by typeing in a name of a dish \nor simply just write what ingredients you want to use.",
-                    size: 13,
-                  ),
+                      // headers
+                      RecipeHeader(
+                          color1: Colors.black, color2: Colors.white, size: 40),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      SubHeader(text: "What will you cock today?", size: 20),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      SubHeader(
+                        text:
+                            "Search recipe by typeing in a name of a dish \nor simply just write what ingredients you want to use.",
+                        size: 13,
+                      ),
 
-                  // inputs text boxes
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextField(
-                            controller: engrideintsTextController,
-                            decoration: InputDecoration(
-                                hintText: "Enter Ingrideints",
-                                hintStyle: TextStyle(
-                                  fontSize: 18,
-                                )),
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            if (engrideintsTextController.text.isNotEmpty) {
-                              //TODO fix before commit
+                      // inputs text boxes
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextField(
+                                controller: engrideintsTextController,
+                                decoration: InputDecoration(
+                                    hintText: "Enter Ingrideints",
+                                    hintStyle: TextStyle(
+                                      fontSize: 18,
+                                    )),
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                if (engrideintsTextController.text.isNotEmpty) {
+                                  //TODO fix before commit
 
-                              // fetchRecipes(engrideintsTextController.text);
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  ShowScreen.idScreen, (route) => false);
-                            } else {
-                              print("text box is empty");
-                            }
-                          },
-                          child: Icon(Icons.search, color: Colors.white),
+                                  setState(() => loading = true);
+                                  sleep(Duration(seconds: 3));
+                                  loading = true;
+                                  setState(() => loading = false);
+                                  // fetchRecipes(engrideintsTextController.text);
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      ShowScreen.idScreen, (route) => false);
+                                } else {
+                                  print("text box is empty");
+                                }
+                              },
+                              child: Icon(Icons.search, color: Colors.white),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      // favorte recipes
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Container(
+                        height: 400,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          //TODO stack overflow: Overflow.clip
+                          children: recipesScrollView,
+                        ),
+                      ),
+                    ],
                   ),
-                  // favorte recipes
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Container(
-                    height: 400,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: recipesScrollView,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                loading ? Loading() : SizedBox(),
+              ],
             ),
           ],
         ),
@@ -307,10 +349,19 @@ class SubHeader extends StatelessWidget {
 }
 
 class MediumRecipeView extends StatelessWidget {
-  final int index;
+  final int cookTime;
+  final int energy;
+  final String name;
+  final String recipeUrl;
   //TODO get recipe data
 
-  MediumRecipeView(this.index);
+  const MediumRecipeView(
+      {Key? key,
+      required this.cookTime,
+      required this.energy,
+      required this.name,
+      required this.recipeUrl})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -319,16 +370,13 @@ class MediumRecipeView extends StatelessWidget {
         GestureDetector(
           onTap: () => {
             Navigator.pushNamedAndRemoveUntil(
-                context, LoginScreen.idScreen, (route) => false)
+                context, ShowScreen.idScreen, (route) => false)
           },
           child: RecipeBigView(
-            cookTime: 10,
-            energy: 420,
-            energyUnit: 'cal',
-            name: 'Pancakes',
-            recipeImageURL:
-                'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
-            timeUnit: 'min',
+            cookTime: cookTime,
+            energy: energy,
+            name: name,
+            recipeImageURL: recipeUrl,
           ),
         ),
         SizedBox(

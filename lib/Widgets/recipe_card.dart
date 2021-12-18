@@ -29,17 +29,13 @@ class RecipeBigView extends StatelessWidget {
     required this.recipeImageURL,
     required this.name,
     required this.cookTime,
-    required this.timeUnit,
     required this.energy,
-    required this.energyUnit,
   });
 
   final String recipeImageURL;
   final String name;
   final int cookTime;
-  final String timeUnit;
   final int energy;
-  final String energyUnit;
   // final double size;
 
   @override
@@ -86,7 +82,7 @@ class RecipeBigView extends StatelessWidget {
                 style: kMainTextStyle,
               ),
               Text(
-                "$cookTime $timeUnit",
+                "$cookTime min",
                 style: kSubHeaderTextStyle,
               ),
             ],
@@ -103,7 +99,7 @@ class RecipeBigView extends StatelessWidget {
               ),
               SizedBox(width: 5.0),
               Text(
-                energyUnit,
+                "cal",
                 style: kSubHeaderTextStyle,
               ),
             ],
