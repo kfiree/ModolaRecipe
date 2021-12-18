@@ -1,13 +1,14 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, deprecated_member_use
 
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
@@ -118,8 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
           child: Text("Still not s user?! Sign-Up",
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.black45)),
           onPressed: () {
             // setState(() => loading = true);
             Navigator.pushNamedAndRemoveUntil(
@@ -224,25 +225,28 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildRememberassword() {
-    return Container(
+    return SizedBox(
       height: 20,
       child: Row(
         children: [
           Theme(
-              data: ThemeData(unselectedWidgetColor: Colors.white),
-              child: Checkbox(
-                value: rememberpwd,
-                checkColor: Colors.blueGrey,
-                activeColor: Colors.white,
-                onChanged: (value) {
-                  setState(() {
+            data: ThemeData(unselectedWidgetColor: Colors.white),
+            child: Checkbox(
+              value: rememberpwd,
+              checkColor: Colors.blueGrey,
+              activeColor: Colors.black,
+              onChanged: (value) {
+                setState(
+                  () {
                     rememberpwd = value!;
-                  });
-                },
-              )),
+                  },
+                );
+              },
+            ),
+          ),
           Text(
             "Remember me",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
         ],
       ),
@@ -255,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextButton(
           child: Text("Forget Password !",
               style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
           onPressed: () => {}),
     );
   }
@@ -263,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget buildLoginButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 25),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         child: RaisedButton(
           onPressed: () {

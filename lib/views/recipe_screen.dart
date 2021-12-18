@@ -3,25 +3,27 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
+import 'package:modolar_recipe/Styles/constants.dart';
+import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/ingredient_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:modolar_recipe/Views/main_screen.dart';
 import 'package:modolar_recipe/Widgets/rating.dart';
+import 'package:modolar_recipe/Widgets/recipe_views.dart';
 
-class ShowScreen extends StatefulWidget {
-  const ShowScreen({Key? key, required this.name}) : super(key: key);
+class FullViewScreen extends StatefulWidget {
+  const FullViewScreen({Key? key, required this.name}) : super(key: key);
 
   final String name;
 
   static const String idScreen = "detail_recipe";
 
   @override
-  _ShowScreenState createState() => _ShowScreenState();
+  _FullViewScreenState createState() => _FullViewScreenState();
 }
 
-class _ShowScreenState extends State<ShowScreen> {
+class _FullViewScreenState extends State<FullViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,118 +215,6 @@ class DetailInfoCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class StepEntry extends StatelessWidget {
-  final String text;
-  final bool initialStep;
-
-  //TODO check original
-  //StepEntry({required this.text, this.initialStep = false});
-  const StepEntry({Key? key, required this.text, this.initialStep = false})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        right: 25,
-        left: 10.0,
-        top: 0.0,
-      ),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  width: 5.0,
-                  height: initialStep ? 0 : 40,
-                  decoration: BoxDecoration(
-                    color: HexColor('#998fb3'),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 69,
-                child: SizedBox(
-                  height: 10.0,
-                ),
-              )
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                height: 5.0,
-                width: 5.0,
-                decoration: BoxDecoration(
-                  color: HexColor('#998fb3'),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              SizedBox(
-                width: 40.0,
-              ),
-              Flexible(
-                child: Text(text),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SmallRecipeView extends StatefulWidget {
-  final String postUrl;
-
-  SmallRecipeView({required this.postUrl});
-
-  @override
-  _SmallRecipeViewState createState() => _SmallRecipeViewState();
-}
-
-class _SmallRecipeViewState extends State<SmallRecipeView> {
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget> [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child:Row(
-                mainAxisAlignment: kIsWeb
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "AppGuy",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontFamily: 'Overpass'),
-                  ),
-                  Text(
-                    "Recipes",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blue,
-                        fontFamily: 'Overpass'),
-                  )
-                ],
-              )
-        )
-
-        ],),
     );
   }
 }

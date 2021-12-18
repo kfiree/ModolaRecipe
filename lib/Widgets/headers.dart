@@ -20,17 +20,36 @@ class RecipeHeader extends StatelessWidget {
       children: <Widget>[
         Text(
           "Modula",
-          style: TextStyle(fontSize: size, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: size, fontWeight: FontWeight.w900),
           textAlign: TextAlign.center,
         ),
         GradientText("R",
-            style: TextStyle(fontSize: size + 5), colors: [color1, color2]),
+            style: TextStyle(
+              fontSize: size + 5,
+              fontWeight: FontWeight.w700,
+            ),
+            colors: [color1, color2]),
         Text(
           "ecipies",
           style: TextStyle(
-              color: Colors.white, fontSize: size, fontWeight: FontWeight.w500),
+              color: Colors.white, fontSize: size, fontWeight: FontWeight.w900),
         )
       ],
+    );
+  }
+}
+
+class SubHeader extends StatelessWidget {
+  const SubHeader({Key? key, required this.text, required this.size})
+      : super(key: key);
+
+  final String text;
+  final double size;
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: size, color: Colors.white),
     );
   }
 }

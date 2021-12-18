@@ -47,19 +47,15 @@ class _AddState extends State<AddScreen> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              child: GestureDetector(
-                child: CircleAvatar(
-                  child: Container(
-                    child: Icon(
-                      Icons.add_a_photo,
-                      size: 40.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  radius: 80,
-                  backgroundColor: HexColor('#F9AF9C'),
+            GestureDetector(
+              child: CircleAvatar(
+                child: Icon(
+                  Icons.add_a_photo,
+                  size: 40.0,
+                  color: Colors.white,
                 ),
+                radius: 80,
+                backgroundColor: HexColor('#F9AF9C'),
               ),
             ),
             SizedBox(
