@@ -190,34 +190,90 @@ class _EnterScreenState extends State<EnterScreen> {
   }
 }
 
-class RecipeTile extends StatefulWidget {
-  String url, source, title, postUrl;
 
-  RecipeTile(
-      {Key? key,
-      required this.url,
-      required this.source,
-      required this.title,
-      required this.postUrl})
-      : super(key: key);
+class RecipieTile extends StatefulWidget {
+  final String title, desc, imgUrl, url;
+
+  RecipieTile({required this.title, required this.desc, required this.imgUrl, required this.url});
 
   @override
-  State<RecipeTile> createState() => _RecipeTileState();
+  _RecipieTileState createState() => _RecipieTileState();
 }
 
-class _RecipeTileState extends State<RecipeTile> {
+class _RecipieTileState extends State<RecipieTile> {
+  _launchURL(String url) async {
+    print(url);
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Stack(
+    return Wrap(
       children: <Widget>[
-        Image.network(widget.url),
-        Container(
-          child: Column(
-            children: <Widget>[Text(widget.title), Text(widget.source)],
+        GestureDetector(
+          onTap: () {
+            if (kIsWeb) {
+              _launchURL(widget.url);
+            } else {
+              print(widget.url + " this is what we are going to see");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RecipeView(
+                            postUrl: widget.url,
+                          )));
+            }
+          },
+          child: Container(
+            margin: EdgeInsets.all(8),
+            child: Stack(
+              children: <Widget>[
+                Image.network(
+                  widget.imgUrl,
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  width: 200,
+                  alignment: Alignment.bottomLeft,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Colors.white30, Colors.white],
+                          begin: FractionalOffset.centerRight,
+                          end: FractionalOffset.centerLeft)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                              fontFamily: 'Overpass'),
+                        ),
+                        Text(
+                          widget.desc,
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black54,
+                              fontFamily: 'OverpassRegular'),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
-        )
+        ),
       ],
-    ));
+    );
   }
 }
