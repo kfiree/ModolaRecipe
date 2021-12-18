@@ -24,7 +24,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  bool loading = false;
+  bool loading = false, searchView = false;
 
   //recipe list
   List<RecipeModel> recipes = <RecipeModel>[];
@@ -105,164 +105,192 @@ class _MainScreenState extends State<MainScreen> {
                   'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
               url: 'url',
             ));
+    return WillPopScope(
+      onWillPop: () async {
+        return searchView = false;
+        // bool? result = await Navigator.pushNamedAndRemoveUntil(
+        //     context, MainScreen.idScreen, (route) => false);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(children: <Widget>[
-        // design data
-        Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Color.fromARGB(255, 248, 191, 176),
-                Colors.white,
-              ],
+        // if (result == null) {
+        //   result = false;
+        // }
+        // return result!;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Stack(children: <Widget>[
+          // style data
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Color.fromARGB(255, 248, 191, 176),
+                  Colors.white,
+                ],
+              ),
             ),
           ),
-        ),
 
-        // screen content
-        Stack(
-          children: [
-            // logout
-            Positioned(
-              bottom: 30.0,
-              right: 0.0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleButton(
-                    color: Colors.black,
-                    icon: Icons.logout,
-                    callback: () => {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, LoginScreen.idScreen, (route) => false)
-                        }),
-              ),
-            ),
-
-            // profile
-            Positioned(
-              top: 30.0,
-              left: 0.0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleButton(
-                  color: Colors.black,
-                  icon: Icons.account_box,
-                  callback: () => {
-                    Navigator.of(context).pushNamed(ProfileScreen.idScreen),
-                  },
-                ),
-              ),
-            ),
-
-            // add recipe
-            Positioned(
-              bottom: 30.0,
-              left: 0.0,
-              child: CircleButton(
-                  color: Colors.black,
-                  icon: Icons.add,
-                  callback: () => {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, AddScreen.idScreen, (route) => false)
-                      }),
-            ),
-
-            Stack(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 50,
-                      ),
-
-                      // headers
-                      RecipeHeader(
-                          color1: Colors.black, color2: Colors.white, size: 40),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      SubHeader(text: "What will you cock today?", size: 20),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      SubHeader(
-                        text:
-                            "Search recipe by typeing in a name of a dish \nor simply just write what ingredients you want to use.",
-                        size: 13,
-                      ),
-
-                      // inputs text boxes
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: TextField(
-                                controller: engrideintsTextController,
-                                decoration: InputDecoration(
-                                    hintText: "Enter Ingrideints",
-                                    hintStyle: TextStyle(
-                                      fontSize: 18,
-                                    )),
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                if (engrideintsTextController.text.isNotEmpty) {
-                                  //TODO fix before commit
-
-                                  // fetchRecipes(engrideintsTextController.text);
-                                  Navigator.of(context)
-                                      .pushNamed(ShowScreen.idScreen);
-                                } else {
-                                  print("text box is empty");
-                                }
-                              },
-                              child: Icon(Icons.search, color: Colors.white),
-                            ),
-                          ],
+          // screen content
+          Stack(
+            children: [
+              Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 50,
                         ),
-                      ),
-                      // favorte recipes
-                      SizedBox(
-                        height: 50,
-                      ),
+                        // headers
+                        RecipeHeader(
+                            color1: Colors.black,
+                            color2: Colors.white,
+                            size: 40),
 
-                      // Container(
-                      //   height: 400,
-                      //   child: ListView(
-                      //     scrollDirection: Axis.horizontal,
-                      //     //TODO stack overflow: Overflow.clip
-                      //     children: recipesScrollView,
-                      //   ),
-                      // ),
+                        if (!searchView)
+                          Column(
+                            children: const <Widget>[
+                              SizedBox(
+                                height: 30,
+                              ),
+                              SubHeader(
+                                  text: "What will you cock today?", size: 20),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              SubHeader(
+                                text:
+                                    "Search recipe by typeing in a name of a dish \nor simply just write what ingredients you want to use.",
+                                size: 13,
+                              ),
+                            ],
+                          ),
+                        // inputs text boxes
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: TextField(
+                                  controller: engrideintsTextController,
+                                  decoration: InputDecoration(
+                                      hintText: "Enter Ingrideints",
+                                      hintStyle: TextStyle(
+                                        fontSize: 18,
+                                      )),
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  if (engrideintsTextController
+                                      .text.isNotEmpty) {
+                                    //TODO fix before commit
 
-                      GridView.count(
-                        crossAxisCount: 3,
-                        children: smallTileList,
-                      ),
-                    ],
+                                    setState(() => searchView = true);
+
+                                    fetchRecipes(
+                                        engrideintsTextController.text);
+
+                                    // Navigator.of(context)
+                                    //     .pushNamed(ShowScreen.idScreen);
+                                  } else {
+                                    print("text box is empty");
+                                  }
+                                },
+                                child: Icon(Icons.search, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // favorte recipes
+                        SizedBox(
+                          height: 30,
+                        ),
+
+                        searchView
+                            ? Expanded(
+                                child: GridView.count(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 10,
+                                  children: smallTileList,
+                                ),
+                              )
+                            : Container(
+                                height: 400,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  //TODO stack overflow: Overflow.clip
+                                  children: recipesScrollView,
+                                ),
+                              )
+                      ],
+                    ),
                   ),
-                ),
-                loading ? Loading() : SizedBox(),
-              ],
-            ),
-          ],
-        ),
-      ]),
+                  // logout
+                  Positioned(
+                    bottom: 30.0,
+                    right: 0.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleButton(
+                          color: Colors.black,
+                          icon: Icons.logout,
+                          callback: () => {
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    LoginScreen.idScreen, (route) => false)
+                              }),
+                    ),
+                  ),
+
+                  // profile
+                  Positioned(
+                    top: 30.0,
+                    left: 0.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleButton(
+                        color: Colors.black,
+                        icon: Icons.account_box,
+                        callback: () => {
+                          Navigator.of(context)
+                              .pushNamed(ProfileScreen.idScreen),
+                        },
+                      ),
+                    ),
+                  ),
+
+                  // add recipe
+                  Positioned(
+                    bottom: 30.0,
+                    left: 0.0,
+                    child: CircleButton(
+                        color: Colors.black,
+                        icon: Icons.add,
+                        callback: () => {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, AddScreen.idScreen, (route) => false)
+                            }),
+                  ),
+
+                  loading ? Loading() : SizedBox(),
+                ],
+              ),
+            ],
+          ),
+        ]),
+      ),
     );
   }
 }

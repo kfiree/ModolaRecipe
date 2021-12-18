@@ -23,9 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "ModulaRecipe",
-      // initialRoute: LoginScreen.idScreen,
-      initialRoute: MainScreen.idScreen,
-      // initialRoute: EnterScreen.idScreen,
+      initialRoute: LoginScreen.idScreen,
+      // initialRoute: MainScreen.idScreen,
 
       routes: {
         // '/': (context) => LoginScreen(),

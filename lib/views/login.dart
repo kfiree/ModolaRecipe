@@ -275,7 +275,6 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               loginUserAndAuthenticate(context);
             }
-            sleep(Duration(seconds: 3));
             setState(() => loading = true);
           },
           shape:
