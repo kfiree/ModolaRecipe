@@ -257,4 +257,23 @@ class RecipeModel {
         label: parsedJson['label'],
         uri: (parsedJson['uri']).split('#')[1]);
   }
+  factory RecipeModel.fromJson(Map<String, dynamic> json) {
+    return RecipeModel(
+      label: json['label'],
+      uri: json['uri'].split('#')[1],
+      image: json['image'],
+      source: json['source'],
+      url: json['url']
+    );
+  }
+
+  factory RecipeModel.fromRecipeMap(Map<String, dynamic> json) {
+    return RecipeModel(
+      label: json['label'],
+      uri: json['uri'].split('#')[1],
+      image: json['image'],
+      source: json['source'],
+      url: json['url']
+    );
+  }
 }

@@ -10,6 +10,8 @@ import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/Widgets/recipe_views.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key? key}) : super(key: key);
@@ -28,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   bool loading = false, searchView = false;
 
   //recipe list
-  List<RecipeModel> recipes = <RecipeModel>[];
+  List<Future<RecipeModel>> recipes = [];
 
   //text controllers
   TextEditingController engrideintsTextController = TextEditingController(),
@@ -74,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
     List<Widget> smallTileList = List.generate(
         50,
         (int i) => RecipeTile(
-              desc: 'source',
+              desc: 'desc',
               title: 'title',
               imgUrl:
                   'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
@@ -270,20 +272,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 // return recipes
-  fetchRecipes(String query) async {
+  Future<List<Future<RecipeModel>>> fetchRecipes(String query) async {
+
     String queryUrl =
         'https://api.edamam.com/search?q=$query&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-    var response = await http.get(Uri.parse(queryUrl));
+    final response = await http.get(Uri.parse(queryUrl));
     Loading();
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String, dynamic> jsonData = jsonDecode(response.body);
+      // for(int i=0; i<50; i++) {
+      //   recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
+      // }
       jsonData["hits"].forEach((element) {
-        RecipeModel recipeModel = RecipeModel.fromMap(element["recipe"]);
-
-        recipes.add(recipeModel);
+        recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
+        // return RecipeModel.fromJson(element["recipe"]);
       });
+      return recipes;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -309,4 +315,37 @@ class UserInfo extends InheritedWidget {
 
   @override
   bool updateShouldNotify(UserInfo old) => userId != old.userId;
+}
+
+class GetUserName extends StatelessWidget {
+  final String documentId;
+
+  GetUserName(this.documentId);
+
+  @override
+  Widget build(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    return FutureBuilder<DocumentSnapshot>(
+      future: users.doc(documentId).get(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.hasData && !snapshot.data!.exists) {
+          return Text("Document does not exist");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+          return Text("Full Name: ${data['full_name']} ${data['last_name']}");
+        }
+
+        return Text("loading");
+      },
+    );
+  }
 }
