@@ -23,17 +23,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "ModulaRecipe",
-      // initialRoute: LoginScreen.idScreen,
-      initialRoute: MainScreen.idScreen,
+      initialRoute: LoginScreen.idScreen,
+      // initialRoute: MainScreen.idScreen,
 
       routes: {
         // '/': (context) => LoginScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
         LoginScreen.idScreen: (context) => LoginScreen(),
-        MainScreen.idScreen: (context) => MainScreen(userId: ''),
+        // '/main_screen'
+        MainScreen.idScreen: (context) => MainScreen(),
         AddScreen.idScreen: (context) => AddScreen(),
-        ProfileScreen.idScreen: (context) => ProfileScreen(),
-        FullViewScreen.idScreen: (context) => FullViewScreen(name: ''),
+        // ProfileScreen.idScreen: (context) => ProfileScreen(
+        //       UID: '',
+        //     ),
+        FullViewScreen.idScreen: (context) => FullViewScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

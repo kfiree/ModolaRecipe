@@ -13,9 +13,7 @@ import 'package:modolar_recipe/Widgets/rating.dart';
 import 'package:modolar_recipe/Widgets/recipe_views.dart';
 
 class FullViewScreen extends StatefulWidget {
-  const FullViewScreen({Key? key, required this.name}) : super(key: key);
-
-  final String name;
+  const FullViewScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "detail_recipe";
 

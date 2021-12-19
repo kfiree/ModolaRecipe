@@ -12,9 +12,9 @@ import 'package:modolar_recipe/Widgets/recipe_views.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({Key? key, required this.userId}) : super(key: key);
+  MainScreen({Key? key}) : super(key: key);
   // CLASS VARIABLES
-  final String userId;
+
   String applicationId = "41ca25af",
       applicationKey = "ab51bad1b862188631ce612a9b1787a9";
 
