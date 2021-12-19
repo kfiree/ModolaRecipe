@@ -3,20 +3,23 @@ class RecipeModel {
   final String image;
   final String source;
   final String url;
+  final String uri;
   // String cookTime;
 
   RecipeModel(
       {required this.url,
       required this.label,
       required this.source,
-      required this.image /**, this.cookTime*/});
+      required this.image,
+      required this.uri /**, this.cookTime*/});
 
   factory RecipeModel.fromMap(Map<String, dynamic> parsedJson) {
     return RecipeModel(
       url: parsedJson['url'],
       image: parsedJson['image'],
       source: parsedJson['source'],
-      label: parsedJson['label']
+      label: parsedJson['label'],
+      uri: (parsedJson['uri']).split('#')[1]
     );
   }
 
