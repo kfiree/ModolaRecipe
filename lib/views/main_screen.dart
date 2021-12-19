@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   bool loading = false, searchView = false;
 
   //recipe list
-  List<RecipeModel> recipes = <RecipeModel>[];
+  List<RecipeModel> recipesList = <RecipeModel>[];
 
   //text controllers
   TextEditingController engrideintsTextController = TextEditingController();
@@ -37,9 +37,10 @@ class _MainScreenState extends State<MainScreen> {
   String applicationId = "41ca25af";
   String applicationKey = "ab51bad1b862188631ce612a9b1787a9";
 
-  // return recipes
+  // return recipesList
   fetchRecipes(String query) async {
-    print("======================  in fetch =============================");
+    List<Widget> smallTileList;
+
     String queryUrl =
         'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
     var response = await http.get(Uri.parse(queryUrl));
@@ -48,20 +49,36 @@ class _MainScreenState extends State<MainScreen> {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-      jsonData["hits"].forEach((element) {
-        RecipeModel recipeModel = RecipeModel.fromMap(element["recipe"]);
+      jsonData["hits"].forEach(
+        (element) {
+          RecipeModel recipeModel = RecipeModel.fromMap(element["recipe"]);
 
-        recipes.add(recipeModel);
-      });
+          recipesList.add(recipeModel);
+        },
+      );
+
+      smallTileList = List<Widget>.generate(
+          recipesList.length,
+          (int i) => ( //RecipeModel curr = recipesList[i];
+                  RecipeTile(
+                desc: recipesList[i].source,
+                title: recipesList[i].label,
+                imgUrl: recipesList[i].image,
+                url: recipesList[i].url,
+              )));
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
       throw Exception('Failed to load Recipe');
     }
+    // smallTileList.toList();
+    return smallTileList;
   }
 
   @override
   Widget build(BuildContext context) {
+    // List<Widget> smallTileList = [];
+
     //build recipe card for scroll view
     int recipeNum = 4;
     List<Widget> recipesScrollView = [
@@ -96,15 +113,15 @@ class _MainScreenState extends State<MainScreen> {
     // List<Widget> recipesScrollView =
     //     List.generate(recipeNum, (int i) => MediumRecipeView());
 
-    List<Widget> smallTileList = List.generate(
-        50,
-        (int i) => RecipeTile(
-              desc: 'source',
-              title: 'title',
-              imgUrl:
-                  'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
-              url: 'url',
-            ));
+    // List<Widget> smallTileList = List.generate(
+    //     50,
+    //     (int i) => RecipeTile(
+    //           desc: 'source',
+    //           title: 'title',
+    //           imgUrl:
+    //               'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
+    //           url: 'url',
+    //         ));
     return WillPopScope(
       onWillPop: () async {
         return searchView = false;
@@ -198,12 +215,25 @@ class _MainScreenState extends State<MainScreen> {
                                     //TODO fix before commit
 
                                     setState(() => searchView = true);
-
-                                    fetchRecipes(
-                                        engrideintsTextController.text);
-
-                                    // Navigator.of(context)
-                                    //     .pushNamed(ShowScreen.idScreen);
+                                    // List<Widget> smallTileList = fetchRecipes(
+                                    //     engrideintsTextController.text);
+                                    // searchView
+                                    //     ? Expanded(
+                                    //         child: GridView.count(
+                                    //           crossAxisCount: 2,
+                                    //           crossAxisSpacing: 5,
+                                    //           mainAxisSpacing: 10,
+                                    //           children: smallTileList,
+                                    //         ),
+                                    //       )
+                                    //     : Container(
+                                    //         height: 400,
+                                    //         child: ListView(
+                                    //           scrollDirection: Axis.horizontal,
+                                    //           //TODO stack overflow: Overflow.clip
+                                    //           children: smallTileList,
+                                    //         ),
+                                    //       );
                                   } else {
                                     print("text box is empty");
                                   }
@@ -224,7 +254,8 @@ class _MainScreenState extends State<MainScreen> {
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 5,
                                   mainAxisSpacing: 10,
-                                  children: smallTileList,
+                                  children: fetchRecipes(
+                                      engrideintsTextController.text),
                                 ),
                               )
                             : Container(
