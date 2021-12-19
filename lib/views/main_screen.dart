@@ -129,7 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                           RecipeHeader(
                               color1: Colors.black,
                               color2: Colors.white,
-                              size: 40),
+                              size: 30),
                           if (!searchView)
                             Column(
                               children: const <Widget>[

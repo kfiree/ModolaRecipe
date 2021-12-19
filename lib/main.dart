@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         // '/main_screen'
         MainScreen.idScreen: (context) => MainScreen(),
         AddScreen.idScreen: (context) => AddScreen(),
-        // ProfileScreen.idScreen: (context) => ProfileScreen(
+        ProfileScreen.idScreen: (context) => ProfileScreen(),
         //       UID: '',
         //     ),
         FullViewScreen.idScreen: (context) => FullViewScreen(),

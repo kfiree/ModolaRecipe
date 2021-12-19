@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
@@ -20,19 +22,19 @@ class RecipeHeader extends StatelessWidget {
       children: <Widget>[
         Text(
           "Modula",
-          style: TextStyle(fontSize: size, fontWeight: FontWeight.w900),
+          style: TextStyle(fontSize: size, fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900),
           textAlign: TextAlign.center,
         ),
         GradientText("R",
             style: TextStyle(
               fontSize: size + 5,
-              fontWeight: FontWeight.w700,
+              fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900,
             ),
             colors: [color1, color2]),
         Text(
           "ecipies",
           style: TextStyle(
-              color: Colors.white, fontSize: size, fontWeight: FontWeight.w900),
+              color: Colors.white, fontSize: size, fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900),
         )
       ],
     );
