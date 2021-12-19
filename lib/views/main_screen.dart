@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   bool loading = false, searchView = false;
 
   //recipe list
-  List<Future<RecipeModel>> recipes = [];
+  List<RecipeModel> recipes = [];
 
   //text controllers
   TextEditingController engrideintsTextController = TextEditingController(),
@@ -272,7 +272,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 // return recipes
-  Future<List<Future<RecipeModel>>> fetchRecipes(String query) async {
+  Future<List<RecipeModel>> fetchRecipes(String query) async {
 
     String queryUrl =
         'https://api.edamam.com/search?q=$query&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
@@ -285,8 +285,12 @@ class _MainScreenState extends State<MainScreen> {
       // for(int i=0; i<50; i++) {
       //   recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
       // }
-      jsonData["hits"].forEach((element) {
-        recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
+      jsonData["hits"].forEach((hit) {
+        jsonData["hits"].forEach((hit) {
+            recipes.add((RecipeModel.fromRecipeMap(hit["recipe"])));
+          }
+        );
+        // recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
         // return RecipeModel.fromJson(element["recipe"]);
       });
       return recipes;
