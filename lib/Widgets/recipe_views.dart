@@ -170,15 +170,18 @@ class RecipeMediumView extends StatelessWidget {
 }
 
 class RecipeTile extends StatelessWidget {
+
   const RecipeTile(
       {Key? key,
       required this.title,
       required this.desc,
       required this.imgUrl,
-      required this.url})
+      required this.url,
+      required this.uri,
+      Null Function()? onTap})
       : super(key: key);
 
-  final String title, desc, imgUrl, url;
+  final String title, desc, imgUrl, url, uri;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -230,6 +233,47 @@ class RecipeTile extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class FullRecipe {
+  final String label;
+  final String image;
+  final String source;
+  final String url;
+  final String uri;
+  final double calories;
+  final double cookingTime;
+  final List<Map<String, dynamic>> ingredients;
+  final String cuisineType;
+  final List<String> cautions;
+
+  FullRecipe({
+    required this.label,
+    required this.image,
+    required this.source,
+    required this.url,
+    required this.uri,
+    required this.calories,
+    required this.cookingTime,
+    required this.ingredients,
+    required this.cuisineType,
+    required this.cautions
+  });
+
+  factory FullRecipe.fromJson(Map<String, dynamic> json){
+    return FullRecipe(
+      label: json['label'],
+      image: json['image'],
+      source: json['source'],
+      url: json['url'],
+      uri: json['uri'],
+      calories: json['calories'],
+      cookingTime: json['cookingTime'],
+      ingredients: json['ingredients'],
+      cuisineType: json['cuisineType'],
+      cautions: json['cautions']
     );
   }
 }

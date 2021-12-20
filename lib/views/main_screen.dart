@@ -11,6 +11,7 @@ import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/Widgets/recipe_views.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:modolar_recipe/views/recipe_screen.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -74,26 +75,32 @@ class _MainScreenState extends State<MainScreen> {
     //     List.generate(recipeNum, (int i) => RecipeMediumView());
 
     List<Widget> smallTileList = List.generate(
-        50,
+        recipes.length,
         (int i) => RecipeTile(
-              desc: 'desc',
-              title: 'title',
-              imgUrl:
-                  'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
-              url: 'url',
-            ));
+              desc: recipes[i].label,
+              title: recipes[i].label,
+              imgUrl: recipes[i].image,
+              url: recipes[i].url,
+              uri: recipes[i].uri.split('#')[1],
+              onTap: () {
+                // fetch specific recipe with recipe_id.
+                // with that recipe details send to recipe view.
+                fetchRecipeAndNavigateToRecipeView(recipes[i].uri.split('#')[1]);
+            },
+        ),
+    );
 
-    return WillPopScope(
-      onWillPop: () async {
-        return searchView = false;
-        // bool? result = await Navigator.pushNamedAndRemoveUntil(
-        //     context, MainScreen.idScreen, (route) => false);
+    return Container(
+      // onWillPop: () async {
+      //   return searchView = false;
+      //   // bool? result = await Navigator.pushNamedAndRemoveUntil(
+      //   //     context, MainScreen.idScreen, (route) => false);
 
-        // if (result == null) {
-        //   result = false;
-        // }
-        // return result!;
-      },
+      //   // if (result == null) {
+      //   //   result = false;
+      //   // }
+      //   // return result!;
+      // },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -293,6 +300,7 @@ class _MainScreenState extends State<MainScreen> {
         // recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
         // return RecipeModel.fromJson(element["recipe"]);
       });
+      // smallTileList();
       return recipes;
     } else {
       // If the server did not return a 200 OK response,
@@ -300,7 +308,24 @@ class _MainScreenState extends State<MainScreen> {
       throw Exception('Failed to load Recipe');
     }
   }
+
+  fetchRecipeAndNavigateToRecipeView(String recipe_id) async {
+    FullRecipe recipe;
+    var queryUrl = 
+    'https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23$recipe_id&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+
+    final response = await http.get(Uri.parse(queryUrl));
+      Loading();
+      if (response.statusCode == 200) {
+        recipe = FullRecipe.fromJson(jsonDecode(response.body));
+        Navigator.pushNamed(context, FullViewScreen.idScreen);
+      }
+
+
 }
+
+}
+
 
 class UserInfo extends InheritedWidget {
   UserInfo({
