@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, deprecated_member_use
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -6,11 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
-import 'package:modolar_recipe/views/recipe_full_view.dart';
-
+import 'package:modolar_recipe/Widgets/recipe_views.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
+import 'package:modolar_recipe/views/recipe_screen.dart';
 import '../main.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -373,9 +375,6 @@ class _SignupScreenState extends State<SignupScreen> {
       padding: const EdgeInsets.symmetric(vertical: 25),
       child: SizedBox(
         width: double.infinity,
-        //TODO replace with elavated button
-
-        // ignore: deprecated_member_use
         child: RaisedButton(
           onPressed: () {
             if (nameTextEdittingController.text.length < 3) {
@@ -440,9 +439,10 @@ class _SignupScreenState extends State<SignupScreen> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return ProgressDialog(
-            "Registering, please wait...",
-          );
+          return Loading();
+          // return ProgressDialog(
+          //   "Registering, please wait...",
+          // );
         });
     final User? firebaseUser = (await _firebaseAuth
             .createUserWithEmailAndPassword(
@@ -467,7 +467,7 @@ class _SignupScreenState extends State<SignupScreen> {
       // Navigator.pushNamedAndRemoveUntil(
       //     context, enterScreen.idScreen, (route) => false);
       Navigator.pushNamedAndRemoveUntil(
-          context, ShowScreen.idScreen, (route) => false);
+          context, FullViewScreen.idScreen, (route) => false);
     } else {
       //Error accured.
       Navigator.pop(context);

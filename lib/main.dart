@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:modolar_recipe/views/enter_screen.dart';
+// import 'package:modolar_recipe/views/enter_screen.dart';
 
 import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
-import 'package:modolar_recipe/views/recipe_full_view.dart';
+import 'package:modolar_recipe/views/recipe_screen.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/views/profile_screen.dart';
 
@@ -28,13 +28,15 @@ class MyApp extends StatelessWidget {
 
       routes: {
         // '/': (context) => LoginScreen(),
-        LoginScreen.idScreen: (context) => LoginScreen(),
         SignupScreen.idScreen: (context) => SignupScreen(),
+        LoginScreen.idScreen: (context) => LoginScreen(),
+        // '/main_screen'
         MainScreen.idScreen: (context) => MainScreen(),
-        // ShowScreen.idScreen: (context) => ShowScreen(name: 'Pancakes'),
         AddScreen.idScreen: (context) => AddScreen(),
         ProfileScreen.idScreen: (context) => ProfileScreen(),
-        EnterScreen.idScreen: (context) => EnterScreen(),
+        //       UID: '',
+        //     ),
+        FullViewScreen.idScreen: (context) => FullViewScreen(),
       },
       debugShowCheckedModeBanner: false,
     );
