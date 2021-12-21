@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Styles/constants.dart';
+import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/recipe_screen.dart';
 import 'package:flutter/foundation.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
 
 class StepEntry extends StatelessWidget {
   final String text;
   final bool initialStep;
+  final bool loading = false, searchView = false;
+  
 
   const StepEntry({Key? key, required this.text, this.initialStep = false})
       : super(key: key);
@@ -170,64 +177,83 @@ class RecipeMediumView extends StatelessWidget {
 }
 
 class RecipeTile extends StatelessWidget {
-
-  const RecipeTile(
-      {Key? key,
-      required this.title,
-      required this.desc,
-      required this.imgUrl,
-      required this.url,
-      required this.uri,
-      Null Function()? onTap})
-      : super(key: key);
+  const RecipeTile({
+    Key? key,
+    required this.title,
+    required this.desc,
+    required this.imgUrl,
+    required this.url,
+    required this.uri,
+    required this.recipeJson,
+  }) : super(key: key);
 
   final String title, desc, imgUrl, url, uri;
+  final Map<String, dynamic> recipeJson;
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(30.0),
-          child: Image.network(
-            imgUrl,
-            height: 200,
-            width: 200,
-            fit: BoxFit.cover,
+        GestureDetector(
+          onTap: (){
+            Navigator.pushNamed(context, FullViewScreen.idScreen, arguments: {'recipe': recipeJson});
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30.0),
+            child: Image.network(
+              imgUrl,
+              height: 2000,
+              width: 200,
+              fit: BoxFit.fill,
+            ),
           ),
         ),
+        // ClipRRect(
+        //   borderRadius: BorderRadius.circular(30.0),
+        //   child: Image.network(
+        //     imgUrl,
+        //     height: 2000,
+        //     width: 200,
+        //     fit: BoxFit.fill,
+        //   ),
+        // ),
         ClipRRect(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
-          child: Container(
-            width: 200,
-            height: 50,
-            alignment: Alignment.bottomLeft,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.white30, Colors.white],
-                    begin: FractionalOffset.centerRight,
-                    end: FractionalOffset.centerLeft)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    style: TextStyle(
+          child: Flexible(
+            child: Container(
+              width: 200,
+              height: 50,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Colors.white30, Colors.white],
+                      begin: FractionalOffset.centerRight,
+                      end: FractionalOffset.centerLeft)),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: TextStyle(
                         fontSize: 13,
-                        color: Colors.black54,
-                        fontFamily: 'Overpass'),
-                  ),
-                  Text(
-                    desc,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.black54,
-                      // fontFamily: 'OverpassRegular'
+                        color: Colors.black,
+                        fontFamily: 'Overpass',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  )
-                ],
+                    Text(
+                      desc,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.black54,
+                        overflow: TextOverflow.ellipsis,
+                        // fontFamily: 'OverpassRegular'
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -249,32 +275,30 @@ class FullRecipe {
   final String cuisineType;
   final List<String> cautions;
 
-  FullRecipe({
-    required this.label,
-    required this.image,
-    required this.source,
-    required this.url,
-    required this.uri,
-    required this.calories,
-    required this.cookingTime,
-    required this.ingredients,
-    required this.cuisineType,
-    required this.cautions
-  });
+  FullRecipe(
+      {required this.label,
+      required this.image,
+      required this.source,
+      required this.url,
+      required this.uri,
+      required this.calories,
+      required this.cookingTime,
+      required this.ingredients,
+      required this.cuisineType,
+      required this.cautions});
 
-  factory FullRecipe.fromJson(Map<String, dynamic> json){
+  factory FullRecipe.fromJson(Map<String, dynamic> json) {
     return FullRecipe(
-      label: json['label'],
-      image: json['image'],
-      source: json['source'],
-      url: json['url'],
-      uri: json['uri'],
-      calories: json['calories'],
-      cookingTime: json['cookingTime'],
-      ingredients: json['ingredients'],
-      cuisineType: json['cuisineType'],
-      cautions: json['cautions']
-    );
+        label: json['label'],
+        image: json['image'],
+        source: json['source'],
+        url: json['url'],
+        uri: json['uri'],
+        calories: json['calories'],
+        cookingTime: json['cookingTime'],
+        ingredients: json['ingredients'],
+        cuisineType: json['cuisineType'],
+        cautions: json['cautions']);
   }
 }
 
@@ -284,6 +308,7 @@ class RecipeModel {
   final String source;
   final String url;
   final String uri;
+  final recipeJson;
   // String cookTime;
 
   RecipeModel(
@@ -291,7 +316,8 @@ class RecipeModel {
       required this.label,
       required this.source,
       required this.image,
-      required this.uri /**, this.cookTime*/});
+      required this.uri,
+      required this.recipeJson, /**, this.cookTime*/});
 
   factory RecipeModel.fromMap(Map<String, dynamic> parsedJson) {
     return RecipeModel(
@@ -299,25 +325,28 @@ class RecipeModel {
         image: parsedJson['image'],
         source: parsedJson['source'],
         label: parsedJson['label'],
-        uri: (parsedJson['uri']).split('#')[1]);
+        uri: (parsedJson['uri']).split('#')[1], 
+        recipeJson: parsedJson
+    );
+        
   }
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
     return RecipeModel(
-      label: json['label'],
-      uri: json['uri'].split('#')[1],
-      image: json['image'],
-      source: json['source'],
-      url: json['url']
-    );
+        label: json['label'],
+        uri: json['uri'].split('#')[1],
+        image: json['image'],
+        source: json['source'],
+        url: json['url'], 
+        recipeJson: json);
   }
 
   factory RecipeModel.fromRecipeMap(Map<String, dynamic> json) {
     return RecipeModel(
-      label: json['label'],
-      uri: json['uri'].split('#')[1],
-      image: json['image'],
-      source: json['source'],
-      url: json['url']
-    );
+        label: json['label'],
+        uri: json['uri'].split('#')[1],
+        image: json['image'],
+        source: json['source'],
+        url: json['url'], 
+        recipeJson: json);
   }
 }

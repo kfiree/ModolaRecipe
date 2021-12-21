@@ -32,6 +32,7 @@ class _MainScreenState extends State<MainScreen> {
 
   //recipe list
   List<RecipeModel> recipes = [];
+  late FullRecipe recipe;
 
   //text controllers
   TextEditingController engrideintsTextController = TextEditingController(),
@@ -70,24 +71,16 @@ class _MainScreenState extends State<MainScreen> {
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEZ_666h1r5_BQTw1uM2Q1LjM6_5qaiOEkeg&usqp=CAU'),
     ];
 
-    // int recipeNum = 4;
-    // List<Widget> recipesScrollView =
-    //     List.generate(recipeNum, (int i) => RecipeMediumView());
-
     List<Widget> smallTileList = List.generate(
-        recipes.length,
-        (int i) => RecipeTile(
-              desc: recipes[i].label,
-              title: recipes[i].label,
-              imgUrl: recipes[i].image,
-              url: recipes[i].url,
-              uri: recipes[i].uri.split('#')[1],
-              onTap: () {
-                // fetch specific recipe with recipe_id.
-                // with that recipe details send to recipe view.
-                fetchRecipeAndNavigateToRecipeView(recipes[i].uri.split('#')[1]);
-            },
-        ),
+      recipes.length,
+      (int i) => RecipeTile(
+        desc: recipes[i].label,
+        title: recipes[i].label,
+        imgUrl: recipes[i].image,
+        url: recipes[i].url,
+        uri: recipes[i].uri,
+        recipeJson: recipes[i].recipeJson,
+      ),
     );
 
     return Container(
@@ -199,14 +192,14 @@ class _MainScreenState extends State<MainScreen> {
 
                           // favorte recipes
                           SizedBox(
-                            height: 30,
+                            height: 0,
                           ),
                           searchView
                               ? Expanded(
                                   child: GridView.count(
                                     crossAxisCount: 2,
-                                    crossAxisSpacing: 5,
-                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 4,
+                                    mainAxisSpacing: 5,
                                     children: smallTileList,
                                   ),
                                 )
@@ -289,12 +282,10 @@ class _MainScreenState extends State<MainScreen> {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-      // for(int i=0; i<50; i++) {
-      //   recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
-      // }
       jsonData["hits"].forEach((hit) {
         jsonData["hits"].forEach((hit) {
             recipes.add((RecipeModel.fromRecipeMap(hit["recipe"])));
+
           }
         );
         // recipes.add(RecipeModel.fromRecipeMap(jsonDecode(jsonData["hits"][i]["recipe"])) as Future<RecipeModel>);
@@ -308,22 +299,18 @@ class _MainScreenState extends State<MainScreen> {
       throw Exception('Failed to load Recipe');
     }
   }
+//   fetchRecipe(String recipeId) async {
+//     var queryUrl = 
+//     'https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23$recipeId&app_id=41ca25af&app_key=ab51bad1b862188631ce612a9b1787a9';
 
-  fetchRecipeAndNavigateToRecipeView(String recipe_id) async {
-    FullRecipe recipe;
-    var queryUrl = 
-    'https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23$recipe_id&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-
-    final response = await http.get(Uri.parse(queryUrl));
-      Loading();
-      if (response.statusCode == 200) {
-        recipe = FullRecipe.fromJson(jsonDecode(response.body));
-        Navigator.pushNamed(context, FullViewScreen.idScreen);
-      }
-
-
-}
-
+//     final response = await http.get(Uri.parse("https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_95661be6f77a57b4c85c789a3b737ada&app_id=41ca25af&app_key=ab51bad1b862188631ce612a9b1787a9"));
+//     Loading();
+//     if (response.statusCode == 200) {
+//       Map<String, dynamic> jsonData = jsonDecode(response.body);
+//     }else{
+//       throw Exception('Failed to load recipe');
+//     }
+//   }
 }
 
 

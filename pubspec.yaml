@@ -47,7 +47,7 @@ dependencies:
   rating_dialog: ^2.0.0
 
   webview_flutter:
-  url_launcher: # for the web version, we're intrested in the mobile version 
+  url_launcher: ^5.7.10 
   simple_gradient_text: ^1.2.2
 
   
