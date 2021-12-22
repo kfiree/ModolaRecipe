@@ -1,22 +1,24 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
 
+import 'package:modolar_recipe/Views/main_screen.dart';
+// import 'package:modolar_recipe/Styles/constants.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
-import 'package:modolar_recipe/Styles/constants.dart';
 import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/ingredient_card.dart';
-import 'package:flutter/foundation.dart';
-import 'package:modolar_recipe/Views/main_screen.dart';
 import 'package:modolar_recipe/Widgets/rating.dart';
-import 'package:modolar_recipe/Widgets/recipe_views.dart';
+import 'package:modolar_recipe/Widgets/recipes.dart';
 
 class FullViewScreen extends StatefulWidget {
-  const FullViewScreen({Key? key}) : super(key: key);
+  FullViewScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "detail_recipe";
-
+  String applicationId = "41ca25af",
+      applicationKey = "ab51bad1b862188631ce612a9b1787a9";
   @override
   _FullViewScreenState createState() => _FullViewScreenState();
 }
@@ -24,22 +26,40 @@ class FullViewScreen extends StatefulWidget {
 class _FullViewScreenState extends State<FullViewScreen> {
   @override
   Widget build(BuildContext context) {
+    final routeArgs =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final UID = routeArgs['UID'];
+    // final URI = routeArgs['URI'];
+    final model = routeArgs['Model'];
+
     return Scaffold(
         backgroundColor: HexColor('#998fb3'),
         body: SafeArea(
           child: Column(
-            children: const <Widget>[
-              DetailHeaderCard(),
-              DetailInfoCard(),
+            children: <Widget>[
+              DetailHeaderCard(model: model),
+              DetailInfoCard(model: model),
             ],
           ),
         ));
   }
+
+  // fetchRecipeAndNavigateToRecipeView(String recipe_id) async {
+  //   FullRecipe recipe;
+  //   var queryUrl =
+  //       'https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23$recipe_id&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+
+  //   final response = await http.get(Uri.parse(queryUrl));
+  //   if (response.statusCode == 200) {
+  //     recipe = FullRecipe.fromJson(jsonDecode(response.body));
+  //     Navigator.pushNamed(context, FullViewScreen.idScreen);
+  //   }
+  // }
 }
 
 class DetailHeaderCard extends StatelessWidget {
-  const DetailHeaderCard({Key? key}) : super(key: key);
-
+  const DetailHeaderCard({Key? key, required this.model}) : super(key: key);
+  final RecipeModel model;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -83,13 +103,12 @@ class DetailHeaderCard extends StatelessWidget {
             clipBehavior: Clip.hardEdge,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(
+                padding: EdgeInsets.only(
                   right: 25.0,
                 ),
                 child: Center(
                   child: CircleNetworkImage(
-                    imageURL:
-                        "https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg",
+                    imageURL: model.image,
                     radius: 250.0,
                   ),
                 ),
@@ -104,8 +123,8 @@ class DetailHeaderCard extends StatelessWidget {
 
 class DetailInfoCard extends StatelessWidget {
   // TODO check why this line is for
-  const DetailInfoCard({Key? key}) : super(key: key);
-
+  const DetailInfoCard({Key? key, required this.model}) : super(key: key);
+  final RecipeModel model;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -127,9 +146,9 @@ class DetailInfoCard extends StatelessWidget {
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const <Widget>[
+              children: <Widget>[
                 Text(
-                  'Pancakes',
+                  model.label,
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
@@ -138,14 +157,15 @@ class DetailInfoCard extends StatelessWidget {
                 ),
                 Icon(Icons.no_food, color: Colors.green, size: 20),
                 Icon(Icons.local_drink, color: Colors.green, size: 20),
-                Text(
-                  '10 mins',
-                  style: TextStyle(
-                    fontFamily: "Quicksand",
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFBFBFBF),
+                if (model.cookingTime != 0.0)
+                  Text(
+                    model.cookingTime.toInt().toString(),
+                    style: TextStyle(
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFBFBFBF),
+                    ),
                   ),
-                ),
               ],
             ),
             SizedBox(

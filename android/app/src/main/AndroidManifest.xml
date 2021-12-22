@@ -2,7 +2,9 @@
     package="com.example.modolar_recipe">
    <application
         android:label="modolar_recipe"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        >
+        <!-- android:name="modolar_recipe" -->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

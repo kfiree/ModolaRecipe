@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Views/main_screen.dart';
-import 'package:firebase_database/firebase_database.dart';
+// import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatelessWidget {
-  CollectionReference _firebaseFirestore = FirebaseFirestore.instance.collection("user_data");
+  CollectionReference _firebaseFirestore =
+      FirebaseFirestore.instance.collection("user_data");
   ProfileScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "profile";
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,6 @@ class ProfileScreen extends StatelessWidget {
       future: _firebaseFirestore.doc("6PD9BeqEfie0FhXiIp6sMKg7twP2").get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
@@ -32,7 +30,8 @@ class ProfileScreen extends StatelessWidget {
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+          Map<String, dynamic> data =
+              snapshot.data!.data() as Map<String, dynamic>;
           return Scaffold(
             body: Column(
               children: <Widget>[
@@ -58,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
                             CircleNetworkImage(
                               radius: 130,
                               imageURL: data['image'],
-                                  // 'https://scontent.ftlv1-1.fna.fbcdn.net/v/t1.18169-9/10151952_10203690787413476_8739758980547261236_n.jpg?_nc_cat=111&ccb=1-5&_nc_sid=cdbe9c&_nc_ohc=GgT6-iP6Wc0AX_cd0Ip&_nc_ht=scontent.ftlv1-1.fna&oh=00_AT9em3xvGi6HMFAVAUGCUglWYydbeWu_zbyM0JhK6wM7wg&oe=61E1E285',
+                              // 'https://scontent.ftlv1-1.fna.fbcdn.net/v/t1.18169-9/10151952_10203690787413476_8739758980547261236_n.jpg?_nc_cat=111&ccb=1-5&_nc_sid=cdbe9c&_nc_ohc=GgT6-iP6Wc0AX_cd0Ip&_nc_ht=scontent.ftlv1-1.fna&oh=00_AT9em3xvGi6HMFAVAUGCUglWYydbeWu_zbyM0JhK6wM7wg&oe=61E1E285',
                             ),
                             SizedBox(
                               height: 10.0,
@@ -168,8 +167,8 @@ class ProfileScreen extends StatelessWidget {
                     )),
                 Container(
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30.0, horizontal: 16.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +223,8 @@ class ProfileScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                       child: Container(
-                        constraints: BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
+                        constraints:
+                            BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
                         alignment: Alignment.center,
                         child: Text(
                           "Contact me",
@@ -246,8 +246,8 @@ class ProfileScreen extends StatelessWidget {
                         color: Colors.black,
                         icon: Icons.arrow_back,
                         callback: () => {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, MainScreen.idScreen, (route) => false)
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  MainScreen.idScreen, (route) => false)
                             }),
                   ),
                 ),
@@ -259,7 +259,6 @@ class ProfileScreen extends StatelessWidget {
         return Text("loading");
       },
     );
-    
   }
   // getUserData(String uid) {
   //   return _firebaseFirestore.doc(uid).get();

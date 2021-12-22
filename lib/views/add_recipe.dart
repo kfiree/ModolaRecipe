@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/HexColor.dart';
 
@@ -70,6 +70,8 @@ class _AddState extends State<AddScreen> {
 }
 
 class Input extends StatelessWidget {
+  const Input({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
