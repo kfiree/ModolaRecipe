@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Text(
-            "Remember me",
+            "Remember me 🥺",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
         ],
@@ -364,8 +364,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (firebaseUser != null) {
       usersRef.child(firebaseUser.uid).once().then((DataSnapshot snap) {
         if (snap.value != null) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, MainScreen.idScreen, (route) => false);
+          // Navigator.pushNamedAndRemoveUntil(
+          //     context, MainScreen.idScreen, (route) => false);
+          Navigator.of(context).pushNamed(
+            MainScreen.idScreen,
+            arguments: {'UID': '123456'},
+          );
           displayToastMessage("Welcome! you are now logged in.", context);
         } else {
           _firebaseAuth.signOut();

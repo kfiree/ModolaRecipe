@@ -10,7 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
-import 'package:modolar_recipe/Widgets/recipe_views.dart';
+import 'package:modolar_recipe/Widgets/recipes.dart';
 import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/recipe_screen.dart';
 import '../main.dart';
@@ -243,14 +243,15 @@ class _SignupScreenState extends State<SignupScreen> {
           height: 60,
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-              color: Color(0xffebefff),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0, 2),
-                )
-              ]),
+            color: Color(0xffebefff),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, 2),
+              )
+            ],
+          ),
           child: TextField(
             controller: phoneTextEdittingController,
             keyboardType: TextInputType.phone,

@@ -11,13 +11,10 @@ class IngredientCard extends StatefulWidget {
   final String unit;
 
   @override
-  State<IngredientCard> createState() => _Ingredient_cardState();
+  State<IngredientCard> createState() => _IngredientCardState();
 }
 
-// String dropdownValue = "wow";
-// List subs = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5'];
-
-class _Ingredient_cardState extends State<IngredientCard> {
+class _IngredientCardState extends State<IngredientCard> {
   // TODO import list
   // List<String> subs = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5'];
 
@@ -86,5 +83,84 @@ class _Ingredient_cardState extends State<IngredientCard> {
         ],
       ),
     );
+  }
+}
+
+/*
+     ========= JSON EXAMPLE =========
+
+        {
+          "text": "2 1/2 cups grappa or unflavored vodka",
+          "quantity": 2.5,
+          "measure": "cup",
+          "food": "vodka",
+          "weight": 556.0000000000001,
+          "foodCategory": "liquors and cocktails",
+          "foodId": "food_aqnx4i8aieyph2athk58cb3cr69w",
+          "image": "https://www.edamam.com/food-img/e1a/e1a4708099e89fdadeb81c2d95deaa34.jpg"
+        },
+ */
+class IngredientModel {
+  final String text;
+  final double quantity;
+  final String unit;
+  final String foodCategory;
+  final String image;
+  final String foodId;
+  final String food;
+
+  IngredientModel({
+    required this.text,
+    required this.quantity,
+    required this.unit,
+    required this.food,
+    required this.foodCategory,
+    required this.image,
+    required this.foodId,
+  });
+
+  factory IngredientModel.fromJson(Map<String, dynamic> json) {
+    var food = json['food'] ?? 'food',
+        foodCategory = json['foodCategory'] ?? '',
+        foodId = json['foodId'] ?? 'foodId',
+        image = json['image'] ?? '',
+        quantity = json['quantity'] ?? 0,
+        text = json['text'] ?? '',
+        unit = json['measure'] ?? '';
+
+    return IngredientModel(
+      food: food,
+      foodCategory: foodCategory,
+      foodId: foodId,
+      image: image,
+      quantity: quantity,
+      text: text,
+      unit: unit,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['text'] = text;
+    data['quantity'] = quantity;
+    data['measure'] = unit;
+    data['food'] = food;
+    data['foodCategory'] = foodCategory;
+    data['image'] = image;
+    data['food'] = food;
+    return data;
+  }
+
+  @override
+  String toString() {
+    String data = '''
+    text: $text
+    quantity: $quantity
+    unit: $unit
+    foodCategory: $foodCategory
+    image: $image
+    foodId: $foodId
+    ''';
+    return '{\n$data}';
   }
 }
