@@ -28,7 +28,8 @@ class _MainScreenState extends State<MainScreen> {
   bool loading = false, searchView = false;
 
   //recipe list
-  List<RecipeModel> recipes = [];
+  List<RecipeModel> recipesForSearch = [];
+  List<RecipeModel> recipesForFirstView = [];
 
   //text controllers
   TextEditingController engrideintsTextController = TextEditingController(),
@@ -36,51 +37,23 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //build recipe card for scroll view
-    List<Widget> recipesScrollView = [
-      RecipeMediumView(
-        cookTime: 10,
-        energy: 420,
-        name: 'Pancakes',
-        recipeImageURL:
-            'https://media.eggs.ca/assets/RecipePhotos/_resampled/FillWyIxMjgwIiwiNzIwIl0/Fluffy-Pancakes-New-CMS.jpg',
-      ),
-      RecipeMediumView(
-        cookTime: 20,
-        energy: 1000000,
-        name: 'Hamburger',
-        recipeImageURL:
-            'https://www.keziefoods.co.uk/wp-content/uploads/2021/01/Kangaroo-Jalapeno-Burgers-228g-2-in-a-pack.jpg',
-      ),
-      RecipeMediumView(
-        cookTime: 5,
-        energy: 50,
-        name: 'Mandarin Orange Salad',
-        recipeImageURL:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkT6qXEFkfXaJMqUzgDpiCyav-ueCcdcKP1g&usqp=CAU',
-      ),
-      RecipeMediumView(
-          cookTime: 0,
-          energy: 88,
-          name: 'Banana',
-          recipeImageURL:
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEZ_666h1r5_BQTw1uM2Q1LjM6_5qaiOEkeg&usqp=CAU'),
-    ];
+    if (ModalRoute.of(context)?.settings.arguments == null) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, LoginScreen.idScreen, (route) => false);
+    }
+    final routeArgs =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final UID = routeArgs['UID'];
+    var rnd = Random();
 
-    List<Widget> smallTileList = List.generate(
-      recipes.length,
-      (int i) => RecipeTile(
-        desc: recipes[i].label,
-        title: recipes[i].label,
-        imgUrl: recipes[i].image,
-        url: recipes[i].url,
-        uri: recipes[i].uri, recipeModel: recipes[i],
-        // onTap: () {
-        //   // fetch specific recipe with recipe_id.
-        //   // with that recipe details send to recipe view.
-        //   fetchRecipeAndNavigateToRecipeView(recipes[i].uri);
-        // },
-      ),
+    //generate random recipes
+    if (!searchView) {
+      fetchRecipes('lunch', recipesForFirstView, from: rnd.nextInt(100));
+    }
+    List<RecipeMediumView> recipeWidget = List.generate(
+      recipesForFirstView.length,
+      (int i) =>
+          RecipeMediumView(recipeModel: recipesForFirstView[i], UID: UID),
     );
 
     return Scaffold(
@@ -123,12 +96,14 @@ class _MainScreenState extends State<MainScreen> {
                             size: 30),
                         if (!searchView)
                           Column(
-                            children: const <Widget>[
+                            children: <Widget>[
                               SizedBox(
                                 height: 30,
                               ),
                               SubHeader(
-                                  text: "What will you cock today?", size: 20),
+                                  text:
+                                      "What will you cock today? ${searchView.toString()}",
+                                  size: 20),
                               SizedBox(
                                 height: 8,
                               ),
@@ -163,9 +138,10 @@ class _MainScreenState extends State<MainScreen> {
                                 onTap: () async {
                                   if (engrideintsTextController
                                       .text.isNotEmpty) {
+                                    fetchRecipes(engrideintsTextController.text,
+                                        recipesForSearch,
+                                        search: true);
                                     setState(() => searchView = true);
-                                    fetchRecipes(
-                                        engrideintsTextController.text);
                                   } else {
                                     // ignore: avoid_print
                                     print("text box is empty");
@@ -187,7 +163,8 @@ class _MainScreenState extends State<MainScreen> {
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 5,
                                   mainAxisSpacing: 10,
-                                  children: smallTileList,
+                                  children: getTiles(
+                                      UID, engrideintsTextController.text),
                                 ),
                               )
                             : SizedBox(
@@ -195,7 +172,8 @@ class _MainScreenState extends State<MainScreen> {
                                 child: ListView(
                                   scrollDirection: Axis.horizontal,
                                   //TODO stack overflow: Overflow.clip
-                                  children: recipesScrollView,
+
+                                  children: recipeWidget,
                                 ),
                               )
                       ],
@@ -230,7 +208,7 @@ class _MainScreenState extends State<MainScreen> {
                         callback: () => {
                           Navigator.of(context).pushNamed(
                             ProfileScreen.idScreen,
-                            arguments: {'UID': '123456'},
+                            arguments: {'UID': UID},
                           ),
                           // Navigator.of(context)
                           //     .pushNamed(ProfileScreen.idScreen),
@@ -251,13 +229,13 @@ class _MainScreenState extends State<MainScreen> {
                         //     context, AddScreen.idScreen, (route) => false),
                         Navigator.of(context).pushNamed(
                           AddScreen.idScreen,
-                          arguments: {'UID': '123456'},
+                          arguments: {'UID': UID},
                         ),
                       },
                     ),
                   ),
 
-                  loading ? Loading() : SizedBox(),
+                  if (loading) Loading(),
                 ],
               ),
             ],
@@ -267,41 +245,55 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  // List<RecipeMediumView> randomRecipes(String UID) {
+  //   List<RecipeMediumView> recipeWidget = List.generate(
+  //     recipes.length,
+  //     (int i) => RecipeMediumView(recipeModel: recipes[i], UID: UID),
+  //   );
+  //   return recipeWidget;
+  // }
+
+//TODO maybe future
+  List<RecipeTile> getTiles(String UID, String query) {
+    // fetchRecipes(query);
+
+    List<RecipeTile> tiles = List.generate(
+      recipesForSearch.length,
+      (int i) => RecipeTile(
+        recipeModel: recipesForSearch[i],
+        UID: UID,
+      ),
+    );
+    return tiles;
+  }
+
 // return recipes
-  Future<List<RecipeModel>> fetchRecipes(String query) async {
+  Future<List<RecipeModel>> fetchRecipes(
+      String query, List<RecipeModel> recipes,
+      {int from = 0, bool search = false}) async {
     String queryUrl =
-        'https://api.edamam.com/search?q=$query&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+        'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
     final response = await http.get(Uri.parse(queryUrl));
 
     Loading();
-
+    recipesForSearch;
     if (response.statusCode == 200) {
+      // recipes.clear();
       Map<String, dynamic> jsonData = jsonDecode(response.body);
 
-      jsonData["hits"].forEach((hit) {
-        recipes.add((RecipeModel.fromJson(hit["recipe"])));
+      jsonData["hits"].forEach(
+        (hit) {
+          recipes.add((RecipeModel.fromJson(hit["recipe"])));
+        },
+      );
+      setState(() {
+        searchView = search;
       });
-
       return recipes;
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception('Failed to load Recipe');
     }
   }
-
-  // showFullRecipe(String recipe_id) async {
-  //   RecipeModel recipe;
-  //   var queryUrl =
-  //       'https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23$recipe_id&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-
-  //   // final response = await http.get(Uri.parse(queryUrl));
-  //   // Loading();
-  //   // if (response.statusCode == 200) {
-  //   //   recipe = RecipeModel.fromJson(jsonDecode(response.body));
-  //   //   Navigator.pushNamed(context, FullViewScreen.idScreen);
-  //   // }
-  // }
 }
 
 // ========================================================= json parsed ======================================================
@@ -432,7 +424,7 @@ class jsonResponse {
 // }
 
 }
-// /*    
+// /*
 // ===================== RESPONSE EXAMPLE =====================
 // {
 //     "q": "milk",

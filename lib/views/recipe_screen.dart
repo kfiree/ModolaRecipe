@@ -9,9 +9,10 @@ import 'package:modolar_recipe/Views/main_screen.dart';
 // import 'package:flutter/foundation.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Widgets/buttons.dart';
-import 'package:modolar_recipe/Widgets/ingredient_card.dart';
+import 'package:modolar_recipe/Widgets/ingredients.dart';
 import 'package:modolar_recipe/Widgets/rating.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FullViewScreen extends StatefulWidget {
   FullViewScreen({Key? key}) : super(key: key);
@@ -28,8 +29,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final UID = routeArgs['UID'];
-    // final URI = routeArgs['URI'];
     final model = routeArgs['Model'];
 
     return Scaffold(
@@ -43,18 +42,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
           ),
         ));
   }
-
-  // fetchRecipeAndNavigateToRecipeView(String recipe_id) async {
-  //   FullRecipe recipe;
-  //   var queryUrl =
-  //       'https://api.edamam.com/search?r=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23$recipe_id&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-
-  //   final response = await http.get(Uri.parse(queryUrl));
-  //   if (response.statusCode == 200) {
-  //     recipe = FullRecipe.fromJson(jsonDecode(response.body));
-  //     Navigator.pushNamed(context, FullViewScreen.idScreen);
-  //   }
-  // }
 }
 
 class DetailHeaderCard extends StatelessWidget {
@@ -62,6 +49,9 @@ class DetailHeaderCard extends StatelessWidget {
   final RecipeModel model;
   @override
   Widget build(BuildContext context) {
+    final routeArgs =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final UID = routeArgs['UID'];
     return Expanded(
       flex: 1,
       child: Row(
@@ -89,8 +79,10 @@ class DetailHeaderCard extends StatelessWidget {
                   color: HexColor('##785ac7'),
                   icon: Icons.keyboard_arrow_left,
                   callback: () => {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, MainScreen.idScreen, (route) => false)
+                    Navigator.of(context).pushNamed(
+                      MainScreen.idScreen,
+                      arguments: {'UID': UID},
+                    ),
                   },
                 ),
               ],
@@ -127,6 +119,19 @@ class DetailInfoCard extends StatelessWidget {
   final RecipeModel model;
   @override
   Widget build(BuildContext context) {
+    List<IngredientCard> ingredientsList = List.generate(
+      model.ingredients.length,
+      (int i) => IngredientCard(
+        name: model.ingredients[i].food,
+        quantity: model.ingredients[i].quantity.toString(),
+        unit: model.ingredients[i].unit,
+      ),
+    );
+    //     IngredientCard(
+    //   name: 'All Purpose Flour',
+    //   quantity: '2',
+    //   unit: 'cups',
+    // ),
     return Expanded(
       flex: 2,
       child: Container(
@@ -183,49 +188,54 @@ class DetailInfoCard extends StatelessWidget {
               height: 10,
             ),
             Column(
-              children: <Widget>[
-                IngredientCard(
-                  name: 'All Purpose Flour',
-                  quantity: '2',
-                  unit: 'cups',
-                ),
-                IngredientCard(
-                  name: 'Milk',
-                  quantity: '2',
-                  unit: 'cups',
-                ),
-                IngredientCard(
-                  name: 'Eggs',
-                  quantity: '2',
-                  unit: 'cups',
-                ),
-                IngredientCard(
-                  name: 'Blueberries',
-                  quantity: '2',
-                  unit: 'cups',
-                ),
-              ],
+              children: ingredientsList,
+              // IngredientCard(
+              //   name: 'All Purpose Flour',
+              //   quantity: '2',
+              //   unit: 'cups',
+              // ),
+              // IngredientCard(
+              //   name: 'Milk',
+              //   quantity: '2',
+              //   unit: 'cups',
+              // ),
+              // IngredientCard(
+              //   name: 'Eggs',
+              //   quantity: '2',
+              //   unit: 'cups',
+              // ),
+              // IngredientCard(
+              //   name: 'Blueberries',
+              //   quantity: '2',
+              //   unit: 'cups',
+              // ),
             ),
             SizedBox(
               height: 20,
             ),
-            Text('Steps',
-                style: TextStyle(
-                  color: Color(0xff909090),
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Quicksand",
-                )),
+            // Text('Steps',
+            //     style: TextStyle(
+            //       color: Color(0xff909090),
+            //       fontWeight: FontWeight.w700,
+            //       fontFamily: "Quicksand",
+            //     )),
             Column(
-              children: const <Widget>[
-                StepEntry(
-                  text: 'Preheat the oven to 450 degrees',
-                  initialStep: true,
+                // children: const <Widget>[
+                //   StepEntry(
+                //     text: 'Preheat the oven to 450 degrees',
+                //     initialStep: true,
+                //   ),
+                //   StepEntry(
+                //       text:
+                //           'Add the basil leaves (but keep some for the presentation) and blend to a green paste.'),
+                //   StepEntry(text: 'Preheat the oven to 450 degrees'),
+                // ],
                 ),
-                StepEntry(
-                    text:
-                        'Add the basil leaves (but keep some for the presentation) and blend to a green paste.'),
-                StepEntry(text: 'Preheat the oven to 450 degrees'),
-              ],
+            ElevatedButton(
+              onPressed: () {
+                _launchURL(model.url);
+              },
+              child: const Text('go to recipe website'),
             ),
             SizedBox(
               height: 50,
@@ -234,5 +244,13 @@ class DetailInfoCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+_launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
   }
 }

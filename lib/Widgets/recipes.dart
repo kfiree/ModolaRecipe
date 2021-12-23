@@ -72,29 +72,25 @@ class StepEntry extends StatelessWidget {
 
 class RecipeMediumView extends StatelessWidget {
   RecipeMediumView({
-    required this.recipeImageURL,
-    required this.name,
-    required this.cookTime,
-    required this.energy,
+    required this.recipeModel,
+    required this.UID,
   });
 
-  final String recipeImageURL;
-  final String name;
-  final int cookTime;
-  final int energy;
-  // final double size;
+  final RecipeModel recipeModel;
+  final String UID;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        GestureDetector(
-          onTap: () => {
-            Navigator.of(context).pushNamed(FullViewScreen.idScreen)
-            // Navigator.pushNamedAndRemoveUntil(
-            //     context, ShowScreen.idScreen, (route) => false)
-          },
-          child: Stack(
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          FullViewScreen.idScreen,
+          arguments: {'UID': UID, 'Model': recipeModel},
+        );
+      },
+      child: Row(
+        children: <Widget>[
+          Stack(
             alignment: Alignment.bottomRight,
             children: <Widget>[
               Container(
@@ -122,7 +118,7 @@ class RecipeMediumView extends StatelessWidget {
                 left: 0.0,
                 child: CircleNetworkImage(
                   radius: 175,
-                  imageURL: recipeImageURL,
+                  imageURL: recipeModel.image,
                 ),
               ),
               Positioned(
@@ -132,13 +128,14 @@ class RecipeMediumView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      name,
+                      recipeModel.label,
                       style: kMainTextStyle,
                     ),
-                    Text(
-                      "$cookTime min",
-                      style: kSubHeaderTextStyle,
-                    ),
+                    if (recipeModel.cookingTime > 0)
+                      Text(
+                        "${recipeModel.cookingTime} min",
+                        style: kSubHeaderTextStyle,
+                      ),
                   ],
                 ),
               ),
@@ -148,7 +145,7 @@ class RecipeMediumView extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      "$energy",
+                      recipeModel.calories.toInt().toString(),
                       style: kSmallTextStyle,
                     ),
                     SizedBox(width: 5.0),
@@ -161,11 +158,11 @@ class RecipeMediumView extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        SizedBox(
-          width: 30,
-        ),
-      ],
+          SizedBox(
+            width: 30,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -173,24 +170,19 @@ class RecipeMediumView extends StatelessWidget {
 class RecipeTile extends StatelessWidget {
   const RecipeTile({
     Key? key,
-    required this.title,
-    required this.desc,
-    required this.imgUrl,
-    required this.url,
-    required this.uri,
     required this.recipeModel,
-    // Null Function()? onTap,
+    required this.UID,
   }) : super(key: key);
 
-  final String title, desc, imgUrl, url, uri;
   final RecipeModel recipeModel;
+  final String UID;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
           FullViewScreen.idScreen,
-          arguments: {'UID': '123456', 'URI': uri, 'Model': recipeModel},
+          arguments: {'UID': UID, 'Model': recipeModel},
         );
       },
       child: Stack(
@@ -198,7 +190,7 @@ class RecipeTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(30.0),
             child: Image.network(
-              imgUrl,
+              recipeModel.image,
               height: 200,
               width: 200,
               fit: BoxFit.cover,
@@ -223,14 +215,14 @@ class RecipeTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      title,
+                      recipeModel.label,
                       style: TextStyle(
                           fontSize: 13,
                           color: Colors.black54,
                           fontFamily: 'Overpass'),
                     ),
                     Text(
-                      desc,
+                      recipeModel.source,
                       style: TextStyle(
                         fontSize: 10,
                         color: Colors.black54,
@@ -249,15 +241,10 @@ class RecipeTile extends StatelessWidget {
 }
 
 class FullRecipe {
-  final String label;
-  final String image;
-  final String source;
-  final String url;
-  final String uri;
+  final String label, image, source, url, uri, cuisineType;
   final double calories;
-  final double cookingTime;
+  final int cookingTime;
   final List<Map<String, dynamic>> ingredients;
-  final String cuisineType;
   final List<String> cautions;
 
   FullRecipe(
@@ -295,7 +282,8 @@ class RecipeModel {
       healthLabels,
       cuisineType,
       cautions;
-  final double calories, cookingTime, yield, totalWeight;
+  final int cookingTime;
+  final double calories, yield, totalWeight;
   final List<IngredientModel> ingredients;
 
   RecipeModel({
@@ -331,10 +319,11 @@ class RecipeModel {
         cautions = json['cautions'].cast<String>() ?? [],
         calories = json['calories'] ?? '',
         totalWeight = json['totalWeight'] ?? '',
-        cookingTime = json['totalTime'] ?? '',
         cuisineType = json['cuisineType'].cast<String>() ?? '',
         mealType = json['mealType'].cast<String>() ?? '',
+        cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0,
         dishType = json['dishType'].cast<String>() ?? '';
+
     List<IngredientModel> ingredients = [];
     json['ingredients'].forEach((ingredient) =>
         {ingredients.add(IngredientModel.fromJson(ingredient))});

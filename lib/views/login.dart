@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Text(
-            "Remember me",
+            "Remember me 🥺",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
         ],
