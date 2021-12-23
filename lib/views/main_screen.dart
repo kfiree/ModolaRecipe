@@ -39,8 +39,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // List<Widget> smallTileList = [];
-
     //build recipe card for scroll view
     List<Widget> recipesScrollView = [
       RecipeMediumView(
