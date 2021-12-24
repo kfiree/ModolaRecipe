@@ -122,7 +122,7 @@ class DetailInfoCard extends StatelessWidget {
     List<IngredientCard> ingredientsList = List.generate(
       model.ingredients.length,
       (int i) => IngredientCard(
-        name: model.ingredients[i].food,
+        name: model.ingredients[i].name,
         quantity: model.ingredients[i].quantity.toString(),
         unit: model.ingredients[i].unit,
       ),
@@ -233,7 +233,7 @@ class DetailInfoCard extends StatelessWidget {
                 ),
             ElevatedButton(
               onPressed: () {
-                _launchURL(model.url);
+                _launchURL(model.recipeURL);
               },
               child: const Text('go to recipe website'),
             ),

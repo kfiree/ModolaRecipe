@@ -101,37 +101,34 @@ class _IngredientCardState extends State<IngredientCard> {
         },
  */
 class IngredientModel {
-  final String text;
+  final String text, unit, category, image, id, name;
   final double quantity;
-  final String unit;
-  final String foodCategory;
-  final String image;
-  final String foodId;
-  final String food;
 
   IngredientModel({
     required this.text,
     required this.quantity,
     required this.unit,
-    required this.food,
-    required this.foodCategory,
+    required this.name,
+    required this.category,
     required this.image,
-    required this.foodId,
+    required this.id,
   });
 
   factory IngredientModel.fromJson(Map<String, dynamic> json) {
-    var food = json['food'] ?? 'food',
-        foodCategory = json['foodCategory'] ?? '',
-        foodId = json['foodId'] ?? 'foodId',
-        image = json['image'] ?? '',
-        quantity = json['quantity'] ?? 0,
-        text = json['text'] ?? '',
-        unit = json['measure'] ?? '';
+    String name = json['food'] ?? 'No Name',
+        category = json['foodCategory'] ?? 'No category',
+        id = json['foodId'] ?? 'No Id',
+        image = json['image'] ?? 'No Image',
+        text = json['text'] ?? 'No text',
+        unit = (json['measure'] == null || json['measure'] == '<unit>')
+            ? ''
+            : json['measure'];
+    double quantity = json['quantity'] ?? 0;
 
     return IngredientModel(
-      food: food,
-      foodCategory: foodCategory,
-      foodId: foodId,
+      name: name,
+      category: category,
+      id: id,
       image: image,
       quantity: quantity,
       text: text,
@@ -144,10 +141,10 @@ class IngredientModel {
     data['text'] = text;
     data['quantity'] = quantity;
     data['measure'] = unit;
-    data['food'] = food;
-    data['foodCategory'] = foodCategory;
+    data['food'] = name;
+    data['foodCategory'] = category;
     data['image'] = image;
-    data['food'] = food;
+    data['food'] = name;
     return data;
   }
 
@@ -155,11 +152,12 @@ class IngredientModel {
   String toString() {
     String data = '''
     text: $text
+    name: $name
     quantity: $quantity
     unit: $unit
-    foodCategory: $foodCategory
+    foodCategory: $category
     image: $image
-    foodId: $foodId
+    foodId: $id
     ''';
     return '{\n$data}';
   }

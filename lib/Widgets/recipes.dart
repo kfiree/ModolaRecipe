@@ -7,71 +7,71 @@ import 'package:modolar_recipe/Styles/constants.dart';
 import 'package:modolar_recipe/views/recipe_screen.dart';
 import 'package:flutter/foundation.dart';
 
-class StepEntry extends StatelessWidget {
-  final String text;
-  final bool initialStep;
+// class StepEntry extends StatelessWidget {
+//   final String text;
+//   final bool initialStep;
 
-  const StepEntry({Key? key, required this.text, this.initialStep = false})
-      : super(key: key);
+//   const StepEntry({Key? key, required this.text, this.initialStep = false})
+//       : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        right: 25,
-        left: 10.0,
-        top: 0.0,
-      ),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  width: 5.0,
-                  height: initialStep ? 0 : 40,
-                  decoration: BoxDecoration(
-                    color: HexColor('#998fb3'),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 69,
-                child: SizedBox(
-                  height: 10.0,
-                ),
-              )
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                height: 5.0,
-                width: 5.0,
-                decoration: BoxDecoration(
-                  color: HexColor('#998fb3'),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              SizedBox(
-                width: 40.0,
-              ),
-              Flexible(
-                child: Text(text),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: EdgeInsets.only(
+//         right: 25,
+//         left: 10.0,
+//         top: 0.0,
+//       ),
+//       child: Column(
+//         children: <Widget>[
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: <Widget>[
+//               Expanded(
+//                 flex: 1,
+//                 child: Container(
+//                   width: 5.0,
+//                   height: initialStep ? 0 : 40,
+//                   decoration: BoxDecoration(
+//                     color: HexColor('#998fb3'),
+//                     borderRadius: BorderRadius.circular(10.0),
+//                   ),
+//                 ),
+//               ),
+//               Expanded(
+//                 flex: 69,
+//                 child: SizedBox(
+//                   height: 10.0,
+//                 ),
+//               )
+//             ],
+//           ),
+//           Row(
+//             children: <Widget>[
+//               Container(
+//                 height: 5.0,
+//                 width: 5.0,
+//                 decoration: BoxDecoration(
+//                   color: HexColor('#998fb3'),
+//                   shape: BoxShape.circle,
+//                 ),
+//               ),
+//               SizedBox(
+//                 width: 40.0,
+//               ),
+//               Flexible(
+//                 child: Text(text),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class RecipeMediumView extends StatelessWidget {
-  RecipeMediumView({
+  const RecipeMediumView({
     required this.recipeModel,
     required this.UID,
   });
@@ -240,50 +240,50 @@ class RecipeTile extends StatelessWidget {
   }
 }
 
-class FullRecipe {
-  final String label, image, source, url, uri, cuisineType;
-  final double calories;
-  final int cookingTime;
-  final List<Map<String, dynamic>> ingredients;
-  final List<String> cautions;
+// class FullRecipe {
+//   final String label, image, source, url, uri, cuisineType;
+//   final double calories;
+//   final int cookingTime;
+//   final List<Map<String, dynamic>> ingredients;
+//   final List<String> cautions;
 
-  FullRecipe(
-      {required this.label,
-      required this.image,
-      required this.source,
-      required this.url,
-      required this.uri,
-      required this.calories,
-      required this.cookingTime,
-      required this.ingredients,
-      required this.cuisineType,
-      required this.cautions});
+//   FullRecipe(
+//       {required this.label,
+//       required this.image,
+//       required this.source,
+//       required this.url,
+//       required this.uri,
+//       required this.calories,
+//       required this.cookingTime,
+//       required this.ingredients,
+//       required this.cuisineType,
+//       required this.cautions});
 
-  factory FullRecipe.fromJson(Map<String, dynamic> json) {
-    return FullRecipe(
-        label: json['label'],
-        image: json['image'],
-        source: json['source'],
-        url: json['url'],
-        uri: json['uri'],
-        calories: json['calories'],
-        cookingTime: json['cookingTime'],
-        ingredients: json['ingredients'],
-        cuisineType: json['cuisineType'],
-        cautions: json['cautions']);
-  }
-}
+//   factory FullRecipe.fromJson(Map<String, dynamic> json) {
+//     return FullRecipe(
+//         label: json['label'],
+//         image: json['image'],
+//         source: json['source'],
+//         url: json['url'],
+//         uri: json['uri'],
+//         calories: json['calories'],
+//         cookingTime: json['cookingTime'],
+//         ingredients: json['ingredients'],
+//         cuisineType: json['cuisineType'],
+//         cautions: json['cautions']);
+//   }
+// }
 
 class RecipeModel {
-  final String label, image, source, url, uri, shareAs;
-  final List<String> mealType,
+  final String label, image, source, apiURL, uri, recipeURL;
+  final List<dynamic> mealType,
       dishType,
       dietLabels,
       healthLabels,
       cuisineType,
       cautions;
   final int cookingTime;
-  final double calories, yield, totalWeight;
+  final double calories;
   final List<IngredientModel> ingredients;
 
   RecipeModel({
@@ -291,15 +291,13 @@ class RecipeModel {
     required this.label,
     required this.image,
     required this.source,
-    required this.url,
-    required this.shareAs,
-    required this.yield,
+    required this.apiURL,
+    required this.recipeURL,
     required this.dietLabels,
     required this.healthLabels,
     required this.cautions,
     required this.ingredients,
     required this.calories,
-    required this.totalWeight,
     required this.cookingTime,
     required this.cuisineType,
     required this.mealType,
@@ -307,22 +305,26 @@ class RecipeModel {
   });
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    var uri = json['uri'] ?? '',
-        label = json['label'] ?? '',
-        image = json['image'] ?? '',
-        source = json['source'] ?? '',
-        url = json['url'] ?? '',
-        shareAs = json['shareAs'] ?? '',
-        yield = json['yield'] ?? '',
-        dietLabels = json['dietLabels'].cast<String>() ?? [],
-        healthLabels = json['healthLabels'].cast<String>() ?? [],
-        cautions = json['cautions'].cast<String>() ?? [],
-        calories = json['calories'] ?? '',
-        totalWeight = json['totalWeight'] ?? '',
-        cuisineType = json['cuisineType'].cast<String>() ?? '',
-        mealType = json['mealType'].cast<String>() ?? '',
-        cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0,
-        dishType = json['dishType'].cast<String>() ?? '';
+    String label = json['label'] ?? 'No Label',
+        image = json['image'] ?? 'No Image',
+        source = json['source'] ?? 'No Source',
+        apiURL = json['url'] ?? 'No Api-url',
+        uri = json['uri'] ?? 'No uri',
+        recipeURL = json['shareAs'] ?? 'No Share-url';
+    double calories = json['calories'] ?? 0.0;
+    List<dynamic> mealType =
+            json['mealType'] != null ? json['mealType'].cast<String>() : [],
+        dishType =
+            json['dishType'] != null ? json['mealType'].cast<String>() : [],
+        dietLabels =
+            json['dietLabels'] != null ? json['mealType'].cast<String>() : [],
+        healthLabels =
+            json['healthLabels'] != null ? json['mealType'].cast<String>() : [],
+        cuisineType =
+            json['cuisineType'] != null ? json['mealType'].cast<String>() : [],
+        cautions =
+            json['cautions'] != null ? json['mealType'].cast<String>() : [];
+    int cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0;
 
     List<IngredientModel> ingredients = [];
     json['ingredients'].forEach((ingredient) =>
@@ -333,14 +335,12 @@ class RecipeModel {
       label: label,
       image: image,
       source: source,
-      url: url,
-      shareAs: shareAs,
-      yield: yield,
+      apiURL: apiURL,
+      recipeURL: recipeURL,
       dietLabels: dietLabels,
       healthLabels: healthLabels,
       cautions: cautions,
       calories: calories,
-      totalWeight: totalWeight,
       cookingTime: cookingTime,
       cuisineType: cuisineType,
       mealType: mealType,
@@ -355,15 +355,13 @@ class RecipeModel {
     data['label'] = label;
     data['image'] = image;
     data['source'] = source;
-    data['url'] = url;
-    data['shareAs'] = shareAs;
-    data['yield'] = yield;
+    data['url'] = apiURL;
+    data['shareAs'] = recipeURL;
     data['dietLabels'] = dietLabels;
     data['healthLabels'] = healthLabels;
     data['cautions'] = cautions;
     data['ingredients'] = ingredients.map((v) => v.toJson()).toList();
     data['calories'] = calories;
-    data['totalWeight'] = totalWeight;
     data['totalTime'] = cookingTime;
     data['cuisineType'] = cuisineType;
     data['mealType'] = mealType;
@@ -387,7 +385,7 @@ class RecipeModel {
     ingredients: $ingredients,
     cuisineType: $cuisineType,
     cautions: $cautions,
-    url: $url,
+    apiURL: $apiURL,
     label: $label,
     source: $source,
     image: $image,
