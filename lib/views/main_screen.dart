@@ -25,18 +25,18 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  bool loading = false, searchView = false;
+  bool loading = true, searchView = false;
 
-  //recipe list
-  List<RecipeModel> recipesForSearch = [];
+  List<RecipeTile> recipesTiles = [];
   List<RecipeModel> recipesForFirstView = [];
 
   //text controllers
-  TextEditingController engrideintsTextController = TextEditingController(),
+  TextEditingController txtController = TextEditingController(),
       recipesTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    // get vatiables from prev widget
     if (ModalRoute.of(context)?.settings.arguments == null) {
       Navigator.pushNamedAndRemoveUntil(
           context, LoginScreen.idScreen, (route) => false);
@@ -44,18 +44,20 @@ class _MainScreenState extends State<MainScreen> {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final UID = routeArgs['UID'];
-    var rnd = Random();
+    List<RecipeMediumView> recipeWidget = [];
 
     //generate random recipes
-    if (!searchView) {
-      fetchRecipes('lunch', recipesForFirstView, from: rnd.nextInt(100));
+    if (!searchView && recipeWidget.isEmpty) {
+      print('fetching recipes');
+      var rnd = Random(); // if (!searchView) {
+      fetchRecipes('lunch', recipesForFirstView,
+          from: rnd.nextInt(100), search: false);
+      recipeWidget = List.generate(
+        recipesForFirstView.length,
+        (int i) =>
+            RecipeMediumView(recipeModel: recipesForFirstView[i], UID: UID),
+      );
     }
-    List<RecipeMediumView> recipeWidget = List.generate(
-      recipesForFirstView.length,
-      (int i) =>
-          RecipeMediumView(recipeModel: recipesForFirstView[i], UID: UID),
-    );
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -76,6 +78,15 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
 
+          // loading
+          if (loading)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Loading(),
+              ),
+            ),
+
           // screen content
           Stack(
             children: <Widget>[
@@ -86,34 +97,8 @@ class _MainScreenState extends State<MainScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SizedBox(
-                          height: 50,
-                        ),
-                        // headers
-                        RecipeHeader(
-                            color1: Colors.black,
-                            color2: Colors.white,
-                            size: 30),
-                        if (!searchView)
-                          Column(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 30,
-                              ),
-                              SubHeader(
-                                  text:
-                                      "What will you cock today? ${searchView.toString()}",
-                                  size: 20),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              SubHeader(
-                                text:
-                                    "Search recipe by typeing in a name of a dish \nor simply just write what ingredients you want to use.",
-                                size: 13,
-                              ),
-                            ],
-                          ),
+                        //headers
+                        MainHeaders(searchView: searchView),
 
                         // inputs text boxes
                         SizedBox(
@@ -122,7 +107,7 @@ class _MainScreenState extends State<MainScreen> {
                             children: <Widget>[
                               Expanded(
                                 child: TextField(
-                                  controller: engrideintsTextController,
+                                  controller: txtController,
                                   decoration: InputDecoration(
                                       hintText: "Enter Ingrideints",
                                       hintStyle: TextStyle(
@@ -136,12 +121,33 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               InkWell(
                                 onTap: () async {
-                                  if (engrideintsTextController
-                                      .text.isNotEmpty) {
-                                    fetchRecipes(engrideintsTextController.text,
-                                        recipesForSearch,
-                                        search: true);
-                                    setState(() => searchView = true);
+                                  if (txtController.text.isNotEmpty) {
+                                    setState(() =>
+                                        {loading = true, searchView = true});
+
+                                    String queryUrl =
+                                        'https://api.edamam.com/search?q=${txtController.text}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+                                    final response =
+                                        await http.get(Uri.parse(queryUrl));
+
+                                    List<RecipeTile> tiles = [];
+                                    if (response.statusCode == 200) {
+                                      Map<String, dynamic> jsonData =
+                                          jsonDecode(response.body);
+
+                                      for (int i = 0;
+                                          i < jsonData["hits"].length;
+                                          i++) {
+                                        RecipeTile tile = RecipeTile(
+                                            recipeModel: RecipeModel.fromJson(
+                                                jsonData['hits'][i]['recipe']),
+                                            UID: UID);
+                                        tiles.add(tile);
+                                        print('tile number $i is added!');
+                                      }
+                                      recipesTiles = tiles;
+                                      setState(() => loading = false);
+                                    }
                                   } else {
                                     // ignore: avoid_print
                                     print("text box is empty");
@@ -153,18 +159,18 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                         ),
 
-                        // favorte recipes
                         SizedBox(
                           height: 30,
                         ),
+
+                        // recipes
                         searchView
                             ? Expanded(
                                 child: GridView.count(
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 5,
                                   mainAxisSpacing: 10,
-                                  children: getTiles(
-                                      UID, engrideintsTextController.text),
+                                  children: recipesTiles,
                                 ),
                               )
                             : SizedBox(
@@ -234,8 +240,6 @@ class _MainScreenState extends State<MainScreen> {
                       },
                     ),
                   ),
-
-                  if (loading) Loading(),
                 ],
               ),
             ],
@@ -245,38 +249,33 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // List<RecipeMediumView> randomRecipes(String UID) {
-  //   List<RecipeMediumView> recipeWidget = List.generate(
-  //     recipes.length,
-  //     (int i) => RecipeMediumView(recipeModel: recipes[i], UID: UID),
-  //   );
-  //   return recipeWidget;
-  // }
+  List<RecipeTile> getTiles(String query, var response, String UID) {
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<RecipeTile> tiles = [];
 
-//TODO maybe future
-  List<RecipeTile> getTiles(String UID, String query) {
-    // fetchRecipes(query);
+      print(jsonData["hits"].toString());
 
-    List<RecipeTile> tiles = List.generate(
-      recipesForSearch.length,
-      (int i) => RecipeTile(
-        recipeModel: recipesForSearch[i],
-        UID: UID,
-      ),
-    );
-    return tiles;
+      for (int i = 0; i < 10; i++) {
+        print('tile number $i is added!');
+        tiles.add(RecipeTile(recipeModel: jsonData["hits"][i], UID: UID));
+      }
+
+      return tiles;
+    } else {
+      throw Exception('Failed to load Recipe ${response.statusCode}');
+    }
   }
 
-// return recipes
+  // return recipes
   Future<List<RecipeModel>> fetchRecipes(
       String query, List<RecipeModel> recipes,
-      {int from = 0, bool search = false}) async {
+      {int from = 0, required bool search}) async {
+    // setState(() => loading = true);
     String queryUrl =
         'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
     final response = await http.get(Uri.parse(queryUrl));
 
-    Loading();
-    recipesForSearch;
     if (response.statusCode == 200) {
       // recipes.clear();
       Map<String, dynamic> jsonData = jsonDecode(response.body);
@@ -286,143 +285,95 @@ class _MainScreenState extends State<MainScreen> {
           recipes.add((RecipeModel.fromJson(hit["recipe"])));
         },
       );
-      setState(() {
-        searchView = search;
-      });
+      // setState(() {
+      //   searchView = search;
+      // });
+      // setState(() => {loading = false, searchView = search});
+      setState(() => {loading = false});
       return recipes;
     } else {
-      throw Exception('Failed to load Recipe');
+      // setState(() => loading = false);
+      throw Exception(
+          'Failed to load Recipe. response statusCode = ${response.statusCode}');
     }
+  }
+
+  // List<RecipeTile> getTiles(String UID, String query) {
+  //   // fetchRecipes(query);
+  //   List<RecipeTile> tiles = List.generate(
+  //     recipesForSearch.length,
+  //     (int i) => RecipeTile(
+  //       recipeModel: recipesForSearch[i],
+  //       UID: UID,
+  //     ),
+  //   );
+  //   // setState(() {
+  //   //   loading = false;
+  //   // });
+  //   return tiles;
+  // }
+}
+
+class LogOut extends StatelessWidget {
+  const LogOut({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
-// ========================================================= json parsed ======================================================
-class jsonResponse {
-// class Recipe {
-//   String uri;
-//   String label;
-//   String image;
-//   String source;
-//   String url;
-//   String shareAs;
-//   double yield;
-//   List<String> dietLabels;
-//   List<String> healthLabels;
-//   List<String> cautions;
-//   List<Ingredients> ingredients;
-//   double calories;
-//   double totalWeight;
-//   int totalTime;
-//   List<String> cuisineType;
-//   List<String> mealType;
-//   List<String> dishType;
+class Profile extends StatelessWidget {
+  const Profile({Key? key}) : super(key: key);
 
-//   Recipe({
-//     required this.uri,
-//     required this.label,
-//     required this.image,
-//     required this.source,
-//     required this.url,
-//     required this.shareAs,
-//     required this.yield,
-//     required this.dietLabels,
-//     required this.healthLabels,
-//     required this.cautions,
-//     required this.ingredients,
-//     required this.calories,
-//     required this.totalWeight,
-//     required this.totalTime,
-//     required this.cuisineType,
-//     required this.mealType,
-//     required this.dishType,
-//   });
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
 
-//   factory Recipe.fromJson(Map<String, dynamic> json) {
-//     return Recipe(
-//       uri: json['uri'],
-//       label: json['label'],
-//       image: json['image'],
-//       source: json['source'],
-//       url: json['url'],
-//       shareAs: json['shareAs'],
-//       yield: json['yield'],
-//       dietLabels: json['dietLabels'].cast<String>(),
-//       healthLabels: json['healthLabels'].cast<String>(),
-//       cautions: json['cautions'].cast<String>(),
-//       calories: json['calories'],
-//       totalWeight: json['totalWeight'],
-//       totalTime: json['totalTime'],
-//       cuisineType: json['cuisineType'].cast<String>(),
-//       mealType: json['mealType'].cast<String>(),
-//       dishType: json['dishType'].cast<String>(),
-//       ingredients: [],
-//     );
-//   }
+class NewRecipe extends StatelessWidget {
+  const NewRecipe({Key? key}) : super(key: key);
 
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = new Map<String, dynamic>();
-//     data['uri'] = uri;
-//     data['label'] = label;
-//     data['image'] = image;
-//     data['source'] = source;
-//     data['url'] = url;
-//     data['shareAs'] = shareAs;
-//     data['yield'] = yield;
-//     data['dietLabels'] = dietLabels;
-//     data['healthLabels'] = healthLabels;
-//     data['cautions'] = cautions;
-//     data['ingredients'] = ingredients.map((v) => v.toJson()).toList();
-//     data['calories'] = calories;
-//     data['totalWeight'] = totalWeight;
-//     data['totalTime'] = totalTime;
-//     data['cuisineType'] = cuisineType;
-//     data['mealType'] = mealType;
-//     data['dishType'] = dishType;
-//     return data;
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
 
-// class Ingredients {
-//   String text;
-//   double quantity;
-//   String measure;
-//   String food;
-//   String foodCategory;
-//   // String foodId; ??
-//   String image;
-
-//   Ingredients(
-//       {required this.text,
-//       required this.quantity,
-//       required this.measure,
-//       required this.food,
-//       required this.foodCategory,
-//       required this.image});
-
-//   factory Ingredients.fromJson(Map<String, dynamic> json) {
-//     return Ingredients(
-//       text: json['text'],
-//       quantity: json['quantity'],
-//       measure: json['measure'],
-//       food: json['food'],
-//       foodCategory: json['foodCategory'],
-//       // foodId : json['foodId'],
-//       image: json['image'],
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final Map<String, dynamic> data = {};
-//     data['text'] = text;
-//     data['quantity'] = quantity;
-//     data['measure'] = measure;
-//     data['food'] = food;
-//     data['foodCategory'] = foodCategory;
-//     data['image'] = image;
-//     return data;
-//   }
-// }
-
+class MainHeaders extends StatelessWidget {
+  const MainHeaders({Key? key, required this.searchView}) : super(key: key);
+  final bool searchView;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          height: 50,
+        ),
+        // headers
+        RecipeHeader(color1: Colors.black, color2: Colors.white, size: 30),
+        if (!searchView)
+          Column(
+            children: const <Widget>[
+              SizedBox(
+                height: 30,
+              ),
+              SubHeader(text: "Are you hungry??", size: 20),
+              SizedBox(
+                height: 8,
+              ),
+              SubHeader(
+                text:
+                    "Search recipe by typeing in a name of a dish \nor simply just write what ingredients you want to use.",
+                size: 13,
+              ),
+            ],
+          ),
+      ],
+    );
+  }
 }
 // /*
 // ===================== RESPONSE EXAMPLE =====================

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/main.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
@@ -441,9 +440,6 @@ class _SignupScreenState extends State<SignupScreen> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Loading();
-          // return ProgressDialog(
-          //   "Registering, please wait...",
-          // );
         });
     final User? firebaseUser = (await _firebaseAuth
             .createUserWithEmailAndPassword(
