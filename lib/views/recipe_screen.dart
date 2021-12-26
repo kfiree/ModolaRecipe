@@ -153,7 +153,7 @@ class DetailInfoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  model.label,
+                  model.name,
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
@@ -233,7 +233,7 @@ class DetailInfoCard extends StatelessWidget {
                 ),
             ElevatedButton(
               onPressed: () {
-                _launchURL(model.recipeURL);
+                _launchURL(model.url);
               },
               child: const Text('go to recipe website'),
             ),
