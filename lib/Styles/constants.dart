@@ -26,6 +26,12 @@ const kIngredientsNameStyle = TextStyle(
   fontWeight: FontWeight.w700,
   color: Colors.black,
 );
+const deletedStyle = TextStyle(
+  fontFamily: "Quicksand",
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+  decoration: TextDecoration.lineThrough,
+);
 
 const kSecondaryTextStyle = TextStyle(
   fontFamily: "Quicksand",

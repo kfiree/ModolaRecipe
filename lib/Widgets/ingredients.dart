@@ -1,69 +1,59 @@
-// ignore_for_file: file_names
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class IngredientCard extends StatefulWidget {
-  IngredientCard(
-      {required this.name, required this.quantity, required this.unit});
+import 'package:modolar_recipe/Styles/constants.dart';
 
+class IngredientCard extends StatefulWidget {
+  IngredientCard({
+    required this.name,
+    required this.quantity,
+    required this.unit,
+    required this.edit,
+    this.removed = false,
+  });
   final String name;
   final String quantity;
   final String unit;
-
+  final bool edit;
+  bool removed;
   @override
-  State<IngredientCard> createState() => _IngredientCardState();
+  _IngredientCardState createState() => _IngredientCardState();
 }
 
 class _IngredientCardState extends State<IngredientCard> {
-  // TODO import list
-  // List<String> subs = ['sub1', 'sub2', 'sub3', 'sub4', 'sub5'];
-
   @override
   Widget build(BuildContext context) {
-    String dropdownValue = widget.name;
-    List<String> subs = [widget.name, 'sub2', 'sub3', 'sub4', 'sub5'];
-    // String dropdownValue = 'All Porpuse Flour';
-    // subs[0] = widget.name;
     return Padding(
       padding: const EdgeInsets.only(
-        bottom: 10,
+        bottom: 20,
         left: 10,
       ),
       child: Row(
         children: <Widget>[
-          DropdownButton<String>(
-            value: dropdownValue,
-            icon: const Icon(Icons.arrow_drop_down),
-            elevation: 16,
-            style: const TextStyle(
-              fontFamily: "Quicksand",
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
+          if (widget.edit)
+            IconButton(
+              icon: widget.removed
+                  ? const Icon(Icons.add)
+                  : const Icon(Icons.cancel),
+              tooltip: 'delete ingredient',
+              onPressed: () {
+                setState(() {
+                  widget.removed = true;
+                });
+              },
             ),
-            onChanged: (String? newValue) {
-              setState(() {
-                dropdownValue = newValue!;
-              });
-            },
-            items: //<String>['All Porpuse Flour', 'Two', 'three', 'Four']
-                subs.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+          Expanded(
+            flex: 5,
+            child: Text(
+              widget.name,
+              style: widget.removed ? deletedStyle : kIngredientsNameStyle,
+            ),
           ),
-          // DropDownList(),
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
                 widget.quantity,
-                style: TextStyle(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFBFBFBF),
-                ),
+                style: widget.removed ? deletedStyle : kSecondaryTextStyle,
               ),
             ),
           ),
@@ -72,11 +62,7 @@ class _IngredientCardState extends State<IngredientCard> {
               alignment: Alignment.centerRight,
               child: Text(
                 widget.unit,
-                style: TextStyle(
-                  fontFamily: "Quicksand",
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFBFBFBF),
-                ),
+                style: widget.removed ? deletedStyle : kSecondaryTextStyle,
               ),
             ),
           ),
@@ -84,6 +70,72 @@ class _IngredientCardState extends State<IngredientCard> {
       ),
     );
   }
+  // @override
+  // Widget build(BuildContext context) {
+  //   String dropdownValue = widget.name;
+  //   List<String> subs = [widget.name, 'sub2', 'sub3', 'sub4', 'sub5'];
+  //   // String dropdownValue = 'All Porpuse Flour';
+  //   // subs[0] = widget.name;
+  //   return Padding(
+  //     padding: const EdgeInsets.only(
+  //       bottom: 10,
+  //       left: 10,
+  //     ),
+  //     child: Row(
+  //       children: <Widget>[
+  //         DropdownButton<String>(
+  //           value: dropdownValue,
+  //           icon: const Icon(Icons.arrow_drop_down),
+  //           elevation: 16,
+  //           style: const TextStyle(
+  //             fontFamily: "Quicksand",
+  //             fontWeight: FontWeight.w700,
+  //             color: Colors.black,
+  //           ),
+  //           onChanged: (String? newValue) {
+  //             setState(() {
+  //               dropdownValue = newValue!;
+  //             });
+  //           },
+  //           items: //<String>['All Porpuse Flour', 'Two', 'three', 'Four']
+  //               subs.map<DropdownMenuItem<String>>((String value) {
+  //             return DropdownMenuItem<String>(
+  //               value: value,
+  //               child: Text(value),
+  //             );
+  //           }).toList(),
+  //         ),
+  //         // DropDownList(),
+  //         Expanded(
+  //           child: Align(
+  //             alignment: Alignment.centerRight,
+  //             child: Text(
+  //               widget.quantity,
+  //               style: TextStyle(
+  //                 fontFamily: "Quicksand",
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Color(0xFFBFBFBF),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: Align(
+  //             alignment: Alignment.centerRight,
+  //             child: Text(
+  //               widget.unit,
+  //               style: TextStyle(
+  //                 fontFamily: "Quicksand",
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Color(0xFFBFBFBF),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 /*
@@ -136,20 +188,7 @@ class IngredientModel {
       unit: unit,
     );
   }
-  factory IngredientModel.fromDocument(Map<String, dynamic> doc) {
-    return IngredientModel(
-        category: doc['category'] ?? 'NULL',
-        id: doc['id'] ?? 'NULL',
-        image: doc['image'] ?? 'NULL',
-        name: doc['name'] ?? 'NULL',
-        quantity: doc['quantity'] == null
-            ? 0
-            : doc['quantity'] is String
-                ? double.parse(doc['quantity'])
-                : doc['quantity'].toDouble(),
-        text: doc['text'] ?? 'NULL',
-        unit: doc['unit'] ?? 'NULL');
-  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['text'] = text;

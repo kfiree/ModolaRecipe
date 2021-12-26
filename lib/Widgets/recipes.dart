@@ -322,53 +322,10 @@ class RecipeModel {
       mealType: ListFormat(json['mealType']),
       dishType: ListFormat(json['dishType']),
       ingredients: toIngredientList(json['ingredients']),
-      instructions: [],
+      instructions: ListFormat(json['instructions']),
     );
   }
 
-  factory RecipeModel.fromDocument(DocumentSnapshot doc) {
-    int a = 1;
-    return RecipeModel(
-      uri: stringFormat(doc['uri']),
-      name: stringFormat(doc['name']),
-      image: stringFormat(doc['image']),
-      source: stringFormat(doc['source']),
-      url: stringFormat(doc['url']),
-      calories: numFormat(doc['cal']),
-      cookingTime: numFormat(doc['timeInMinutes']),
-      dietLabels: ListFormat(doc['dietLabels']),
-      healthLabels: ListFormat(doc['healthLabels']),
-      cautions: ListFormat(doc['cautions']),
-      cuisineType: ListFormat(doc['cuisineType']),
-      mealType: ListFormat(doc['mealType']),
-      dishType: ListFormat(doc['dishType']),
-      instructions: ListFormat(doc['instructions']),
-      ingredients: toIngredientList(doc['ingredients']),
-    );
-  }
-  //  String name = json['label'] ?? 'NULL',
-  //       image = json['image'] ?? 'NULL',
-  //       source = json['source'] ?? 'NULL',
-  //       url = json['url'] ?? 'NULL',
-  //       uri = json['uri'] ?? 'NULL';
-  //   double calories = json['calories'] ?? 0.0;
-  //   List<dynamic> mealType =
-  //           json['mealType'] != null ? json['mealType'].cast<String>() : [],
-  //       dishType =
-  //           json['dishType'] != null ? json['mealType'].cast<String>() : [],
-  //       dietLabels =
-  //           json['dietLabels'] != null ? json['mealType'].cast<String>() : [],
-  //       healthLabels =
-  //           json['healthLabels'] != null ? json['mealType'].cast<String>() : [],
-  //       cuisineType =
-  //           json['cuisineType'] != null ? json['mealType'].cast<String>() : [],
-  //       cautions =
-  //           json['cautions'] != null ? json['mealType'].cast<String>() : [];
-  //   int cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0;
-  //   List<IngredientModel> ingredients = [];
-  //   json['ingredients'].forEach((ingredient) =>
-  //       {ingredients.add(IngredientModel.fromJson(ingredient))});
-  //   ingredients.cast<IngredientModel>();
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['uri'] = uri;
@@ -427,6 +384,6 @@ List<IngredientModel> toIngredientList(dynamic element) {
 
   List<IngredientModel> ingredientList = [];
   element.forEach((ingredient) =>
-      {ingredientList.add(IngredientModel.fromDocument(ingredient))});
+      {ingredientList.add(IngredientModel.fromJson(ingredient))});
   return ingredientList;
 }

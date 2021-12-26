@@ -5,6 +5,7 @@ import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Views/main_screen.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
 
 class ProfileScreen extends StatelessWidget {
   CollectionReference _firebaseFirestore =
@@ -256,7 +257,7 @@ class ProfileScreen extends StatelessWidget {
           );
         }
 
-        return Text("loading");
+        return Loading();
       },
     );
   }

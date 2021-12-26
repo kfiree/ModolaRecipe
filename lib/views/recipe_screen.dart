@@ -25,28 +25,120 @@ class FullViewScreen extends StatefulWidget {
 }
 
 class _FullViewScreenState extends State<FullViewScreen> {
+  bool editView = false;
+  int _selectedIndex = 0;
+  var url = '';
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        _launchURL(url);
+        break;
+      case 1:
+        print('edit mode');
+        //TODO save to liked recipes
+        break;
+      case 2:
+        print('edit mode');
+        setState(() {
+          editView = !editView;
+        });
+
+        break;
+    }
+    // setState(() {
+    //   _selectedIndex = index;
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final model = routeArgs['Model'];
+    url = model.url;
 
     return Scaffold(
-        backgroundColor: HexColor('#998fb3'),
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              DetailHeaderCard(model: model),
-              DetailInfoCard(model: model),
-            ],
+      backgroundColor: HexColor('#998fb3'),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            HeaderCard(model: model),
+            InfoCard(model: model, editView: editView),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_dining),
+            label: 'Recipe',
           ),
-        ));
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Faivorites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit),
+            label: 'Edit',
+          ),
+        ],
+        // currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: (int index) {
+          setState(() {
+            editView = !editView;
+          });
+        },
+      ),
+    );
   }
 }
 
-class DetailHeaderCard extends StatelessWidget {
-  const DetailHeaderCard({Key? key, required this.model}) : super(key: key);
+// Row(
+//   crossAxisAlignment: CrossAxisAlignment.center,
+//   mainAxisSize: MainAxisSize.max,
+//   // mainAxisAlignment: MainAxisAlignment.end,
+//   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//   children: <Widget>[
+//     OutlinedButton(
+//       style: ButtonStyle(
+//         backgroundColor:
+//             MaterialStateProperty.all<Color>(Colors.black12),
+//       ),
+//       onPressed: () {
+//         _launchURL(model.url);
+//       },
+//       child: Text(
+//         "Full Recipe On '${model.source}'",
+//         style: TextStyle(
+//             fontWeight: FontWeight.bold,
+//             color: HexColor('##785ac7')),
+//       ),
+//     ),
+//     CircleButton(
+//       color: HexColor('##785ac7'),
+//       icon: Icons.edit,
+//       callback: () {
+//         showDialog(
+//           context: context,
+//           builder: (BuildContext context) => RateRecipe(),
+//         );
+//       },
+//     ),
+//   ],
+// ),
+
+class HeaderCard extends StatelessWidget {
+  const HeaderCard({
+    Key? key,
+    required this.model,
+  }) : super(key: key);
+
   final RecipeModel model;
+
   @override
   Widget build(BuildContext context) {
     final routeArgs =
@@ -113,18 +205,27 @@ class DetailHeaderCard extends StatelessWidget {
   }
 }
 
-class DetailInfoCard extends StatelessWidget {
-  // TODO check why this line is for
-  const DetailInfoCard({Key? key, required this.model}) : super(key: key);
+class InfoCard extends StatefulWidget {
+  const InfoCard({Key? key, required this.model, required this.editView})
+      : super(key: key);
   final RecipeModel model;
+  final bool editView;
+  @override
+  _InfoCardState createState() => _InfoCardState();
+}
+
+class _InfoCardState extends State<InfoCard> {
+  // TODO check why this line is for
+
   @override
   Widget build(BuildContext context) {
     List<IngredientCard> ingredientsList = List.generate(
-      model.ingredients.length,
+      widget.model.ingredients.length,
       (int i) => IngredientCard(
-        name: model.ingredients[i].name,
-        quantity: model.ingredients[i].quantity.toString(),
-        unit: model.ingredients[i].unit,
+        edit: widget.editView,
+        name: widget.model.ingredients[i].name,
+        quantity: widget.model.ingredients[i].quantity.toString(),
+        unit: widget.model.ingredients[i].unit,
       ),
     );
     //     IngredientCard(
@@ -153,7 +254,7 @@ class DetailInfoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  model.name,
+                  widget.model.name,
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
@@ -162,9 +263,9 @@ class DetailInfoCard extends StatelessWidget {
                 ),
                 Icon(Icons.no_food, color: Colors.green, size: 20),
                 Icon(Icons.local_drink, color: Colors.green, size: 20),
-                if (model.cookingTime != 0.0)
+                if (widget.model.cookingTime != 0.0)
                   Text(
-                    model.cookingTime.toInt().toString(),
+                    widget.model.cookingTime.toInt().toString(),
                     style: TextStyle(
                       fontFamily: "Quicksand",
                       fontWeight: FontWeight.bold,
@@ -189,26 +290,6 @@ class DetailInfoCard extends StatelessWidget {
             ),
             Column(
               children: ingredientsList,
-              // IngredientCard(
-              //   name: 'All Purpose Flour',
-              //   quantity: '2',
-              //   unit: 'cups',
-              // ),
-              // IngredientCard(
-              //   name: 'Milk',
-              //   quantity: '2',
-              //   unit: 'cups',
-              // ),
-              // IngredientCard(
-              //   name: 'Eggs',
-              //   quantity: '2',
-              //   unit: 'cups',
-              // ),
-              // IngredientCard(
-              //   name: 'Blueberries',
-              //   quantity: '2',
-              //   unit: 'cups',
-              // ),
             ),
             SizedBox(
               height: 20,
@@ -231,15 +312,17 @@ class DetailInfoCard extends StatelessWidget {
                 //   StepEntry(text: 'Preheat the oven to 450 degrees'),
                 // ],
                 ),
-            ElevatedButton(
-              onPressed: () {
-                _launchURL(model.url);
-              },
-              child: const Text('go to recipe website'),
-            ),
-            SizedBox(
-              height: 50,
-            ),
+
+            // ElevatedButton(
+            //   onPressed: () {
+            //   onPressed: () {
+            //     _launchURL(model.url);
+            //   },
+            //   child: Text("Full Recipe On ${model.source}"),
+            // ),
+            // SizedBox(
+            //   height: 50,
+            // ),
           ],
         ),
       ),
