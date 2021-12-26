@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:modolar_recipe/Widgets/ingredients.dart';
 import 'dart:math';
 
 import 'package:modolar_recipe/Widgets/loading.dart';
@@ -283,10 +284,16 @@ class _MainScreenState extends State<MainScreen> {
       //   searchView = search;
       // });
       setState(() => {loading = false, searchView = true});
+      // _firebaseFirestore.add()
       // setState(() => {loading = false});
       return recipes;
     } else {
-      // setState(() => loading = false);
+      List<String> keyWords = query.split(' ');
+      setState(() => loading = false);
+      var snapshot =
+          FirebaseFirestore.instance.collection('recipes').where("ingredients['food']" { arrayContainsAny, keyWords});
+      // _firebaseFirestore.add(data)
+      // recipes.
       throw Exception(
           'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
     }
