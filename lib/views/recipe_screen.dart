@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, non_constant_identifier_names
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -48,9 +48,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
 
         break;
     }
-    // setState(() {
-    //   _selectedIndex = index;
-    // });
   }
 
   @override
@@ -96,40 +93,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
     );
   }
 }
-
-// Row(
-//   crossAxisAlignment: CrossAxisAlignment.center,
-//   mainAxisSize: MainAxisSize.max,
-//   // mainAxisAlignment: MainAxisAlignment.end,
-//   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//   children: <Widget>[
-//     OutlinedButton(
-//       style: ButtonStyle(
-//         backgroundColor:
-//             MaterialStateProperty.all<Color>(Colors.black12),
-//       ),
-//       onPressed: () {
-//         _launchURL(model.url);
-//       },
-//       child: Text(
-//         "Full Recipe On '${model.source}'",
-//         style: TextStyle(
-//             fontWeight: FontWeight.bold,
-//             color: HexColor('##785ac7')),
-//       ),
-//     ),
-//     CircleButton(
-//       color: HexColor('##785ac7'),
-//       icon: Icons.edit,
-//       callback: () {
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) => RateRecipe(),
-//         );
-//       },
-//     ),
-//   ],
-// ),
 
 class HeaderCard extends StatelessWidget {
   const HeaderCard({
@@ -215,8 +178,6 @@ class InfoCard extends StatefulWidget {
 }
 
 class _InfoCardState extends State<InfoCard> {
-  // TODO check why this line is for
-
   @override
   Widget build(BuildContext context) {
     List<IngredientCard> ingredientsList = List.generate(
@@ -228,11 +189,7 @@ class _InfoCardState extends State<InfoCard> {
         unit: widget.model.ingredients[i].unit,
       ),
     );
-    //     IngredientCard(
-    //   name: 'All Purpose Flour',
-    //   quantity: '2',
-    //   unit: 'cups',
-    // ),
+
     return Expanded(
       flex: 2,
       child: Container(
