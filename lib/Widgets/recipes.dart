@@ -5,6 +5,7 @@ import 'package:modolar_recipe/Widgets/ingredients.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Styles/constants.dart';
 import 'package:modolar_recipe/views/recipe_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 // class StepEntry extends StatelessWidget {
@@ -128,7 +129,7 @@ class RecipeMediumView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      recipeModel.label,
+                      recipeModel.name,
                       style: kMainTextStyle,
                     ),
                     if (recipeModel.cookingTime > 0)
@@ -215,7 +216,7 @@ class RecipeTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      recipeModel.label,
+                      recipeModel.name,
                       style: TextStyle(
                           fontSize: 13,
                           color: Colors.black54,
@@ -275,24 +276,24 @@ class RecipeTile extends StatelessWidget {
 // }
 
 class RecipeModel {
-  final String label, image, source, apiURL, uri, recipeURL;
+  final String name, image, source, url, uri;
   final List<dynamic> mealType,
       dishType,
       dietLabels,
       healthLabels,
       cuisineType,
-      cautions;
-  final int cookingTime;
-  final double calories;
+      cautions,
+      instructions;
+
+  final int cookingTime, calories;
   final List<IngredientModel> ingredients;
 
   RecipeModel({
     required this.uri,
-    required this.label,
+    required this.name,
     required this.image,
     required this.source,
-    required this.apiURL,
-    required this.recipeURL,
+    required this.url,
     required this.dietLabels,
     required this.healthLabels,
     required this.cautions,
@@ -302,61 +303,79 @@ class RecipeModel {
     required this.cuisineType,
     required this.mealType,
     required this.dishType,
+    required this.instructions,
   });
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    String label = json['label'] ?? 'No Label',
-        image = json['image'] ?? 'No Image',
-        source = json['source'] ?? 'No Source',
-        apiURL = json['url'] ?? 'No Api-url',
-        uri = json['uri'] ?? 'No uri',
-        recipeURL = json['shareAs'] ?? 'No Share-url';
-    double calories = json['calories'] ?? 0.0;
-    List<dynamic> mealType =
-            json['mealType'] != null ? json['mealType'].cast<String>() : [],
-        dishType =
-            json['dishType'] != null ? json['mealType'].cast<String>() : [],
-        dietLabels =
-            json['dietLabels'] != null ? json['mealType'].cast<String>() : [],
-        healthLabels =
-            json['healthLabels'] != null ? json['mealType'].cast<String>() : [],
-        cuisineType =
-            json['cuisineType'] != null ? json['mealType'].cast<String>() : [],
-        cautions =
-            json['cautions'] != null ? json['mealType'].cast<String>() : [];
-    int cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0;
-
-    List<IngredientModel> ingredients = [];
-    json['ingredients'].forEach((ingredient) =>
-        {ingredients.add(IngredientModel.fromJson(ingredient))});
-    ingredients.cast<IngredientModel>();
     return RecipeModel(
-      uri: uri,
-      label: label,
-      image: image,
-      source: source,
-      apiURL: apiURL,
-      recipeURL: recipeURL,
-      dietLabels: dietLabels,
-      healthLabels: healthLabels,
-      cautions: cautions,
-      calories: calories,
-      cookingTime: cookingTime,
-      cuisineType: cuisineType,
-      mealType: mealType,
-      dishType: dishType,
-      ingredients: ingredients,
+      uri: stringFormat(json['uri']),
+      name: stringFormat(json['label']),
+      image: stringFormat(json['image']),
+      source: stringFormat(json['source']),
+      url: stringFormat(json['url']),
+      calories: numFormat(json['calories']),
+      cookingTime: numFormat(json['totalTime']),
+      dietLabels: ListFormat(json['dietLabels']),
+      healthLabels: ListFormat(json['healthLabels']),
+      cautions: ListFormat(json['cautions']),
+      cuisineType: ListFormat(json['cuisineType']),
+      mealType: ListFormat(json['mealType']),
+      dishType: ListFormat(json['dishType']),
+      ingredients: toIngredientList(json['ingredients']),
+      instructions: [],
     );
   }
 
+  factory RecipeModel.fromDocument(DocumentSnapshot doc) {
+    int a = 1;
+    return RecipeModel(
+      uri: stringFormat(doc['uri']),
+      name: stringFormat(doc['name']),
+      image: stringFormat(doc['image']),
+      source: stringFormat(doc['source']),
+      url: stringFormat(doc['url']),
+      calories: numFormat(doc['cal']),
+      cookingTime: numFormat(doc['timeInMinutes']),
+      dietLabels: ListFormat(doc['dietLabels']),
+      healthLabels: ListFormat(doc['healthLabels']),
+      cautions: ListFormat(doc['cautions']),
+      cuisineType: ListFormat(doc['cuisineType']),
+      mealType: ListFormat(doc['mealType']),
+      dishType: ListFormat(doc['dishType']),
+      instructions: ListFormat(doc['instructions']),
+      ingredients: toIngredientList(doc['ingredients']),
+    );
+  }
+  //  String name = json['label'] ?? 'NULL',
+  //       image = json['image'] ?? 'NULL',
+  //       source = json['source'] ?? 'NULL',
+  //       url = json['url'] ?? 'NULL',
+  //       uri = json['uri'] ?? 'NULL';
+  //   double calories = json['calories'] ?? 0.0;
+  //   List<dynamic> mealType =
+  //           json['mealType'] != null ? json['mealType'].cast<String>() : [],
+  //       dishType =
+  //           json['dishType'] != null ? json['mealType'].cast<String>() : [],
+  //       dietLabels =
+  //           json['dietLabels'] != null ? json['mealType'].cast<String>() : [],
+  //       healthLabels =
+  //           json['healthLabels'] != null ? json['mealType'].cast<String>() : [],
+  //       cuisineType =
+  //           json['cuisineType'] != null ? json['mealType'].cast<String>() : [],
+  //       cautions =
+  //           json['cautions'] != null ? json['mealType'].cast<String>() : [];
+  //   int cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0;
+  //   List<IngredientModel> ingredients = [];
+  //   json['ingredients'].forEach((ingredient) =>
+  //       {ingredients.add(IngredientModel.fromJson(ingredient))});
+  //   ingredients.cast<IngredientModel>();
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['uri'] = uri;
-    data['label'] = label;
+    data['label'] = name;
     data['image'] = image;
     data['source'] = source;
-    data['url'] = apiURL;
-    data['shareAs'] = recipeURL;
+    data['url'] = url;
     data['dietLabels'] = dietLabels;
     data['healthLabels'] = healthLabels;
     data['cautions'] = cautions;
@@ -366,15 +385,8 @@ class RecipeModel {
     data['cuisineType'] = cuisineType;
     data['mealType'] = mealType;
     data['dishType'] = dishType;
+    data['instructions'] = instructions;
     return data;
-  }
-
-  List<IngredientModel> toIngredientList(
-      List<Map<String, dynamic>> ingredientsJson) {
-    List<IngredientModel> ingredientList = [];
-    ingredientsJson.forEach((ingredient) =>
-        {ingredientList.add(IngredientModel.fromJson(ingredient))});
-    return ingredientList;
   }
 
   @override
@@ -385,12 +397,36 @@ class RecipeModel {
     ingredients: $ingredients,
     cuisineType: $cuisineType,
     cautions: $cautions,
-    apiURL: $apiURL,
-    label: $label,
+    label: $name,
     source: $source,
     image: $image,
     uri: $uri
     ''';
     return '{\n$data}';
   }
+}
+
+String stringFormat(dynamic element) {
+  return element ?? 'NULL';
+}
+
+int numFormat(dynamic element) {
+  return element.toInt() ?? 0;
+}
+
+List<dynamic> ListFormat(dynamic element) {
+  element ?? [];
+  return element.cast<String>();
+}
+
+//List<Map<String, dynamic>> ingredientsJson) {
+List<IngredientModel> toIngredientList(dynamic element) {
+  if (element == null) {
+    return [];
+  }
+
+  List<IngredientModel> ingredientList = [];
+  element.forEach((ingredient) =>
+      {ingredientList.add(IngredientModel.fromDocument(ingredient))});
+  return ingredientList;
 }

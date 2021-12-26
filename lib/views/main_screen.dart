@@ -1,11 +1,13 @@
 import 'dart:convert';
+// import 'dart:html';
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
+
 import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/profile_screen.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:math';
 import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
@@ -17,26 +19,47 @@ class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "main_screen";
-  final String applicationId = "41ca25af",
-      applicationKey = "ab51bad1b862188631ce612a9b1787a9";
+  final String applicationId = "2051cf6b",
+      applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  bool loading = true, searchView = false;
-
-  List<RecipeTile> recipesTiles = [];
-  List<RecipeModel> recipesForFirstView = [];
+  bool loading = false, searchView = false;
+  CollectionReference _firebaseFirestore =
+      FirebaseFirestore.instance.collection("recipes");
+  // _firebaseFirestore.snapshots().forEach((e){})
+  List<Widget> recipeWidgets = [];
+  List<RecipeModel> recipeModels = [];
 
   //text controllers
   TextEditingController txtController = TextEditingController(),
       recipesTextController = TextEditingController();
 
+//   func() async {
+//     // final QuerySnapshot result = await _firebaseFirestore.get().then((value) => null);
+//     var b = await _firebaseFirestore.get().then((value) {
+//       value.docs.forEach((e) {
+//         print('e = ${e['name']}');
+//       }); //.map((doc) => json.decode(json.encode(doc.data())));
+//     }); //.docs.map(doc => doc.data());print('this is inside func ${value}')});
+//     var a = _firebaseFirestore
+//         .get()
+//         .then((recipe) => print(' hi yo ${recipe.toString()}'));
+//     print(a);
+// // final List<DocumentSnapshot> documents = result.docChanges;
+//   }
+  // setRecipes() async {
+  //   var snapshot = await FirebaseFirestore.instance.collection('recipes').get();
+
+  // }
   @override
   Widget build(BuildContext context) {
     // get vatiables from prev widget
+    // var initialRecipe = InitialRecipe();
+
     if (ModalRoute.of(context)?.settings.arguments == null) {
       Navigator.pushNamedAndRemoveUntil(
           context, LoginScreen.idScreen, (route) => false);
@@ -44,20 +67,37 @@ class _MainScreenState extends State<MainScreen> {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final UID = routeArgs['UID'];
-    List<RecipeMediumView> recipeWidget = [];
+    List<Widget> recipeWidget = [];
 
-    //generate random recipes
-    if (!searchView && recipeWidget.isEmpty) {
-      print('fetching recipes');
-      var rnd = Random(); // if (!searchView) {
-      fetchRecipes('lunch', recipesForFirstView,
-          from: rnd.nextInt(100), search: false);
-      recipeWidget = List.generate(
-        recipesForFirstView.length,
-        (int i) =>
-            RecipeMediumView(recipeModel: recipesForFirstView[i], UID: UID),
-      );
-    }
+    //get recipes from firebase
+    var snapshot = FirebaseFirestore.instance.collection('recipes').get();
+    snapshot.then((collection) {
+      collection.docs.forEach((recipe) {
+        recipeWidgets.add((RecipeMediumView(
+          UID: UID,
+          recipeModel: RecipeModel.fromDocument(recipe),
+        )));
+      });
+    });
+
+    // getRecipesFromFB() {
+    //   var userData =
+    //       _firebaseFirestore.doc("6PD9BeqEfie0FhXiIp6sMKg7twP2").get();
+    // }
+
+    // if (!searchView && recipeWidget.isEmpty) {
+    //   print('fetching recipes');
+    //   var rnd = Random(); // if (!searchView) {
+
+    //   fetchRecipes('lunch', recipeWidget, UID,
+    //       from: rnd.nextInt(100), search: false);
+
+    //   recipeWidget = List.generate(
+    //     recipeWidget.length,
+    //     (int i) => RecipeMediumView(recipeModel: recipeModels[i], UID: UID),
+    //   );
+    // }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -78,18 +118,19 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
 
-          // loading
-          if (loading)
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Loading(),
-              ),
-            ),
+          // // loading
+          // if (loading)
+          //   Positioned.fill(
+          //     child: Align(
+          //       alignment: Alignment.centerRight,
+          //       child: Loading(),
+          //     ),
+          //   ),
 
           // screen content
           Stack(
             children: <Widget>[
+              // InitialRecipe(UID),
               Stack(
                 children: <Widget>[
                   Padding(
@@ -121,6 +162,7 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               InkWell(
                                 onTap: () async {
+                                  // func();
                                   if (txtController.text.isNotEmpty) {
                                     setState(() =>
                                         {loading = true, searchView = true});
@@ -130,7 +172,7 @@ class _MainScreenState extends State<MainScreen> {
                                     final response =
                                         await http.get(Uri.parse(queryUrl));
 
-                                    List<RecipeTile> tiles = [];
+                                    List<Widget> tiles = [];
                                     if (response.statusCode == 200) {
                                       Map<String, dynamic> jsonData =
                                           jsonDecode(response.body);
@@ -145,7 +187,7 @@ class _MainScreenState extends State<MainScreen> {
                                         tiles.add(tile);
                                         print('tile number $i is added!');
                                       }
-                                      recipesTiles = tiles;
+                                      recipeWidget = tiles; // as List<Widget>;
                                       setState(() => loading = false);
                                     }
                                   } else {
@@ -162,16 +204,17 @@ class _MainScreenState extends State<MainScreen> {
                         SizedBox(
                           height: 30,
                         ),
+                        // InitialRecipe(UID),
 
                         // recipes
+                        InitialRecipe(UID, recipeWidgets),
                         searchView
                             ? Expanded(
                                 child: GridView.count(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 10,
-                                  children: recipesTiles,
-                                ),
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 10,
+                                    children: recipeWidget),
                               )
                             : SizedBox(
                                 height: 400,
@@ -179,67 +222,15 @@ class _MainScreenState extends State<MainScreen> {
                                   scrollDirection: Axis.horizontal,
                                   //TODO stack overflow: Overflow.clip
 
-                                  children: recipeWidget,
+                                  children: recipeWidgets,
                                 ),
-                              )
+                              ),
                       ],
                     ),
                   ),
-                  // logout
-                  Positioned(
-                    bottom: 30.0,
-                    right: 0.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleButton(
-                        color: Colors.black,
-                        icon: Icons.logout,
-                        callback: () => {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, LoginScreen.idScreen, (route) => false)
-                        },
-                      ),
-                    ),
-                  ),
-
-                  // profile
-                  Positioned(
-                    top: 30.0,
-                    left: 0.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleButton(
-                        color: Colors.black,
-                        icon: Icons.account_box,
-                        callback: () => {
-                          Navigator.of(context).pushNamed(
-                            ProfileScreen.idScreen,
-                            arguments: {'UID': UID},
-                          ),
-                          // Navigator.of(context)
-                          //     .pushNamed(ProfileScreen.idScreen),
-                        },
-                      ),
-                    ),
-                  ),
-
-                  // add recipe
-                  Positioned(
-                    bottom: 30.0,
-                    left: 0.0,
-                    child: CircleButton(
-                      color: Colors.black,
-                      icon: Icons.add,
-                      callback: () => {
-                        // Navigator.pushNamedAndRemoveUntil(
-                        //     context, AddScreen.idScreen, (route) => false),
-                        Navigator.of(context).pushNamed(
-                          AddScreen.idScreen,
-                          arguments: {'UID': UID},
-                        ),
-                      },
-                    ),
-                  ),
+                  LogOut(),
+                  Profile(UID: UID),
+                  NewRecipe(UID: UID)
                 ],
               ),
             ],
@@ -268,10 +259,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // return recipes
-  Future<List<RecipeModel>> fetchRecipes(
-      String query, List<RecipeModel> recipes,
+  Future<List<Widget>> fetchRecipes(
+      String query, List<Widget> recipes, String UID,
       {int from = 0, required bool search}) async {
-    // setState(() => loading = true);
+    setState(() => loading = true);
     String queryUrl =
         'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
     final response = await http.get(Uri.parse(queryUrl));
@@ -282,19 +273,22 @@ class _MainScreenState extends State<MainScreen> {
 
       jsonData["hits"].forEach(
         (hit) {
-          recipes.add((RecipeModel.fromJson(hit["recipe"])));
+          recipes.add((RecipeMediumView(
+            UID: UID,
+            recipeModel: RecipeModel.fromJson(hit["recipe"]),
+          )));
         },
       );
       // setState(() {
       //   searchView = search;
       // });
-      // setState(() => {loading = false, searchView = search});
-      setState(() => {loading = false});
+      setState(() => {loading = false, searchView = true});
+      // setState(() => {loading = false});
       return recipes;
     } else {
       // setState(() => loading = false);
       throw Exception(
-          'Failed to load Recipe. response statusCode = ${response.statusCode}');
+          'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
     }
   }
 
@@ -314,30 +308,150 @@ class _MainScreenState extends State<MainScreen> {
   // }
 }
 
+class InitialRecipe extends StatelessWidget {
+  final UID;
+  final recipeWidgets;
+  InitialRecipe(this.UID, this.recipeWidgets);
+
+  @override
+  Widget build(BuildContext context) {
+    var snapshot = FirebaseFirestore.instance.collection('recipes').get();
+    // return snapshot.docs.map(doc => doc.data());
+    // CollectionReference recipes = FirebaseFirestore.instance.collection('recipes');
+
+// var b =  snapshot.get().then((value) {
+//       value.docs.forEach((e) {
+//         print('e = ${e['name']}');
+//       }); //.map((doc) => json.decode(json.encode(doc.data())));
+//    });
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      future: snapshot,
+      builder: (BuildContext context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> docs) {
+        // List<RecipeMediumView> recipeWidgets = [];
+        snapshot.then((collection) {
+          collection.docs.forEach((recipe) {
+            recipeWidgets.add((RecipeMediumView(
+              UID: UID,
+              recipeModel: RecipeModel.fromDocument(recipe),
+            )));
+          });
+        });
+        if (docs.hasError) {
+          return Text("Something went wrong");
+        }
+
+        // if (docs.hasData && !docs.data!.exists) {
+        //   return Text("Document does not exist");
+        // }
+
+        return SizedBox(); // if (snapshot.connectionState == ConnectionState.done) {
+        //   Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+        //   return Text("Full Name: ${data['full_name']} ${data['last_name']}");
+        // }
+      },
+    );
+  }
+}
+
+class showRecipes extends StatelessWidget {
+  const showRecipes({Key? key, this.searchView, this.recipes})
+      : super(key: key);
+
+  final searchView;
+  final recipes;
+  @override
+  Widget build(BuildContext context) {
+    return searchView
+        ? Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 10,
+              children: recipes,
+            ),
+          )
+        : SizedBox(
+            height: 400,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              //TODO stack overflow: Overflow.clip
+
+              children: recipes,
+            ),
+          );
+  }
+}
+
 class LogOut extends StatelessWidget {
   const LogOut({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Positioned(
+      bottom: 30.0,
+      right: 0.0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleButton(
+          color: Colors.black,
+          icon: Icons.logout,
+          callback: () => {
+            Navigator.pushNamedAndRemoveUntil(
+                context, LoginScreen.idScreen, (route) => false)
+          },
+        ),
+      ),
+    );
   }
 }
 
 class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+  const Profile({Key? key, this.UID}) : super(key: key);
+  final UID;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Positioned(
+      top: 30.0,
+      left: 0.0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleButton(
+          color: Colors.black,
+          icon: Icons.account_box,
+          callback: () => {
+            Navigator.of(context).pushNamed(
+              ProfileScreen.idScreen,
+              arguments: {'UID': UID},
+            ),
+          },
+        ),
+      ),
+    );
   }
 }
 
 class NewRecipe extends StatelessWidget {
-  const NewRecipe({Key? key}) : super(key: key);
+  const NewRecipe({Key? key, this.UID}) : super(key: key);
+  final UID;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Positioned(
+      bottom: 30.0,
+      left: 0.0,
+      child: CircleButton(
+        color: Colors.black,
+        icon: Icons.add,
+        callback: () => {
+          Navigator.of(context).pushNamed(
+            AddScreen.idScreen,
+            arguments: {'UID': UID},
+          ),
+        },
+      ),
+    );
   }
 }
 

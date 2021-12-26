@@ -1,5 +1,5 @@
 // ignore_for_file: file_names
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class IngredientCard extends StatefulWidget {
@@ -123,7 +123,8 @@ class IngredientModel {
         unit = (json['measure'] == null || json['measure'] == '<unit>')
             ? ''
             : json['measure'];
-    double quantity = json['quantity'] ?? 0;
+    double quantity =
+        json['quantity'] == null ? 0 : json['quantity'].toInt().toDouble();
 
     return IngredientModel(
       name: name,
@@ -135,7 +136,20 @@ class IngredientModel {
       unit: unit,
     );
   }
-
+  factory IngredientModel.fromDocument(Map<String, dynamic> doc) {
+    return IngredientModel(
+        category: doc['category'] ?? 'NULL',
+        id: doc['id'] ?? 'NULL',
+        image: doc['image'] ?? 'NULL',
+        name: doc['name'] ?? 'NULL',
+        quantity: doc['quantity'] == null
+            ? 0
+            : doc['quantity'] is String
+                ? double.parse(doc['quantity'])
+                : doc['quantity'].toDouble(),
+        text: doc['text'] ?? 'NULL',
+        unit: doc['unit'] ?? 'NULL');
+  }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['text'] = text;
