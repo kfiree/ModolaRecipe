@@ -8,7 +8,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:modolar_recipe/Widgets/progress_dialog.dart';
 import 'package:modolar_recipe/views/main_screen.dart';
 import 'package:modolar_recipe/views/signup.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
@@ -347,9 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Loading();
-          // ProgressDialog(
-          //   "Authenticating, please wait...",
-          // );
+          ;
         });
     final User? firebaseUser = (await _firebaseAuth
             .signInWithEmailAndPassword(

@@ -122,7 +122,7 @@ class DetailInfoCard extends StatelessWidget {
     List<IngredientCard> ingredientsList = List.generate(
       model.ingredients.length,
       (int i) => IngredientCard(
-        name: model.ingredients[i].food,
+        name: model.ingredients[i].name,
         quantity: model.ingredients[i].quantity.toString(),
         unit: model.ingredients[i].unit,
       ),
@@ -153,7 +153,7 @@ class DetailInfoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  model.label,
+                  model.name,
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
