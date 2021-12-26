@@ -463,11 +463,15 @@ class _SignupScreenState extends State<SignupScreen> {
       displayToastMessage("New user created succesffuly!", context);
       // Navigator.pushNamedAndRemoveUntil(
       //     context, enterScreen.idScreen, (route) => false);
-      Navigator.pushNamedAndRemoveUntil(
-          context, FullViewScreen.idScreen, (route) => false);
+      Navigator.of(context).pushNamed(
+            MainScreen.idScreen,
+            arguments: {'UID': firebaseUser.uid},
+      );
     } else {
       //Error accured.
-      Navigator.pop(context);
+      Navigator.of(context).pushNamed(
+            SignupScreen.idScreen,
+      );
       displayToastMessage("New user has not been created.", context);
     }
   }

@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
           context, LoginScreen.idScreen, (route) => false);
     }
     final routeArgs =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+        ModalRoute.of(context)?.settings.arguments as Map;
     final UID = routeArgs['UID'];
     List<Widget> recipeWidget = [];
 
