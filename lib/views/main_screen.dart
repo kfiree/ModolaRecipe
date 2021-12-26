@@ -290,8 +290,8 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       List<String> keyWords = query.split(' ');
       setState(() => loading = false);
-      var snapshot =
-          FirebaseFirestore.instance.collection('recipes').where("ingredients['food']" { arrayContainsAny, keyWords});
+      // var snapshot =
+      //     FirebaseFirestore.instance.collection('recipes').where("ingredients['food']" { arrayContainsAny, keyWords});
       // _firebaseFirestore.add(data)
       // recipes.
       throw Exception(
