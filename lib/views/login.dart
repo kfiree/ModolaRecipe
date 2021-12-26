@@ -368,7 +368,7 @@ class _LoginScreenState extends State<LoginScreen> {
           //     context, MainScreen.idScreen, (route) => false);
           Navigator.of(context).pushNamed(
             MainScreen.idScreen,
-            arguments: {'UID': '123456'},
+            arguments: {'UID': firebaseUser.uid},
           );
           displayToastMessage("Welcome! you are now logged in.", context);
         } else {
