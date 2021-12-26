@@ -186,14 +186,6 @@ class _MainScreenState extends State<MainScreen> {
                                       children: recipeWidget),
                                 )
                               : InitialRecipe(UID),
-                          // : SizedBox(
-                          //     height: 400,
-                          //     child: ListView(
-                          //       scrollDirection: Axis.horizontal,
-                          //       //TODO stack overflow: Overflow.clip
-                          //       children: recipeWidgets,
-                          //     ),
-                          //   ),
                         ],
                       ),
                     ),
