@@ -307,71 +307,27 @@ class RecipeModel {
   });
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    json = format(json);
+    // addToFB(json);
+    // json = format(json);
     return RecipeModel(
-      uri: json['uri'],
-      name: json['label'],
-      image: json['image'],
-      source: json['source'],
-      url: json['url'],
-      calories: json['calories'],
-      cookingTime: json['totalTime'],
-      dietLabels: json['dietLabels'],
-      healthLabels: json['healthLabels'],
-      cautions: json['cautions'],
-      cuisineType: json['cuisineType'],
-      mealType: json['mealType'],
-      dishType: json['dishType'],
-      ingredients: json['ingredients'],
-      instructions: [],
+      uri: stringFormat(json['uri']),
+      name: stringFormat(json['label']),
+      image: stringFormat(json['image']),
+      source: stringFormat(json['source']),
+      url: stringFormat(json['url']),
+      calories: numFormat(json['calories']),
+      cookingTime: numFormat(json['totalTime']),
+      dietLabels: ListFormat(json['dietLabels']),
+      healthLabels: ListFormat(json['healthLabels']),
+      cautions: ListFormat(json['cautions']),
+      cuisineType: ListFormat(json['cuisineType']),
+      mealType: ListFormat(json['mealType']),
+      dishType: ListFormat(json['dishType']),
+      ingredients: toIngredientList(json['ingredients']),
+      instructions: ListFormat(json['instructions']),
     );
   }
 
-  factory RecipeModel.fromDocument(DocumentSnapshot doc) {
-    doc = format(doc);
-    return RecipeModel(
-      uri: doc['uri'],
-      name: doc['name'],
-      image: doc['image'],
-      source: doc['source'],
-      url: doc['url'],
-      calories: doc['cal'],
-      cookingTime: doc['timeInMinutes'],
-      dietLabels: doc['dietLabels'],
-      healthLabels: doc['healthLabels'],
-      cautions: doc['cautions'],
-      cuisineType: doc['cuisineType'],
-      mealType: doc['mealType'],
-      dishType: doc['dishType'],
-      instructions: doc['instructions'],
-      ingredients: doc['ingredients'],
-    );
-  }
-  
-  //  String name = json['label'] ?? 'NULL',
-  //       image = json['image'] ?? 'NULL',
-  //       source = json['source'] ?? 'NULL',
-  //       url = json['url'] ?? 'NULL',
-  //       uri = json['uri'] ?? 'NULL';
-  //   double calories = json['calories'] ?? 0.0;
-  //   List<dynamic> mealType =
-  //           json['mealType'] != null ? json['mealType'].cast<String>() : [],
-  //       dishType =
-  //           json['dishType'] != null ? json['mealType'].cast<String>() : [],
-  //       dietLabels =
-  //           json['dietLabels'] != null ? json['mealType'].cast<String>() : [],
-  //       healthLabels =
-  //           json['healthLabels'] != null ? json['mealType'].cast<String>() : [],
-  //       cuisineType =
-  //           json['cuisineType'] != null ? json['mealType'].cast<String>() : [],
-  //       cautions =
-  //           json['cautions'] != null ? json['mealType'].cast<String>() : [];
-  //   int cookingTime = json['totalTime'] != null ? json['totalTime'].toInt() : 0;
-  //   List<IngredientModel> ingredients = [];
-  //   json['ingredients'].forEach((ingredient) =>
-  //       {ingredients.add(IngredientModel.fromJson(ingredient))});
-  //   ingredients.cast<IngredientModel>();
-  
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['uri'] = uri;
@@ -390,6 +346,13 @@ class RecipeModel {
     data['dishType'] = dishType;
     data['instructions'] = instructions;
     return data;
+  }
+
+  addToFB(Map<String, dynamic> recipe) {
+    // Map<
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection("recipes");
+    collection.add(recipe);
   }
 
   @override
@@ -430,29 +393,31 @@ List<IngredientModel> toIngredientList(dynamic element) {
 
   List<IngredientModel> ingredientList = [];
   element.forEach((ingredient) =>
-      {ingredientList.add(IngredientModel.fromDocument(ingredient))});
+      {ingredientList.add(IngredientModel.fromJson(ingredient))});
   return ingredientList;
 }
 
-dynamic format(dynamic doc) {
-  doc['uri'] = stringFormat(doc['uri']);
-  doc['label'] == null
-      ? doc['name'] = stringFormat(doc['name'])
-      : stringFormat(doc['label']);
-  doc['image'] = stringFormat(doc['image']);
-  doc['source'] = stringFormat(doc['source']);
-  doc['url'] = stringFormat(doc['url']);
-  doc['calories'] = numFormat(doc['calories']);
-  doc['totalTime'] == null
-      ? doc['timeInMinutes'] = numFormat(doc['timeInMinutes'])
-      : numFormat(doc['totalTime']);
-  doc['dietLabels'] = ListFormat(doc['dietLabels']);
-  doc['healthLabels'] = ListFormat(doc['healthLabels']);
-  doc['cautions'] = ListFormat(doc['cautions']);
-  doc['cuisineType'] = ListFormat(doc['cuisineType']);
-  doc['mealType'] = ListFormat(doc['mealType']);
-  doc['dishType'] = ListFormat(doc['dishType']);
-  doc['instructions'] = ListFormat(doc['instructions']);
-  doc['ingredients'] = toIngredientList(doc['ingredients']);
-  return doc;
-}
+
+
+// dynamic format(dynamic doc) {
+//   doc['uri'] = stringFormat(doc['uri']);
+//   doc['label'] == null
+//       ? doc['name'] = stringFormat(doc['name'])
+//       : stringFormat(doc['label']);
+//   doc['image'] = stringFormat(doc['image']);
+//   doc['source'] = stringFormat(doc['source']);
+//   doc['url'] = stringFormat(doc['url']);
+//   doc['calories'] = numFormat(doc['calories']);
+//   doc['totalTime'] == null
+//       ? doc['timeInMinutes'] = numFormat(doc['timeInMinutes'])
+//       : numFormat(doc['totalTime']);
+//   doc['dietLabels'] = ListFormat(doc['dietLabels']);
+//   doc['healthLabels'] = ListFormat(doc['healthLabels']);
+//   doc['cautions'] = ListFormat(doc['cautions']);
+//   doc['cuisineType'] = ListFormat(doc['cuisineType']);
+//   doc['mealType'] = ListFormat(doc['mealType']);
+//   doc['dishType'] = ListFormat(doc['dishType']);
+//   doc['instructions'] = ListFormat(doc['instructions']);
+//   doc['ingredients'] = toIngredientList(doc['ingredients']);
+//   return doc;
+// }

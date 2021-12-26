@@ -58,185 +58,147 @@ class _MainScreenState extends State<MainScreen> {
   // }
   @override
   Widget build(BuildContext context) {
-    // get vatiables from prev widget
-    // var initialRecipe = InitialRecipe();
-
     if (ModalRoute.of(context)?.settings.arguments == null) {
       Navigator.pushNamedAndRemoveUntil(
           context, LoginScreen.idScreen, (route) => false);
     }
     final routeArgs =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+        ModalRoute.of(context)?.settings.arguments as Map;
     final UID = routeArgs['UID'];
     List<Widget> recipeWidget = [];
 
-    //get recipes from firebase
-    var snapshot = FirebaseFirestore.instance.collection('recipes').get();
-    snapshot.then((collection) {
-      collection.docs.forEach((recipe) {
-        recipeWidgets.add((RecipeMediumView(
-          UID: UID,
-          recipeModel: RecipeModel.fromDocument(recipe),
-        )));
-      });
-    });
-
-    // getRecipesFromFB() {
-    //   var userData =
-    //       _firebaseFirestore.doc("6PD9BeqEfie0FhXiIp6sMKg7twP2").get();
-    // }
-
-    // if (!searchView && recipeWidget.isEmpty) {
-    //   print('fetching recipes');
-    //   var rnd = Random(); // if (!searchView) {
-
-    //   fetchRecipes('lunch', recipeWidget, UID,
-    //       from: rnd.nextInt(100), search: false);
-
-    //   recipeWidget = List.generate(
-    //     recipeWidget.length,
-    //     (int i) => RecipeMediumView(recipeModel: recipeModels[i], UID: UID),
-    //   );
-    // }
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: <Widget>[
-          // style data
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Color.fromARGB(255, 248, 191, 176),
-                  Colors.white,
-                ],
+      body: SingleChildScrollView(
+        child: Stack(
+          children: <Widget>[
+            // style data
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Color.fromARGB(255, 248, 191, 176),
+                    Colors.white,
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // // loading
-          // if (loading)
-          //   Positioned.fill(
-          //     child: Align(
-          //       alignment: Alignment.centerRight,
-          //       child: Loading(),
-          //     ),
-          //   ),
-
-          // screen content
-          Stack(
-            children: <Widget>[
-              // InitialRecipe(UID),
-              Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        //headers
-                        MainHeaders(searchView: searchView),
-
-                        // inputs text boxes
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: TextField(
-                                  controller: txtController,
-                                  decoration: InputDecoration(
-                                      hintText: "Enter Ingrideints",
-                                      hintStyle: TextStyle(
-                                        fontSize: 18,
-                                      )),
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              InkWell(
-                                onTap: () async {
-                                  // func();
-                                  if (txtController.text.isNotEmpty) {
-                                    setState(() =>
-                                        {loading = true, searchView = true});
-
-                                    String queryUrl =
-                                        'https://api.edamam.com/search?q=${txtController.text}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-                                    final response =
-                                        await http.get(Uri.parse(queryUrl));
-
-                                    List<Widget> tiles = [];
-                                    if (response.statusCode == 200) {
-                                      Map<String, dynamic> jsonData =
-                                          jsonDecode(response.body);
-
-                                      for (int i = 0;
-                                          i < jsonData["hits"].length;
-                                          i++) {
-                                        RecipeTile tile = RecipeTile(
-                                            recipeModel: RecipeModel.fromJson(
-                                                jsonData['hits'][i]['recipe']),
-                                            UID: UID);
-                                        tiles.add(tile);
-                                        print('tile number $i is added!');
-                                      }
-                                      recipeWidget = tiles; // as List<Widget>;
-                                      setState(() => loading = false);
-                                    }
-                                  } else {
-                                    // ignore: avoid_print
-                                    print("text box is empty");
-                                  }
-                                },
-                                child: Icon(Icons.search, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(
-                          height: 30,
-                        ),
-                        // InitialRecipe(UID),
-
-                        // recipes
-                        InitialRecipe(UID, recipeWidgets),
-                        searchView
-                            ? Expanded(
-                                child: GridView.count(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 5,
-                                    mainAxisSpacing: 10,
-                                    children: recipeWidget),
-                              )
-                            : SizedBox(
-                                height: 400,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  //TODO stack overflow: Overflow.clip
-
-                                  children: recipeWidgets,
-                                ),
-                              ),
-                      ],
-                    ),
-                  ),
-                  LogOut(),
-                  Profile(UID: UID),
-                  NewRecipe(UID: UID)
-                ],
+            // loading
+            if (loading)
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Loading(),
+                ),
               ),
-            ],
-          ),
-        ],
+
+            // screen content
+            Stack(
+              children: <Widget>[
+                Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //headers
+                          MainHeaders(searchView: searchView),
+
+                          // inputs text boxes
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextField(
+                                    controller: txtController,
+                                    decoration: InputDecoration(
+                                        hintText: "Enter Ingrideints",
+                                        hintStyle: TextStyle(
+                                          fontSize: 18,
+                                        )),
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 16,
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    // func();
+                                    if (txtController.text.isNotEmpty) {
+                                      setState(() => {});
+                                    }
+                                    // {loading = true, searchView = true});
+
+                                    //   String queryUrl =
+                                    //       'https://api.edamam.com/search?q=${txtController.text}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+                                    //   final response =
+                                    //       await http.get(Uri.parse(queryUrl));
+
+                                    //   List<Widget> tiles = [];
+                                    //   if (response.statusCode == 200) {
+                                    //     Map<String, dynamic> jsonData =
+                                    //         jsonDecode(response.body);
+
+                                    //     for (int i = 0;
+                                    //         i < jsonData["hits"].length;
+                                    //         i++) {
+                                    //       RecipeTile tile = RecipeTile(
+                                    //           recipeModel: RecipeModel.fromJson(
+                                    //               jsonData['hits'][i]
+                                    //                   ['recipe']),
+                                    //           UID: UID);
+                                    //       tiles.add(tile);
+                                    //       print('tile number $i is added!');
+                                    //     }
+                                    //     recipeWidget =
+                                    //         tiles; // as List<Widget>;
+                                    //     // setState(() => loading = false);
+                                    //   }
+                                    // } else {
+                                    //   // ignore: avoid_print
+                                    //   print("text box is empty");
+                                    // }
+                                  },
+                                  child:
+                                      Icon(Icons.search, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+
+                          // recipes
+                          false
+                              ? Expanded(
+                                  child: GridView.count(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 5,
+                                      mainAxisSpacing: 10,
+                                      children: recipeWidget),
+                                )
+                              : InitialRecipe(UID),
+                        ],
+                      ),
+                    ),
+                    LogOut(),
+                    Profile(UID: UID),
+                    NewRecipe(UID: UID)
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -263,7 +225,6 @@ class _MainScreenState extends State<MainScreen> {
   Future<List<Widget>> fetchRecipes(
       String query, List<Widget> recipes, String UID,
       {int from = 0, required bool search}) async {
-    setState(() => loading = true);
     String queryUrl =
         'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
     final response = await http.get(Uri.parse(queryUrl));
@@ -298,61 +259,62 @@ class _MainScreenState extends State<MainScreen> {
           'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
     }
   }
-
-  // List<RecipeTile> getTiles(String UID, String query) {
-  //   // fetchRecipes(query);
-  //   List<RecipeTile> tiles = List.generate(
-  //     recipesForSearch.length,
-  //     (int i) => RecipeTile(
-  //       recipeModel: recipesForSearch[i],
-  //       UID: UID,
-  //     ),
-  //   );
-  //   // setState(() {
-  //   //   loading = false;
-  //   // });
-  //   return tiles;
-  // }
 }
 
 class InitialRecipe extends StatelessWidget {
   final UID;
-  final recipeWidgets;
-  InitialRecipe(this.UID, this.recipeWidgets);
+  CollectionReference collection =
+      FirebaseFirestore.instance.collection("recipes");
+  // final recipeWidgets;
+  InitialRecipe(this.UID); //, this.recipeWidgets);
 
   @override
   Widget build(BuildContext context) {
-    var snapshot = FirebaseFirestore.instance.collection('recipes').get();
-    // return snapshot.docs.map(doc => doc.data());
-    // CollectionReference recipes = FirebaseFirestore.instance.collection('recipes');
+    // var snapshot = collection.doc('recipe_95661be6f77a57b4c85c789a3b737ada').get();
 
-// var b =  snapshot.get().then((value) {
-//       value.docs.forEach((e) {
-//         print('e = ${e['name']}');
-//       }); //.map((doc) => json.decode(json.encode(doc.data())));
-//    });
-    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      future: snapshot,
-      builder: (BuildContext context,
-          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> docs) {
-        // List<RecipeMediumView> recipeWidgets = [];
-        snapshot.then((collection) {
-          collection.docs.forEach((recipe) {
-            recipeWidgets.add((RecipeMediumView(
-              UID: UID,
-              recipeModel: RecipeModel.fromDocument(recipe),
-            )));
-          });
-        });
-        if (docs.hasError) {
+    return FutureBuilder<DocumentSnapshot>(
+      future: collection.doc('VRWodus2pN2wXXHSz8JH').get(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
           return Text("Something went wrong");
         }
 
-        // if (docs.hasData && !docs.data!.exists) {
-        //   return Text("Document does not exist");
-        // }
+        if (snapshot.hasData && !snapshot.data!.exists) {
+          return Text("Document does not exist");
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          List<RecipeMediumView> recipeWidgets = [];
+          Map<String, dynamic> data =
+              snapshot.data!.data() as Map<String, dynamic>;
+          data.forEach((key, recipe) {
+            print("  ====   Key : $key, Value : $recipe   ====   ");
+            recipeWidgets.add(RecipeMediumView(
+              UID: UID,
+              recipeModel: RecipeModel.fromJson(recipe),
+            ));
+          });
+          return SizedBox(
+            height: 400,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              //TODO stack overflow: Overflow.clip
 
-        return SizedBox(); // if (snapshot.connectionState == ConnectionState.done) {
+              children: recipeWidgets,
+            ),
+          );
+          // snapshot.get().then((collection) {
+          //   collection.docs.forEach((recipe) {
+          //     recipeWidgets.add((RecipeMediumView(
+          //       UID: UID,
+          //       recipeModel: RecipeModel.fromDocument(recipe),
+          //     )));
+          //   });
+          // });
+        }
+        return Loading();
+
+        // if (snapshot.connectionState == ConnectionState.done) {
         //   Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
         //   return Text("Full Name: ${data['full_name']} ${data['last_name']}");
         // }
@@ -361,34 +323,32 @@ class InitialRecipe extends StatelessWidget {
   }
 }
 
-class showRecipes extends StatelessWidget {
-  const showRecipes({Key? key, this.searchView, this.recipes})
-      : super(key: key);
-
-  final searchView;
-  final recipes;
-  @override
-  Widget build(BuildContext context) {
-    return searchView
-        ? Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 10,
-              children: recipes,
-            ),
-          )
-        : SizedBox(
-            height: 400,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              //TODO stack overflow: Overflow.clip
-
-              children: recipes,
-            ),
-          );
-  }
-}
+// class showRecipes extends StatelessWidget {
+//   const showRecipes({Key? key, this.searchView, this.recipes})
+//       : super(key: key);
+//   final searchView;
+//   final recipes;
+//   @override
+//   Widget build(BuildContext context) {
+//     return searchView
+//         ? Expanded(
+//             child: GridView.count(
+//               crossAxisCount: 2,
+//               crossAxisSpacing: 5,
+//               mainAxisSpacing: 10,
+//               children: recipes,
+//             ),
+//           )
+//         : SizedBox(
+//             height: 400,
+//             child: ListView(
+//               scrollDirection: Axis.horizontal,
+//               //TODO stack overflow: Overflow.clip
+//               children: recipes,
+//             ),
+//           );
+//   }
+// }
 
 class LogOut extends StatelessWidget {
   const LogOut({Key? key}) : super(key: key);

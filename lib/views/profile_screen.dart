@@ -5,6 +5,7 @@ import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Views/main_screen.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
 
 class ProfileScreen extends StatelessWidget {
   CollectionReference _firebaseFirestore =
@@ -15,10 +16,13 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var userData = _firebaseFirestore.doc("Rhf0xLH1TwZrqAHeusCdUbJKkiH3").get();
+    final routeArgs =
+        ModalRoute.of(context)?.settings.arguments as Map;
+    final UID = routeArgs['UID'];
+    var userData = _firebaseFirestore.doc(UID).get();
 
     return FutureBuilder<DocumentSnapshot>(
-      future: _firebaseFirestore.doc("Rhf0xLH1TwZrqAHeusCdUbJKkiH3").get(),
+      future: _firebaseFirestore.doc(UID).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
@@ -246,8 +250,9 @@ class ProfileScreen extends StatelessWidget {
                         color: Colors.black,
                         icon: Icons.arrow_back,
                         callback: () => {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  MainScreen.idScreen, (route) => false)
+                              Navigator.of(context).pushNamed(
+                                MainScreen.idScreen,
+                                arguments: {'UID': UID},)
                             }),
                   ),
                 ),
@@ -256,7 +261,7 @@ class ProfileScreen extends StatelessWidget {
           );
         }
 
-        return Text("loading");
+        return Loading();
       },
     );
   }
