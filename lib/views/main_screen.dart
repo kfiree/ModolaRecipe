@@ -103,7 +103,8 @@ class _MainScreenState extends State<MainScreen> {
                                   loading = true,
                                 },
                               );
-                              fetchRecipes(txtController.text, tiles, UID);
+                              await fetchRecipes(
+                                  txtController.text, tiles, UID);
                               setState(
                                 () => {
                                   searchMode = true,
