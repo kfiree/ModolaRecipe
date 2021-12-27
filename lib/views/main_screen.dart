@@ -75,9 +75,8 @@ class _MainScreenState extends State<MainScreen> {
                   //headers
                   MainHeaders(
                     searchMode: searchMode,
-                    mainSize: searchMode ? 40 : 50,
+                    mainSize: searchMode ? 45 : 40,
                   ),
-
                   Container(
                     child: Row(
                       children: <Widget>[
@@ -102,12 +101,12 @@ class _MainScreenState extends State<MainScreen> {
                               setState(
                                 () => {
                                   loading = true,
-                                  searchMode = true,
                                 },
                               );
                               fetchRecipes(txtController.text, tiles, UID);
                               setState(
                                 () => {
+                                  searchMode = true,
                                   loading = false,
                                 },
                               );
