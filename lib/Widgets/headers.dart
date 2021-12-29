@@ -22,7 +22,9 @@ class RecipeHeader extends StatelessWidget {
       children: <Widget>[
         Text(
           "Modula",
-          style: TextStyle(fontSize: size, fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900),
+          style: TextStyle(
+              fontSize: size,
+              fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900),
           textAlign: TextAlign.center,
         ),
         GradientText("R",
@@ -34,7 +36,9 @@ class RecipeHeader extends StatelessWidget {
         Text(
           "ecipies",
           style: TextStyle(
-              color: Colors.white, fontSize: size, fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900),
+              color: Colors.white,
+              fontSize: size,
+              fontWeight: Platform.isIOS ? FontWeight.w400 : FontWeight.w900),
         )
       ],
     );
@@ -49,9 +53,11 @@ class SubHeader extends StatelessWidget {
   final double size;
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(fontSize: size, color: Colors.white),
-    );
+    return Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: TextStyle(fontSize: size, color: Colors.white),
+        ));
   }
 }

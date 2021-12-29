@@ -1,8 +1,10 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, non_constant_identifier_names
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
+import 'package:modolar_recipe/Styles/constants.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import 'package:modolar_recipe/Views/main_screen.dart';
 // import 'package:modolar_recipe/Styles/constants.dart';
@@ -27,37 +29,19 @@ class FullViewScreen extends StatefulWidget {
 class _FullViewScreenState extends State<FullViewScreen> {
   bool editView = false;
   int _selectedIndex = 0;
+  String ApplicationID = '1e2b1681',
+      ApplicationKey = '47e224016bc268ada433484688f019cf';
+
   var url = '';
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
-  void _onItemTapped(int index) {
-    switch (index) {
-      case 0:
-        _launchURL(url);
-        break;
-      case 1:
-        print('edit mode');
-        //TODO save to liked recipes
-        break;
-      case 2:
-        print('edit mode');
-        setState(() {
-          editView = !editView;
-        });
-
-        break;
-    }
-    // setState(() {
-    //   _selectedIndex = index;
-    // });
-  }
 
   @override
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final model = routeArgs['Model'];
+
     url = model.url;
 
     return Scaffold(
@@ -85,51 +69,34 @@ class _FullViewScreenState extends State<FullViewScreen> {
             label: 'Edit',
           ),
         ],
-        // currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        currentIndex: _selectedIndex,
+        selectedItemColor:
+            _selectedIndex == 1 ? Colors.red : Colors.purple, //amber[800],
         onTap: (int index) {
           setState(() {
-            editView = !editView;
+            _selectedIndex = index;
           });
+          switch (index) {
+            case 0:
+              _launchURL(url);
+              print('0 $index');
+              break;
+            case 1:
+              print('1 $index');
+              break;
+            case 2:
+              print('2 $index');
+
+              setState(() {
+                editView = !editView;
+              });
+              break;
+          }
         },
       ),
     );
   }
 }
-
-// Row(
-//   crossAxisAlignment: CrossAxisAlignment.center,
-//   mainAxisSize: MainAxisSize.max,
-//   // mainAxisAlignment: MainAxisAlignment.end,
-//   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//   children: <Widget>[
-//     OutlinedButton(
-//       style: ButtonStyle(
-//         backgroundColor:
-//             MaterialStateProperty.all<Color>(Colors.black12),
-//       ),
-//       onPressed: () {
-//         _launchURL(model.url);
-//       },
-//       child: Text(
-//         "Full Recipe On '${model.source}'",
-//         style: TextStyle(
-//             fontWeight: FontWeight.bold,
-//             color: HexColor('##785ac7')),
-//       ),
-//     ),
-//     CircleButton(
-//       color: HexColor('##785ac7'),
-//       icon: Icons.edit,
-//       callback: () {
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) => RateRecipe(),
-//         );
-//       },
-//     ),
-//   ],
-// ),
 
 class HeaderCard extends StatelessWidget {
   const HeaderCard({
@@ -215,10 +182,14 @@ class InfoCard extends StatefulWidget {
 }
 
 class _InfoCardState extends State<InfoCard> {
-  // TODO check why this line is for
-
+  TextEditingController txtController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final instructions = [
+      'do A',
+      'do B',
+      'asfasdfs dafasdf  as dfasfsdafasdfasfasdf s dafasdf  as dfasfs dafasdf asfasdfs dafasdf  as dfasfsdafasdf'
+    ];
     List<IngredientCard> ingredientsList = List.generate(
       widget.model.ingredients.length,
       (int i) => IngredientCard(
@@ -228,11 +199,7 @@ class _InfoCardState extends State<InfoCard> {
         unit: widget.model.ingredients[i].unit,
       ),
     );
-    //     IngredientCard(
-    //   name: 'All Purpose Flour',
-    //   quantity: '2',
-    //   unit: 'cups',
-    // ),
+    List<Animal> ingredientComp = [];
     return Expanded(
       flex: 2,
       child: Container(
@@ -261,17 +228,20 @@ class _InfoCardState extends State<InfoCard> {
                     fontFamily: "Quicksand",
                   ),
                 ),
-                Icon(Icons.no_food, color: Colors.green, size: 20),
-                Icon(Icons.local_drink, color: Colors.green, size: 20),
                 if (widget.model.cookingTime != 0.0)
-                  Text(
-                    widget.model.cookingTime.toInt().toString(),
-                    style: TextStyle(
-                      fontFamily: "Quicksand",
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFBFBFBF),
-                    ),
-                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        widget.model.cookingTime.toInt().toString(),
+                        style: TextStyle(
+                          fontFamily: "Quicksand",
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFBFBFBF),
+                        ),
+                      ),
+                      Icon(Icons.timer, color: Color(0xFFBFBFBF), size: 30),
+                    ],
+                  )
               ],
             ),
             SizedBox(
@@ -286,46 +256,282 @@ class _InfoCardState extends State<InfoCard> {
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 20,
             ),
             Column(
               children: ingredientsList,
             ),
+            if (widget.editView)
+              Row(
+                children: <Widget>[
+                  // search
+                  Expanded(
+                    child: TextField(
+                      controller: txtController,
+                      decoration: InputDecoration(
+                          hintText: "Start Typeing Ingrideint name",
+                          hintStyle: TextStyle(
+                            fontSize: 18,
+                          )),
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if (txtController.text.isNotEmpty) {
+                        print('in search damn!');
+                        await fetchIngredients(
+                          txtController.text,
+                          ingredientComp,
+                        );
+                        setState(() {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AddIngredient(
+                                  model: widget.model, options: ingredientComp);
+                            },
+                          );
+                        });
+                      } else {}
+                    },
+                    child: Icon(Icons.search, color: Colors.black),
+                  ),
+                ],
+              ),
             SizedBox(
               height: 20,
             ),
-            // Text('Steps',
-            //     style: TextStyle(
-            //       color: Color(0xff909090),
-            //       fontWeight: FontWeight.w700,
-            //       fontFamily: "Quicksand",
-            //     )),
-            Column(
-                // children: const <Widget>[
-                //   StepEntry(
-                //     text: 'Preheat the oven to 450 degrees',
-                //     initialStep: true,
-                //   ),
-                //   StepEntry(
-                //       text:
-                //           'Add the basil leaves (but keep some for the presentation) and blend to a green paste.'),
-                //   StepEntry(text: 'Preheat the oven to 450 degrees'),
-                // ],
-                ),
-
-            // ElevatedButton(
-            //   onPressed: () {
-            //   onPressed: () {
-            //     _launchURL(model.url);
-            //   },
-            //   child: Text("Full Recipe On ${model.source}"),
-            // ),
-            // SizedBox(
-            //   height: 50,
-            // ),
+            // if (widget.model.instructions.isEmpty)
+            if (instructions.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Additional Instructions',
+                    style: TextStyle(
+                      color: Color(0xff909090),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: "Quicksand",
+                    ),
+                  ),
+                  Column(
+                    children: <Widget>[
+                      for (String s in instructions)
+                        StepEntry(text: s, edit: widget.editView),
+                      if (widget.editView)
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          tooltip: 'add instruction',
+                          onPressed: () {
+                            setState(() {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AddInstruction(model: widget.model);
+                                  });
+                            });
+                          },
+                        ),
+                    ],
+                  )
+                ],
+              ),
+            SizedBox(
+              height: 20,
+            ),
+            if (widget.editView)
+              TextButton.icon(
+                // style: ButtonStyle(
+                //     textStyle: TextStyle(
+                //   color: Colors.black,
+                // )),
+                onPressed: () {
+                  // Respond to button press
+                },
+                icon: Icon(Icons.save, size: 30),
+                label: Text("SUBMIT"),
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<List<Animal>> fetchIngredients(
+      String query, List<Animal> ingredientComp) async {
+    String applicationId = "2051cf6b",
+        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+    String queryUrl =
+        "https://api.edamam.com/auto-complete?app_id=1e2b1681&app_key=47e224016bc268ada433484688f019cf&q=$query";
+    // 'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
+    final response = await http.get(Uri.parse(queryUrl));
+
+    if (response.statusCode == 200) {
+      // recipes.clear();
+      List<String> jsonData = jsonDecode(response.body).cast<String>();
+      int i = 0;
+      jsonData.forEach(
+        (ingredient) {
+          ingredientComp.add(Animal(
+            id: ++i,
+            name: ingredient,
+          ));
+        },
+      );
+
+      return ingredientComp;
+    } else {
+      throw Exception(
+          'Failed to load ingredients. response statusCode = ${response.statusCode}');
+    }
+  }
+}
+
+class Animal {
+  final int id;
+  final String name;
+
+  Animal({
+    required this.id,
+    required this.name,
+  });
+
+  @override
+  String toString() {
+    String data = '''
+    id: $id,
+    name: $name,
+    ''';
+    return '{\n$data}';
+  }
+}
+
+class AddIngredient extends StatefulWidget {
+  AddIngredient({Key? key, required this.model, required this.options})
+      : super(key: key);
+  final RecipeModel model;
+  List<Animal> options;
+
+  @override
+  State<AddIngredient> createState() => _AddIngredientState();
+}
+
+class _AddIngredientState extends State<AddIngredient> {
+  TextEditingController txtController = TextEditingController();
+  bool autoComplete = true;
+  List<Object?> selected = [];
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      scrollable: true,
+      title: Text('Add Ingredient'),
+      content: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          child: Column(
+            children: <Widget>[
+              // MultiSelectDialogField(
+              // items: _animals
+              //     .map((animal) =>
+              //         MultiSelectItem<Animal>(animal, animal.name))
+              //     .toList(),
+              //   onConfirm: (values) {
+              //     print(values.toString());
+              //   },
+              //   // items: _animals.map((e) => MultiSelectItem(e, e.name)).toList(),
+              //   // listType: MultiSelectListType.CHIP,
+              //   // onConfirm: (values) {
+              //   //   _selectedAnimals = values;
+              //   // },
+              // ),
+              MultiSelectBottomSheetField(
+                initialChildSize: 0.4,
+                listType: MultiSelectListType.CHIP,
+                searchable: true,
+                buttonText: Text("Choose ingredient"),
+                title: Text("Animals"),
+                items: widget.options
+                    .map((ingredient) =>
+                        MultiSelectItem<Animal>(ingredient, ingredient.name))
+                    .toList(),
+                onConfirm: (values) {
+                  print('save to DB the values ${values.toString()}');
+                  selected.addAll(values);
+                },
+                chipDisplay: MultiSelectChipDisplay(
+                  onTap: (value) {
+                    setState(() {
+                      selected.remove(value);
+                    });
+                  },
+                ),
+              ),
+              // _selectedAnimals2 == null || _selectedAnimals2.isEmpty
+              //     ? Container(
+              //         padding: EdgeInsets.all(10),
+              //         alignment: Alignment.centerLeft,
+              //         child: Text(
+              //           "None selected",
+              //           style: TextStyle(color: Colors.black54),
+              //         ))
+              //     : Container(),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        RaisedButton(
+            child: Text("Add"),
+            onPressed: () {
+              Navigator.pop(context, []);
+
+              // TODO push to fire base and show new ingredients
+            })
+      ],
+    );
+  }
+}
+
+class AddInstruction extends StatelessWidget {
+  AddInstruction({Key? key, required this.model}) : super(key: key);
+  RecipeModel model;
+
+  TextEditingController txtController = TextEditingController();
+  // final String name;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      scrollable: true,
+      title: Text('Add Instruction'),
+      content: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: txtController,
+                decoration: InputDecoration(
+                  labelText: 'Instruction',
+                  icon: Icon(Icons.account_box),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        RaisedButton(
+            child: Text("Add"),
+            onPressed: () {
+              if (txtController.text.isNotEmpty)
+                model.instructions.add(txtController.text);
+              // push to fire base
+            })
+      ],
     );
   }
 }
@@ -335,5 +541,89 @@ _launchURL(String url) async {
     await launch(url);
   } else {
     throw 'Could not launch $url';
+  }
+}
+
+class StepEntry extends StatefulWidget {
+  final String text;
+  final bool initialStep;
+  final bool edit;
+  const StepEntry(
+      {required this.text, this.initialStep: false, required this.edit});
+
+  @override
+  State<StepEntry> createState() => _StepEntryState();
+}
+
+class _StepEntryState extends State<StepEntry> {
+  bool removed = false;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        right: 25,
+        left: 10.0,
+        top: 0.0,
+      ),
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              // Expanded(
+              //   flex: 1,
+              //   child: Container(
+              //     width: 5.0,
+              //     height: initialStep ? 0 : 40,
+              //     decoration: BoxDecoration(
+              //       color: HexColor('#F9AF9C'),
+              //       borderRadius: BorderRadius.circular(10.0),
+              //     ),
+              //   ),
+              // ),
+              Expanded(
+                flex: 69,
+                child: SizedBox(
+                  height: 10.0,
+                ),
+              )
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              widget.edit
+                  ? IconButton(
+                      icon: removed
+                          ? const Icon(Icons.add)
+                          : const Icon(Icons.cancel),
+                      tooltip: 'delete instruction',
+                      onPressed: () {
+                        setState(() {
+                          removed = !removed;
+                        });
+                      },
+                    )
+                  : Container(
+                      height: 5.0,
+                      width: 5.0,
+                      decoration: BoxDecoration(
+                        color: HexColor('##785ac7'),
+                        shape: BoxShape.rectangle,
+                      ),
+                    ),
+              SizedBox(
+                width: 20.0,
+              ),
+              Flexible(
+                child: Text(
+                  widget.text,
+                  style: removed ? deletedStyle : kIngredientsNameStyle,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -229,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         children: [
           Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.white),
+            data: ThemeData(unselectedWidgetColor: Colors.grey),
             child: Checkbox(
               value: rememberpwd,
               checkColor: Colors.blueGrey,

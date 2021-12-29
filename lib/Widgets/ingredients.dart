@@ -37,7 +37,7 @@ class _IngredientCardState extends State<IngredientCard> {
               tooltip: 'delete ingredient',
               onPressed: () {
                 setState(() {
-                  widget.removed = true;
+                  widget.removed = !widget.removed;
                 });
               },
             ),

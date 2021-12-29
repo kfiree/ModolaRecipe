@@ -1,6 +1,4 @@
 import 'dart:convert';
-// import 'dart:html';
-// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,213 +18,154 @@ class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "main_screen";
-  final String applicationId = "2051cf6b",
-      applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+  // final String applicationId = "2051cf6b",
+  //     applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  bool loading = false, searchView = false;
-  CollectionReference _firebaseFirestore =
-      FirebaseFirestore.instance.collection("recipes");
-  // _firebaseFirestore.snapshots().forEach((e){})
-  List<Widget> recipeWidgets = [];
-  List<RecipeModel> recipeModels = [];
+  bool loading = false, searchMode = false;
+  double headerSize = 40;
+  List<RecipeTile> tiles = [];
+  // String query = 'sugar';
 
   //text controllers
-  TextEditingController txtController = TextEditingController(),
-      recipesTextController = TextEditingController();
+  TextEditingController txtController = TextEditingController();
 
-//   func() async {
-//     // final QuerySnapshot result = await _firebaseFirestore.get().then((value) => null);
-//     var b = await _firebaseFirestore.get().then((value) {
-//       value.docs.forEach((e) {
-//         print('e = ${e['name']}');
-//       }); //.map((doc) => json.decode(json.encode(doc.data())));
-//     }); //.docs.map(doc => doc.data());print('this is inside func ${value}')});
-//     var a = _firebaseFirestore
-//         .get()
-//         .then((recipe) => print(' hi yo ${recipe.toString()}'));
-//     print(a);
-// // final List<DocumentSnapshot> documents = result.docChanges;
-//   }
-  // setRecipes() async {
-  //   var snapshot = await FirebaseFirestore.instance.collection('recipes').get();
-
-  // }
   @override
   Widget build(BuildContext context) {
+    // safety check
     if (ModalRoute.of(context)?.settings.arguments == null) {
       Navigator.pushNamedAndRemoveUntil(
-          context, LoginScreen.idScreen, (route) => false);
+        context,
+        LoginScreen.idScreen,
+        (route) => false,
+      );
     }
-    final routeArgs =
-        ModalRoute.of(context)?.settings.arguments as Map;
+
+    // route arguments
+    final routeArgs = ModalRoute.of(context)?.settings.arguments as Map;
     final UID = routeArgs['UID'];
-    List<Widget> recipeWidget = [];
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            // style data
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                    Color.fromARGB(255, 248, 191, 176),
-                    Colors.white,
-                  ],
-                ),
+      body: Stack(
+        children: <Widget>[
+          // style data
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [Color.fromARGB(255, 248, 191, 176), Colors.white],
               ),
             ),
+          ),
 
-            // loading
-            if (loading)
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Loading(),
-                ),
-              ),
-
-            // screen content
-            Stack(
-              children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          //headers
-                          MainHeaders(searchView: searchView),
-
-                          // inputs text boxes
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextField(
-                                    controller: txtController,
-                                    decoration: InputDecoration(
-                                        hintText: "Enter Ingrideints",
-                                        hintStyle: TextStyle(
-                                          fontSize: 18,
-                                        )),
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 16,
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    // func();
-                                    if (txtController.text.isNotEmpty) {
-                                      setState(() => {});
-                                    }
-                                    // {loading = true, searchView = true});
-
-                                    //   String queryUrl =
-                                    //       'https://api.edamam.com/search?q=${txtController.text}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-                                    //   final response =
-                                    //       await http.get(Uri.parse(queryUrl));
-
-                                    //   List<Widget> tiles = [];
-                                    //   if (response.statusCode == 200) {
-                                    //     Map<String, dynamic> jsonData =
-                                    //         jsonDecode(response.body);
-
-                                    //     for (int i = 0;
-                                    //         i < jsonData["hits"].length;
-                                    //         i++) {
-                                    //       RecipeTile tile = RecipeTile(
-                                    //           recipeModel: RecipeModel.fromJson(
-                                    //               jsonData['hits'][i]
-                                    //                   ['recipe']),
-                                    //           UID: UID);
-                                    //       tiles.add(tile);
-                                    //       print('tile number $i is added!');
-                                    //     }
-                                    //     recipeWidget =
-                                    //         tiles; // as List<Widget>;
-                                    //     // setState(() => loading = false);
-                                    //   }
-                                    // } else {
-                                    //   // ignore: avoid_print
-                                    //   print("text box is empty");
-                                    // }
-                                  },
-                                  child:
-                                      Icon(Icons.search, color: Colors.white),
-                                ),
-                              ],
-                            ),
+          // screen content
+          SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  //headers
+                  MainHeaders(
+                    searchMode: searchMode,
+                    mainSize: searchMode ? 45 : 40,
+                  ),
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        // search
+                        Expanded(
+                          child: TextField(
+                            controller: txtController,
+                            decoration: InputDecoration(
+                                hintText: "Enter Ingrideints",
+                                hintStyle: TextStyle(
+                                  fontSize: 18,
+                                )),
+                            style: TextStyle(fontSize: 18),
                           ),
-                          SizedBox(
-                            height: 30,
-                          ),
-
-                          // recipes
-                          false
-                              ? Expanded(
-                                  child: GridView.count(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 5,
-                                      mainAxisSpacing: 10,
-                                      children: recipeWidget),
-                                )
-                              : InitialRecipe(UID),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            if (txtController.text.isNotEmpty) {
+                              setState(
+                                () => {
+                                  loading = true,
+                                },
+                              );
+                              await fetchRecipes(
+                                  txtController.text, tiles, UID);
+                              setState(
+                                () => {
+                                  searchMode = true,
+                                  loading = false,
+                                },
+                              );
+                            } else {
+                              setState(
+                                () => {
+                                  searchMode = false,
+                                },
+                              );
+                            }
+                          },
+                          child: Icon(Icons.search, color: Colors.white),
+                        ),
+                      ],
                     ),
-                    LogOut(),
-                    Profile(UID: UID),
-                    NewRecipe(UID: UID)
-                  ],
-                ),
-              ],
+                  ),
+                  //recipe views
+                  Container(
+                    child: searchMode
+                        ? GridView.count(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 10,
+                            children: tiles,
+                          )
+                        : InitialRecipe(UID),
+                  )
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+
+          // loading
+          if (loading)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Loading(),
+              ),
+            ),
+          //buttons
+          LogOut(),
+          Profile(UID: UID),
+          NewRecipe(UID: UID),
+        ],
       ),
     );
   }
 
-  List<RecipeTile> getTiles(String query, var response, String UID) {
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonData = jsonDecode(response.body);
-      List<RecipeTile> tiles = [];
-
-      print(jsonData["hits"].toString());
-
-      for (int i = 0; i < 10; i++) {
-        print('tile number $i is added!');
-        tiles.add(RecipeTile(recipeModel: jsonData["hits"][i], UID: UID));
-      }
-
-      return tiles;
-    } else {
-      throw Exception('Failed to load Recipe ${response.statusCode}');
-    }
-  }
-
-  // return recipes
-  Future<List<Widget>> fetchRecipes(
-      String query, List<Widget> recipes, String UID,
-      {int from = 0, required bool search}) async {
+  Future<List<RecipeTile>> fetchRecipes(
+      String query, List<RecipeTile> recipes, String UID) async {
+    String applicationId = "2051cf6b",
+        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
     String queryUrl =
-        'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+        'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
     final response = await http.get(Uri.parse(queryUrl));
 
     if (response.statusCode == 200) {
@@ -235,43 +174,58 @@ class _MainScreenState extends State<MainScreen> {
 
       jsonData["hits"].forEach(
         (hit) {
-          recipes.add((RecipeMediumView(
-            UID: UID,
+          recipes.add(RecipeTile(
             recipeModel: RecipeModel.fromJson(hit["recipe"]),
-          )));
+            UID: UID,
+          ));
         },
       );
-      // setState(() {
-      //   searchView = search;
-      // });
-      setState(() => {loading = false, searchView = true});
-      // _firebaseFirestore.add()
-      // setState(() => {loading = false});
+      
+      List<String> keyWords = query.split(' ');   
+      
+      setState(() => {loading = false});
+      
       return recipes;
     } else {
-      List<String> keyWords = query.split(' ');
       setState(() => loading = false);
-      // var snapshot =
-      //     FirebaseFirestore.instance.collection('recipes').where("ingredients['food']" { arrayContainsAny, keyWords});
-      // _firebaseFirestore.add(data)
-      // recipes.
       throw Exception(
-          'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
+          'Failed to load Recipe. response statusCode = ${response.statusCode}');
     }
   }
+  // // return recipes
+  // Future<List<Widget>> fetchRecipes(
+  //     String query, List<Widget> recipes, String UID,
+  //     {int from = 0, required bool search}) async {
+  //   String queryUrl =
+  //       'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
+  //   final response = await http.get(Uri.parse(queryUrl));
+  //   if (response.statusCode == 200) {
+  //     // recipes.clear();
+  //     Map<String, dynamic> jsonData = jsonDecode(response.body);
+  //     jsonData["hits"].forEach(
+  //       (hit) {
+  //         recipes.add((RecipeMediumView(
+  //           UID: UID,
+  //           recipeModel: RecipeModel.fromJson(hit["recipe"]),
+  //         )));
+  //       },
+  //     );
+  //     return recipes;
+  //   } else {
+  //     throw Exception(
+  //         'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
+  //   }
+  // }
 }
 
 class InitialRecipe extends StatelessWidget {
   final UID;
   CollectionReference collection =
       FirebaseFirestore.instance.collection("recipes");
-  // final recipeWidgets;
-  InitialRecipe(this.UID); //, this.recipeWidgets);
+  InitialRecipe(this.UID, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // var snapshot = collection.doc('recipe_95661be6f77a57b4c85c789a3b737ada').get();
-
     return FutureBuilder<DocumentSnapshot>(
       future: collection.doc('VRWodus2pN2wXXHSz8JH').get(),
       builder:
@@ -283,10 +237,12 @@ class InitialRecipe extends StatelessWidget {
         if (snapshot.hasData && !snapshot.data!.exists) {
           return Text("Document does not exist");
         }
+
         if (snapshot.connectionState == ConnectionState.done) {
           List<RecipeMediumView> recipeWidgets = [];
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
+
           data.forEach((key, recipe) {
             print("  ====   Key : $key, Value : $recipe   ====   ");
             recipeWidgets.add(RecipeMediumView(
@@ -303,128 +259,19 @@ class InitialRecipe extends StatelessWidget {
               children: recipeWidgets,
             ),
           );
-          // snapshot.get().then((collection) {
-          //   collection.docs.forEach((recipe) {
-          //     recipeWidgets.add((RecipeMediumView(
-          //       UID: UID,
-          //       recipeModel: RecipeModel.fromDocument(recipe),
-          //     )));
-          //   });
-          // });
         }
         return Loading();
-
-        // if (snapshot.connectionState == ConnectionState.done) {
-        //   Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-        //   return Text("Full Name: ${data['full_name']} ${data['last_name']}");
-        // }
       },
     );
   }
 }
 
-// class showRecipes extends StatelessWidget {
-//   const showRecipes({Key? key, this.searchView, this.recipes})
-//       : super(key: key);
-//   final searchView;
-//   final recipes;
-//   @override
-//   Widget build(BuildContext context) {
-//     return searchView
-//         ? Expanded(
-//             child: GridView.count(
-//               crossAxisCount: 2,
-//               crossAxisSpacing: 5,
-//               mainAxisSpacing: 10,
-//               children: recipes,
-//             ),
-//           )
-//         : SizedBox(
-//             height: 400,
-//             child: ListView(
-//               scrollDirection: Axis.horizontal,
-//               //TODO stack overflow: Overflow.clip
-//               children: recipes,
-//             ),
-//           );
-//   }
-// }
-
-class LogOut extends StatelessWidget {
-  const LogOut({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 30.0,
-      right: 0.0,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CircleButton(
-          color: Colors.black,
-          icon: Icons.logout,
-          callback: () => {
-            Navigator.pushNamedAndRemoveUntil(
-                context, LoginScreen.idScreen, (route) => false)
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class Profile extends StatelessWidget {
-  const Profile({Key? key, this.UID}) : super(key: key);
-  final UID;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: 30.0,
-      left: 0.0,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CircleButton(
-          color: Colors.black,
-          icon: Icons.account_box,
-          callback: () => {
-            Navigator.of(context).pushNamed(
-              ProfileScreen.idScreen,
-              arguments: {'UID': UID},
-            ),
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class NewRecipe extends StatelessWidget {
-  const NewRecipe({Key? key, this.UID}) : super(key: key);
-  final UID;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 30.0,
-      left: 0.0,
-      child: CircleButton(
-        color: Colors.black,
-        icon: Icons.add,
-        callback: () => {
-          Navigator.of(context).pushNamed(
-            AddScreen.idScreen,
-            arguments: {'UID': UID},
-          ),
-        },
-      ),
-    );
-  }
-}
-
 class MainHeaders extends StatelessWidget {
-  const MainHeaders({Key? key, required this.searchView}) : super(key: key);
-  final bool searchView;
+  const MainHeaders(
+      {Key? key, required this.searchMode, required this.mainSize})
+      : super(key: key);
+  final bool searchMode;
+  final double mainSize;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -434,8 +281,9 @@ class MainHeaders extends StatelessWidget {
           height: 50,
         ),
         // headers
-        RecipeHeader(color1: Colors.black, color2: Colors.white, size: 30),
-        if (!searchView)
+        RecipeHeader(
+            color1: Colors.black, color2: Colors.white, size: mainSize),
+        if (!searchMode)
           Column(
             children: const <Widget>[
               SizedBox(

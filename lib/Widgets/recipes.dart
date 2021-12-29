@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
 import 'package:modolar_recipe/Widgets/ingredients.dart';
+import 'dart:convert';
 
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Styles/constants.dart';
+import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/recipe_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -372,6 +375,73 @@ class RecipeModel {
   }
 }
 
+class RecipeGrid extends StatelessWidget {
+  const RecipeGrid({Key? key, this.query, this.UID}) : super(key: key);
+
+  final query, UID;
+// List<RecipeTile>
+  Future<List<RecipeModel>> fetchFromAPI(String query) async {
+    String applicationId = "2051cf6b",
+        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+    String queryUrl =
+        'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
+    final response = await http.get(Uri.parse(queryUrl));
+
+    if (response.statusCode == 200) {
+      // recipes.clear();
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<RecipeModel> recipes = [];
+
+      jsonData["hits"].forEach(
+        (hit) {
+          recipes.add(
+            RecipeModel.fromJson(hit["recipe"]),
+          );
+        },
+      );
+
+      return recipes;
+    } else {
+      throw Exception(
+          'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<RecipeModel>>(
+      future: fetchFromAPI(query),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<RecipeModel>> snapshot) {
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Loading();
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          List<RecipeTile> tiles = [];
+          snapshot.data?.forEach((model) {
+            tiles.add(RecipeTile(
+              recipeModel: model,
+              UID: UID,
+            ));
+          });
+          return GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 10,
+            children: tiles,
+          );
+        } else {
+          return Text('State: ${snapshot.connectionState}');
+        }
+      },
+    );
+  }
+}
+
 String stringFormat(dynamic element) {
   return element ?? 'NULL';
 }
@@ -381,7 +451,9 @@ int numFormat(dynamic element) {
 }
 
 List<dynamic> ListFormat(dynamic element) {
-  element ?? [];
+  if (element == null) {
+    return [];
+  }
   return element.cast<String>();
 }
 
