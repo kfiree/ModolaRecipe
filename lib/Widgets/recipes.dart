@@ -351,8 +351,6 @@ class RecipeModel {
     return data;
   }
 
-  
-
   @override
   String toString() {
     String data = '''
@@ -463,6 +461,3 @@ List<IngredientModel> toIngredientList(dynamic element) {
       {ingredientList.add(IngredientModel.fromJson(ingredient))});
   return ingredientList;
 }
-
-
-
