@@ -162,6 +162,16 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<List<RecipeTile>> fetchRecipes(
       String query, List<RecipeTile> recipes, String UID) async {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection("recipes");
+
+    // if there are no results in our FB then we'll get them here
+    // List <dynamic> results = collection.where()
+
+    // else we'll reach the API
+    // then we'll get the new recipes and while process then to RecipeModel
+    // we'll add them to our FB
+
     String applicationId = "2051cf6b",
         applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
     String queryUrl =
@@ -178,13 +188,14 @@ class _MainScreenState extends State<MainScreen> {
             recipeModel: RecipeModel.fromJson(hit["recipe"]),
             UID: UID,
           ));
+          addToFB(hit["recipe"]);
         },
       );
-      
-      List<String> keyWords = query.split(' ');   
-      
+
+      List<String> keyWords = query.split(' ');
+
       setState(() => {loading = false});
-      
+
       return recipes;
     } else {
       setState(() => loading = false);
@@ -192,6 +203,61 @@ class _MainScreenState extends State<MainScreen> {
           'Failed to load Recipe. response statusCode = ${response.statusCode}');
     }
   }
+
+  addToFB(Map<String, dynamic> recipe) {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection("recipes");
+    // DocumentReference doc = collection.document();
+    recipe = format(recipe);
+    collection.firestore.collection("VRWodus2pN2wXXHSz8JH").add(recipe);
+  }
+
+  dynamic format(dynamic doc) {
+    doc['uri'] = stringFormat(doc['uri']);
+    doc['label'] = stringFormat(doc['label']);
+    doc['image'] = stringFormat(doc['image']);
+    doc['source'] = stringFormat(doc['source']);
+    doc['url'] = stringFormat(doc['url']);
+    doc['calories'] = numFormat(doc['calories']);
+    doc['totalTime'] = numFormat(doc['totalTime']);
+    doc['dietLabels'] = ListFormat(doc['dietLabels']);
+    doc['healthLabels'] = ListFormat(doc['healthLabels']);
+    doc['cautions'] = ListFormat(doc['cautions']);
+    doc['cuisineType'] = ListFormat(doc['cuisineType']);
+    doc['mealType'] = ListFormat(doc['mealType']);
+    doc['dishType'] = ListFormat(doc['dishType']);
+    doc['instructions'] = ListFormat(doc['instructions']);
+    doc['ingredients'] = toIngredientList(doc['ingredients']);
+    return doc;
+  }
+
+  String stringFormat(dynamic element) {
+    return element ?? 'NULL';
+  }
+
+  int numFormat(dynamic element) {
+    return element.toInt() ?? 0;
+  }
+
+  List<dynamic> ListFormat(dynamic element) {
+    if (element == null) {
+      return [];
+    }
+    return element.cast<String>();
+  }
+
+//List<Map<String, dynamic>> ingredientsJson) {
+  List<IngredientModel> toIngredientList(dynamic element) {
+    if (element == null) {
+      return [];
+    }
+
+    List<IngredientModel> ingredientList = [];
+    element.forEach((ingredient) =>
+        {ingredientList.add(IngredientModel.fromJson(ingredient))});
+    return ingredientList;
+  }
+
   // // return recipes
   // Future<List<Widget>> fetchRecipes(
   //     String query, List<Widget> recipes, String UID,
@@ -304,6 +370,7 @@ class MainHeaders extends StatelessWidget {
     );
   }
 }
+
 // /*
 // ===================== RESPONSE EXAMPLE =====================
 // {

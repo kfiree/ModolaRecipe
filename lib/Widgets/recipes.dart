@@ -310,8 +310,8 @@ class RecipeModel {
   });
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    // addToFB(json);
     // json = format(json);
+    // addToFB(json);
     return RecipeModel(
       uri: stringFormat(json['uri']),
       name: stringFormat(json['label']),
@@ -351,12 +351,7 @@ class RecipeModel {
     return data;
   }
 
-  addToFB(Map<String, dynamic> recipe) {
-    // Map<
-    CollectionReference collection =
-        FirebaseFirestore.instance.collection("recipes");
-    collection.add(recipe);
-  }
+  
 
   @override
   String toString() {
@@ -471,25 +466,3 @@ List<IngredientModel> toIngredientList(dynamic element) {
 
 
 
-// dynamic format(dynamic doc) {
-//   doc['uri'] = stringFormat(doc['uri']);
-//   doc['label'] == null
-//       ? doc['name'] = stringFormat(doc['name'])
-//       : stringFormat(doc['label']);
-//   doc['image'] = stringFormat(doc['image']);
-//   doc['source'] = stringFormat(doc['source']);
-//   doc['url'] = stringFormat(doc['url']);
-//   doc['calories'] = numFormat(doc['calories']);
-//   doc['totalTime'] == null
-//       ? doc['timeInMinutes'] = numFormat(doc['timeInMinutes'])
-//       : numFormat(doc['totalTime']);
-//   doc['dietLabels'] = ListFormat(doc['dietLabels']);
-//   doc['healthLabels'] = ListFormat(doc['healthLabels']);
-//   doc['cautions'] = ListFormat(doc['cautions']);
-//   doc['cuisineType'] = ListFormat(doc['cuisineType']);
-//   doc['mealType'] = ListFormat(doc['mealType']);
-//   doc['dishType'] = ListFormat(doc['dishType']);
-//   doc['instructions'] = ListFormat(doc['instructions']);
-//   doc['ingredients'] = toIngredientList(doc['ingredients']);
-//   return doc;
-// }
