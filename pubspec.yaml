@@ -45,6 +45,7 @@ dependencies:
   duration: ^3.0.8
   hexcolor: ^2.0.5
   rating_dialog: ^2.0.0
+  multi_select_flutter: ^4.0.0
 
   webview_flutter:
   url_launcher: # for the web version, we're intrested in the mobile version 

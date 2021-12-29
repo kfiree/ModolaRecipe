@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
 import 'package:modolar_recipe/Styles/constants.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import 'package:modolar_recipe/Views/main_screen.dart';
 // import 'package:modolar_recipe/Styles/constants.dart';
@@ -28,6 +29,9 @@ class FullViewScreen extends StatefulWidget {
 class _FullViewScreenState extends State<FullViewScreen> {
   bool editView = false;
   int _selectedIndex = 0;
+  String ApplicationID = '1e2b1681',
+      ApplicationKey = '47e224016bc268ada433484688f019cf';
+
   var url = '';
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -195,7 +199,7 @@ class _InfoCardState extends State<InfoCard> {
         unit: widget.model.ingredients[i].unit,
       ),
     );
-
+    List<Animal> ingredientComp = [];
     return Expanded(
       flex: 2,
       child: Container(
@@ -258,18 +262,45 @@ class _InfoCardState extends State<InfoCard> {
               children: ingredientsList,
             ),
             if (widget.editView)
-              IconButton(
-                icon: const Icon(Icons.add),
-                tooltip: 'add ingredient',
-                onPressed: () {
-                  setState(() {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AddToRecipe(title: 'ingredient');
+              Row(
+                children: <Widget>[
+                  // search
+                  Expanded(
+                    child: TextField(
+                      controller: txtController,
+                      decoration: InputDecoration(
+                          hintText: "Start Typeing Ingrideint name",
+                          hintStyle: TextStyle(
+                            fontSize: 18,
+                          )),
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if (txtController.text.isNotEmpty) {
+                        print('in search damn!');
+                        await fetchIngredients(
+                          txtController.text,
+                          ingredientComp,
+                        );
+                        setState(() {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AddIngredient(
+                                  model: widget.model, options: ingredientComp);
+                            },
+                          );
                         });
-                  });
-                },
+                      } else {}
+                    },
+                    child: Icon(Icons.search, color: Colors.black),
+                  ),
+                ],
               ),
             SizedBox(
               height: 20,
@@ -300,7 +331,7 @@ class _InfoCardState extends State<InfoCard> {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return AddToRecipe(title: 'Edit');
+                                    return AddInstruction(model: widget.model);
                                   });
                             });
                           },
@@ -309,52 +340,195 @@ class _InfoCardState extends State<InfoCard> {
                   )
                 ],
               ),
-
             SizedBox(
               height: 20,
             ),
+            if (widget.editView)
+              TextButton.icon(
+                // style: ButtonStyle(
+                //     textStyle: TextStyle(
+                //   color: Colors.black,
+                // )),
+                onPressed: () {
+                  // Respond to button press
+                },
+                icon: Icon(Icons.save, size: 30),
+                label: Text("SUBMIT"),
+              ),
           ],
         ),
       ),
     );
   }
+
+  Future<List<Animal>> fetchIngredients(
+      String query, List<Animal> ingredientComp) async {
+    String applicationId = "2051cf6b",
+        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+    String queryUrl =
+        "https://api.edamam.com/auto-complete?app_id=1e2b1681&app_key=47e224016bc268ada433484688f019cf&q=$query";
+    // 'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
+    final response = await http.get(Uri.parse(queryUrl));
+
+    if (response.statusCode == 200) {
+      // recipes.clear();
+      List<String> jsonData = jsonDecode(response.body).cast<String>();
+      int i = 0;
+      jsonData.forEach(
+        (ingredient) {
+          ingredientComp.add(Animal(
+            id: ++i,
+            name: ingredient,
+          ));
+        },
+      );
+
+      return ingredientComp;
+    } else {
+      throw Exception(
+          'Failed to load ingredients. response statusCode = ${response.statusCode}');
+    }
+  }
 }
 
-class AddToRecipe extends StatelessWidget {
-  const AddToRecipe({Key? key, required this.title}) : super(key: key);
+class Animal {
+  final int id;
+  final String name;
 
-  final String title;
-  // final String name;
+  Animal({
+    required this.id,
+    required this.name,
+  });
+
+  @override
+  String toString() {
+    String data = '''
+    id: $id,
+    name: $name,
+    ''';
+    return '{\n$data}';
+  }
+}
+
+class AddIngredient extends StatefulWidget {
+  AddIngredient({Key? key, required this.model, required this.options})
+      : super(key: key);
+  final RecipeModel model;
+  List<Animal> options;
+
+  @override
+  State<AddIngredient> createState() => _AddIngredientState();
+}
+
+class _AddIngredientState extends State<AddIngredient> {
+  TextEditingController txtController = TextEditingController();
+  bool autoComplete = true;
+  List<Object?> selected = [];
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text('Add $title'),
+      title: Text('Add Ingredient'),
       content: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
           child: Column(
             children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: '$title',
-                  icon: Icon(Icons.account_box),
+              // MultiSelectDialogField(
+              // items: _animals
+              //     .map((animal) =>
+              //         MultiSelectItem<Animal>(animal, animal.name))
+              //     .toList(),
+              //   onConfirm: (values) {
+              //     print(values.toString());
+              //   },
+              //   // items: _animals.map((e) => MultiSelectItem(e, e.name)).toList(),
+              //   // listType: MultiSelectListType.CHIP,
+              //   // onConfirm: (values) {
+              //   //   _selectedAnimals = values;
+              //   // },
+              // ),
+              MultiSelectBottomSheetField(
+                initialChildSize: 0.4,
+                listType: MultiSelectListType.CHIP,
+                searchable: true,
+                buttonText: Text("Choose ingredient"),
+                title: Text("Animals"),
+                items: widget.options
+                    .map((ingredient) =>
+                        MultiSelectItem<Animal>(ingredient, ingredient.name))
+                    .toList(),
+                onConfirm: (values) {
+                  print('save to DB the values ${values.toString()}');
+                  selected.addAll(values);
+                },
+                chipDisplay: MultiSelectChipDisplay(
+                  onTap: (value) {
+                    setState(() {
+                      selected.remove(value);
+                    });
+                  },
                 ),
               ),
-              // TextFormField(
-              //   decoration: InputDecoration(
-              //     labelText: 'Email',
-              //     icon: Icon(Icons.email),
-              //   ),
-              // ),
+              // _selectedAnimals2 == null || _selectedAnimals2.isEmpty
+              //     ? Container(
+              //         padding: EdgeInsets.all(10),
+              //         alignment: Alignment.centerLeft,
+              //         child: Text(
+              //           "None selected",
+              //           style: TextStyle(color: Colors.black54),
+              //         ))
+              //     : Container(),
             ],
           ),
         ),
       ),
       actions: [
         RaisedButton(
-            child: Text("Submit"),
+            child: Text("Add"),
             onPressed: () {
+              Navigator.pop(context, []);
+
+              // TODO push to fire base and show new ingredients
+            })
+      ],
+    );
+  }
+}
+
+class AddInstruction extends StatelessWidget {
+  AddInstruction({Key? key, required this.model}) : super(key: key);
+  RecipeModel model;
+
+  TextEditingController txtController = TextEditingController();
+  // final String name;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      scrollable: true,
+      title: Text('Add Instruction'),
+      content: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: txtController,
+                decoration: InputDecoration(
+                  labelText: 'Instruction',
+                  icon: Icon(Icons.account_box),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        RaisedButton(
+            child: Text("Add"),
+            onPressed: () {
+              if (txtController.text.isNotEmpty)
+                model.instructions.add(txtController.text);
               // push to fire base
             })
       ],
