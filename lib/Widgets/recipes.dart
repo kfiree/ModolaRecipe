@@ -287,9 +287,10 @@ class RecipeModel {
       cuisineType,
       cautions,
       instructions;
+  List<dynamic> subs = [], removed = [];
 
   final int cookingTime, calories;
-  final List<IngredientModel> ingredients;
+  List<IngredientModel> ingredients;
 
   RecipeModel({
     required this.uri,
@@ -308,6 +309,24 @@ class RecipeModel {
     required this.dishType,
     required this.instructions,
   });
+
+  addSubs(List<String> ingredientsNames) {
+    for (String e in ingredientsNames) {
+      subs.add(e);
+    }
+  }
+
+  addRemoved(List<String> ingredientsNames) {
+    for (String e in ingredientsNames) {
+      removed.add(e);
+    }
+  }
+
+  deleteIngredients(List<IngredientModel> ingredientsList) {
+    for (IngredientModel e in ingredientsList) {
+      ingredients.remove(e);
+    }
+  }
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
     // json = format(json);
@@ -350,8 +369,6 @@ class RecipeModel {
     data['instructions'] = instructions;
     return data;
   }
-
-  
 
   @override
   String toString() {
@@ -463,6 +480,3 @@ List<IngredientModel> toIngredientList(dynamic element) {
       {ingredientList.add(IngredientModel.fromJson(ingredient))});
   return ingredientList;
 }
-
-
-
