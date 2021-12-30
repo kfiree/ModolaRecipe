@@ -423,7 +423,7 @@ class AddIngredient extends StatefulWidget {
 class _AddIngredientState extends State<AddIngredient> {
   TextEditingController txtController = TextEditingController();
   bool autoComplete = true;
-  List<Object?> selected = [];
+  List<Animal> selected = [];
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -453,14 +453,14 @@ class _AddIngredientState extends State<AddIngredient> {
                 listType: MultiSelectListType.CHIP,
                 searchable: true,
                 buttonText: Text("Choose ingredient"),
-                title: Text("Animals"),
+                title: Text("Ingredients"),
                 items: widget.options
                     .map((ingredient) =>
                         MultiSelectItem<Animal>(ingredient, ingredient.name))
                     .toList(),
                 onConfirm: (values) {
                   print('save to DB the values ${values.toString()}');
-                  selected.addAll(values);
+                  selected.addAll(values as List<Animal>);
                 },
                 chipDisplay: MultiSelectChipDisplay(
                   onTap: (value) {
@@ -470,15 +470,15 @@ class _AddIngredientState extends State<AddIngredient> {
                   },
                 ),
               ),
-              // _selectedAnimals2 == null || _selectedAnimals2.isEmpty
-              //     ? Container(
-              //         padding: EdgeInsets.all(10),
-              //         alignment: Alignment.centerLeft,
-              //         child: Text(
-              //           "None selected",
-              //           style: TextStyle(color: Colors.black54),
-              //         ))
-              //     : Container(),
+              (selected == null || selected.isEmpty)
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "None selected",
+                        style: TextStyle(color: Colors.black54),
+                      ))
+                  : Container(),
             ],
           ),
         ),
@@ -487,9 +487,12 @@ class _AddIngredientState extends State<AddIngredient> {
         RaisedButton(
             child: Text("Add"),
             onPressed: () {
-              Navigator.pop(context, []);
-
-              // TODO push to fire base and show new ingredients
+              List<String> ingredientNames = [];
+              for (Animal element in selected) {
+                ingredientNames.add(element.name);
+              }
+              widget.model.addSubs(ingredientNames);
+              Navigator.pop(context);
             })
       ],
     );
