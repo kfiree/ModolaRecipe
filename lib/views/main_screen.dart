@@ -165,6 +165,11 @@ class _MainScreenState extends State<MainScreen> {
     CollectionReference collection =
         FirebaseFirestore.instance.collection("recipes");
 
+    List<String> keyWords = query.split(' ');
+    // List<dynamic> resultsFromFB =
+
+    // collection.where('ingredients',arrayContainsAny: keyWords); //.where('dietLabels',arrayContainsAny: keyWords).where('healthLabels',arrayContainsAny: keyWords);
+
     // if there are no results in our FB then we'll get them here
     // List <dynamic> results = collection.where()
 
@@ -185,14 +190,12 @@ class _MainScreenState extends State<MainScreen> {
       jsonData["hits"].forEach(
         (hit) {
           recipes.add(RecipeTile(
-            recipeModel: RecipeModel.fromJson(hit["recipe"]),
+            recipeModel: RecipeModel.fromJson(hit['recipe']),
             UID: UID,
           ));
           addToFB(hit["recipe"]);
         },
       );
-
-      List<String> keyWords = query.split(' ');
 
       setState(() => {loading = false});
 
@@ -207,9 +210,10 @@ class _MainScreenState extends State<MainScreen> {
   addToFB(Map<String, dynamic> recipe) {
     CollectionReference collection =
         FirebaseFirestore.instance.collection("recipes");
-    // DocumentReference doc = collection.document();
-    recipe = format(recipe);
-    collection.firestore.collection("VRWodus2pN2wXXHSz8JH").add(recipe);
+    // recipe = format(recipe);
+    String reID = recipe['uri'].split("#")[1];
+    // collection.firestore.collection(""+reID).add(recipe);
+    collection.doc(reID).set(recipe);
   }
 
   dynamic format(dynamic doc) {
@@ -292,40 +296,51 @@ class InitialRecipe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: collection.doc('VRWodus2pN2wXXHSz8JH').get(),
+    return FutureBuilder<List<QuerySnapshot>>(
+      future:
+          collection.snapshots().toList(), //.doc('VRWodus2pN2wXXHSz8JH').get(),
       builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          (BuildContext context, AsyncSnapshot<List<QuerySnapshot>> snapshot) {
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
 
-        if (snapshot.hasData && !snapshot.data!.exists) {
-          return Text("Document does not exist");
-        }
+        // if (snapshot.hasData && !snapshot.data!.exists) {
+        //   return Text("Document does not exist");
+        // }
 
-        if (snapshot.connectionState == ConnectionState.done) {
-          List<RecipeMediumView> recipeWidgets = [];
-          Map<String, dynamic> data =
-              snapshot.data!.data() as Map<String, dynamic>;
+        // if (snapshot.connectionState == ConnectionState.done) {
+        List<RecipeMediumView> recipeWidgets = [];
+        Map<String, dynamic> data =
+            {}; //  // = collection.snapshots().toSet() as Map<String,dynamic>;
+        // data["recipe_0138f0f24ead045ed14e7788cb4e2931"] = collection.doc("recipe_0138f0f24ead045ed14e7788cb4e2931");
+        data["recipe_38131b25becdfc48e4783192109d8b92"] =
+            collection.doc("recipe_38131b25becdfc48e4783192109d8b92");
+        // Set a = collection.snapshots().toSet() as Set<dynamic>;
+        // int i = 0;
+        // a.forEach((element) {
+        //   data[element['uri']] = element;
+        // });
+        // snapshot.data!.data() as Map<String, dynamic>;
 
-          data.forEach((key, recipe) {
-            print("  ====   Key : $key, Value : $recipe   ====   ");
-            recipeWidgets.add(RecipeMediumView(
-              UID: UID,
-              recipeModel: RecipeModel.fromJson(recipe),
-            ));
-          });
-          return SizedBox(
-            height: 400,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              //TODO stack overflow: Overflow.clip
+        data.forEach((key, recipe) {
+          print(recipe);
+          print("  ====   Key : $key, Value : $recipe   ====   ");
+          recipeWidgets.add(RecipeMediumView(
+            UID: UID,
+            recipeModel: RecipeModel.fromJson(recipe),
+          ));
+        });
+        return SizedBox(
+          height: 400,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            //TODO stack overflow: Overflow.clip
 
-              children: recipeWidgets,
-            ),
-          );
-        }
+            children: recipeWidgets,
+          ),
+        );
+        // }
         return Loading();
       },
     );
