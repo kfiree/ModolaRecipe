@@ -212,6 +212,11 @@ class _MainScreenState extends State<MainScreen> {
     String recID = recipe['uri'].split("#")[1];
     collection.firestore.collection('wow').add(formatRecipe);
 
+    collection
+        .doc(recID)
+        .set(recipe)
+        .then((value) => print('recipe $recID Added'))
+        .catchError((error) => print('Add failed: $error'));
     // recipe['ingredients'] = toIngredientList(recipe['ingredients']);
     // .add({recID: recipe});
     // collection.add({recID: recID});

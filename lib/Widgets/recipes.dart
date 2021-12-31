@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
@@ -287,8 +289,18 @@ class RecipeModel {
       cuisineType,
       cautions,
       instructions;
-  List<dynamic> subs = [], removed = [];
+  // List<String> subs = [], removed = [];
 
+  Map<int, Map<String, dynamic>> subs = {};
+  //  subs = [{
+  //   'id': {
+  //     'subs': <String>[],
+  //     'removed': <String>[],
+  //     'instructions': <String>[],
+  //     'totalRate': 3,
+  //     'numOfVoters': 100
+  //   }
+  // }];
   final int cookingTime, calories;
   List<IngredientModel> ingredients;
 
@@ -308,25 +320,27 @@ class RecipeModel {
     required this.mealType,
     required this.dishType,
     required this.instructions,
+    required this.subs,
+    // required this.removed,
   });
 
-  addSubs(List<String> ingredientsNames) {
-    for (String e in ingredientsNames) {
-      subs.add(e);
-    }
-  }
+  // addSubs(List<String> ingredientsNames) {
+  //   for (String e in ingredientsNames) {
+  //     subs.add(e);
+  //   }
+  // }
 
-  addRemoved(List<String> ingredientsNames) {
-    for (String e in ingredientsNames) {
-      removed.add(e);
-    }
-  }
+  // addRemoved(List<String> ingredientsNames) {
+  //   for (String e in ingredientsNames) {
+  //     removed.add(e);
+  //   }
+  // }
 
-  deleteIngredients(List<IngredientModel> ingredientsList) {
-    for (IngredientModel e in ingredientsList) {
-      ingredients.remove(e);
-    }
-  }
+  // deleteIngredients(List<IngredientModel> ingredientsList) {
+  //   for (IngredientModel e in ingredientsList) {
+  //     ingredients.remove(e);
+  //   }
+  // }
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
     // json = format(json);
@@ -347,28 +361,76 @@ class RecipeModel {
       dishType: ListFormat(json['dishType']),
       ingredients: toIngredientList(json['ingredients']),
       instructions: ListFormat(json['instructions']),
+      subs: {},
     );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['uri'] = uri;
-    data['label'] = name;
-    data['image'] = image;
-    data['source'] = source;
-    data['url'] = url;
-    data['dietLabels'] = dietLabels;
-    data['healthLabels'] = healthLabels;
-    data['cautions'] = cautions;
-    data['ingredients'] = ingredients.map((v) => v.toJson()).toList();
-    data['calories'] = calories;
-    data['totalTime'] = cookingTime;
-    data['cuisineType'] = cuisineType;
-    data['mealType'] = mealType;
-    data['dishType'] = dishType;
-    data['instructions'] = instructions;
-    return data;
+  addToFB(Map<String, dynamic> recipe) {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection("recipes");
+
+    var formatRecipe = format(recipe);
+    String recID = recipe['uri'].split("#")[1];
+
+    collection
+        .doc(recID)
+        .set(formatRecipe)
+        .then((value) => print('recipe $recID Added'))
+        .catchError((error) => print('Add failed: $error'));
   }
+
+  dynamic format(dynamic doc) {
+    doc['uri'] = stringFormat(doc['uri']);
+    doc['label'] = stringFormat(doc['label']);
+    doc['image'] = stringFormat(doc['image']);
+    doc['source'] = stringFormat(doc['source']);
+    doc['url'] = stringFormat(doc['url']);
+    doc['calories'] = numFormat(doc['calories']);
+    doc['totalTime'] = numFormat(doc['totalTime']);
+    doc['dietLabels'] = ListFormat(doc['dietLabels']);
+    doc['healthLabels'] = ListFormat(doc['healthLabels']);
+    doc['cautions'] = ListFormat(doc['cautions']);
+    doc['cuisineType'] = ListFormat(doc['cuisineType']);
+    doc['mealType'] = ListFormat(doc['mealType']);
+    doc['dishType'] = ListFormat(doc['dishType']);
+    doc['instructions'] = ListFormat(doc['instructions']);
+    doc['subs'] = formatSubs(doc['subs']);
+    // doc['ingredients'] = toIngredientList(doc['ingredients']);
+    return doc;
+  }
+
+  addSub(Map<String, List> sub) {
+    Map<String, List> sub = {};
+    subs[subs.length + 1] = sub;
+  }
+
+  rateSub(int newRate, int id) {
+    double currentRate = subs[id]!['rate'];
+    int ratesNum = subs[id]!['ratesNum'] + 1;
+
+    subs[id]!['rate'] = (currentRate + newRate) / ratesNum;
+    subs[id]!['ratesNum'] = ratesNum;
+  }
+
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = {};
+  //   data['uri'] = uri;
+  //   data['label'] = name;
+  //   data['image'] = image;
+  //   data['source'] = source;
+  //   data['url'] = url;
+  //   data['dietLabels'] = dietLabels;
+  //   data['healthLabels'] = healthLabels;
+  //   data['cautions'] = cautions;
+  //   data['ingredients'] = ingredients.map((v) => v.toJson()).toList();
+  //   data['calories'] = calories;
+  //   data['totalTime'] = cookingTime;
+  //   data['cuisineType'] = cuisineType;
+  //   data['mealType'] = mealType;
+  //   data['dishType'] = dishType;
+  //   data['instructions'] = instructions;
+  //   return data;
+  // }
 
   @override
   String toString() {
@@ -479,4 +541,17 @@ List<IngredientModel> toIngredientList(dynamic element) {
   element.forEach((ingredient) =>
       {ingredientList.add(IngredientModel.fromJson(ingredient))});
   return ingredientList;
+}
+
+Map<int, dynamic> formatSubs(Map<int, dynamic> subMap) {
+  //  subs = {{
+  //   'id': {
+  //     'subs': <String>[],
+  //     'removed': <String>[],
+  //     'instructions': <String>[],
+  //     'totalRate': 3,
+  //     'numOfVoters': 100
+  //   }
+  // }};
+  return subMap ?? {};
 }
