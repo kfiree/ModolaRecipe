@@ -165,7 +165,7 @@ class _MainScreenState extends State<MainScreen> {
     CollectionReference collection =
         FirebaseFirestore.instance.collection("recipes");
 
-    List<String> keyWords = query.split(' ');
+    // List<String> keyWords = query.split(' ');
     // List<dynamic> resultsFromFB =
 
     // collection.where('ingredients',arrayContainsAny: keyWords); //.where('dietLabels',arrayContainsAny: keyWords).where('healthLabels',arrayContainsAny: keyWords);
@@ -177,7 +177,7 @@ class _MainScreenState extends State<MainScreen> {
     // then we'll get the new recipes and while process then to RecipeModel
     // we'll add them to our FB
 
-    String applicationId = "2051cf6b",
+        String applicationId = "2051cf6b",
         applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
     String queryUrl =
         'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
@@ -189,14 +189,15 @@ class _MainScreenState extends State<MainScreen> {
 
       jsonData["hits"].forEach(
         (hit) {
-          hit["recipe"] = format(hit["recipe"]);
           addToFB(hit["recipe"]);
           recipes.add(RecipeTile(
-            recipeModel: RecipeModel.fromJson(hit['recipe']),
+            recipeModel: RecipeModel.fromJson(hit["recipe"]),
             UID: UID,
           ));
         },
       );
+
+      // List<String> keyWords = query.split(' ');
 
       setState(() => {loading = false});
 
@@ -214,13 +215,12 @@ class _MainScreenState extends State<MainScreen> {
     // DocumentReference doc = collection.document();
     var formatRecipe = format(recipe);
     String recID = recipe['uri'].split("#")[1];
-    collection.firestore.collection('wow').add(formatRecipe);
+    // collection.firestore.collection('wow').add(formatRecipe);
 
     // recipe['ingredients'] = toIngredientList(recipe['ingredients']);
     // .add({recID: recipe});
-    // collection.add({recID: recID});
+    collection.add({recID: formatRecipe});
   }
-
   dynamic format(dynamic doc) {
     doc['uri'] = stringFormat(doc['uri']);
     doc['label'] = stringFormat(doc['label']);
