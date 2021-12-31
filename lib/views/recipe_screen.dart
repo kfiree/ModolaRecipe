@@ -18,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class FullViewScreen extends StatefulWidget {
   FullViewScreen({Key? key}) : super(key: key);
-
+  List<String> added = [], removed = [], instructions = [];
   static const String idScreen = "detail_recipe";
   String applicationId = "41ca25af",
       applicationKey = "ab51bad1b862188631ce612a9b1787a9";
@@ -50,7 +50,10 @@ class _FullViewScreenState extends State<FullViewScreen> {
         child: Column(
           children: <Widget>[
             HeaderCard(model: model),
-            InfoCard(model: model, editView: editView),
+            InfoCard(
+                model: model,
+                editView: editView,
+                instructions: widget.instructions),
           ],
         ),
       ),
@@ -173,23 +176,29 @@ class HeaderCard extends StatelessWidget {
 }
 
 class InfoCard extends StatefulWidget {
-  const InfoCard({Key? key, required this.model, required this.editView})
+  InfoCard(
+      {Key? key,
+      required this.model,
+      required this.editView,
+      required this.instructions})
       : super(key: key);
   final RecipeModel model;
   final bool editView;
+  List<String> instructions;
   @override
   _InfoCardState createState() => _InfoCardState();
 }
 
 class _InfoCardState extends State<InfoCard> {
   TextEditingController txtController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final instructions = [
-      'do A',
-      'do B',
-      'asfasdfs dafasdf  as dfasfsdafasdfasfasdf s dafasdf  as dfasfs dafasdf asfasdfs dafasdf  as dfasfsdafasdf'
-    ];
+    // widget.instructions = [
+    //   'do A',
+    //   'do B',
+    //   'asfasdfs dafasdf  as dfasfsdafasdfasfasdf s dafasdf  as dfasfs dafasdf asfasdfs dafasdf  as dfasfsdafasdf'
+    // ];
     List<IngredientCard> ingredientsList = List.generate(
       widget.model.ingredients.length,
       (int i) => IngredientCard(
@@ -199,7 +208,7 @@ class _InfoCardState extends State<InfoCard> {
         unit: widget.model.ingredients[i].unit,
       ),
     );
-    List<Animal> ingredientComp = [];
+    List<recipe> ingredientComp = [];
     return Expanded(
       flex: 2,
       child: Container(
@@ -306,7 +315,7 @@ class _InfoCardState extends State<InfoCard> {
               height: 20,
             ),
             // if (widget.model.instructions.isEmpty)
-            if (instructions.isNotEmpty)
+            if (widget.instructions.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -320,7 +329,7 @@ class _InfoCardState extends State<InfoCard> {
                   ),
                   Column(
                     children: <Widget>[
-                      for (String s in instructions)
+                      for (String s in widget.instructions)
                         StepEntry(text: s, edit: widget.editView),
                       if (widget.editView)
                         IconButton(
@@ -361,8 +370,8 @@ class _InfoCardState extends State<InfoCard> {
     );
   }
 
-  Future<List<Animal>> fetchIngredients(
-      String query, List<Animal> ingredientComp) async {
+  Future<List<recipe>> fetchIngredients(
+      String query, List<recipe> ingredientComp) async {
     String applicationId = "2051cf6b",
         applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
     String queryUrl =
@@ -376,7 +385,7 @@ class _InfoCardState extends State<InfoCard> {
       int i = 0;
       jsonData.forEach(
         (ingredient) {
-          ingredientComp.add(Animal(
+          ingredientComp.add(recipe(
             id: ++i,
             name: ingredient,
           ));
@@ -391,11 +400,11 @@ class _InfoCardState extends State<InfoCard> {
   }
 }
 
-class Animal {
+class recipe {
   final int id;
   final String name;
 
-  Animal({
+  recipe({
     required this.id,
     required this.name,
   });
@@ -414,7 +423,7 @@ class AddIngredient extends StatefulWidget {
   AddIngredient({Key? key, required this.model, required this.options})
       : super(key: key);
   final RecipeModel model;
-  List<Animal> options;
+  List<recipe> options;
 
   @override
   State<AddIngredient> createState() => _AddIngredientState();
@@ -423,7 +432,7 @@ class AddIngredient extends StatefulWidget {
 class _AddIngredientState extends State<AddIngredient> {
   TextEditingController txtController = TextEditingController();
   bool autoComplete = true;
-  List<Animal> selected = [];
+  List<recipe> selected = [];
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -435,17 +444,17 @@ class _AddIngredientState extends State<AddIngredient> {
           child: Column(
             children: <Widget>[
               // MultiSelectDialogField(
-              // items: _animals
-              //     .map((animal) =>
-              //         MultiSelectItem<Animal>(animal, animal.name))
+              // items: _recipes
+              //     .map((recipe) =>
+              //         MultiSelectItem<recipe>(recipe, recipe.name))
               //     .toList(),
               //   onConfirm: (values) {
               //     print(values.toString());
               //   },
-              //   // items: _animals.map((e) => MultiSelectItem(e, e.name)).toList(),
+              //   // items: _recipes.map((e) => MultiSelectItem(e, e.name)).toList(),
               //   // listType: MultiSelectListType.CHIP,
               //   // onConfirm: (values) {
-              //   //   _selectedAnimals = values;
+              //   //   _selectedrecipes = values;
               //   // },
               // ),
               MultiSelectBottomSheetField(
@@ -456,11 +465,11 @@ class _AddIngredientState extends State<AddIngredient> {
                 title: Text("Ingredients"),
                 items: widget.options
                     .map((ingredient) =>
-                        MultiSelectItem<Animal>(ingredient, ingredient.name))
+                        MultiSelectItem<recipe>(ingredient, ingredient.name))
                     .toList(),
                 onConfirm: (values) {
                   print('save to DB the values ${values.toString()}');
-                  selected.addAll(values as List<Animal>);
+                  selected.addAll(values as List<recipe>);
                 },
                 chipDisplay: MultiSelectChipDisplay(
                   onTap: (value) {
@@ -488,10 +497,10 @@ class _AddIngredientState extends State<AddIngredient> {
             child: Text("Add"),
             onPressed: () {
               List<String> ingredientNames = [];
-              for (Animal element in selected) {
+              for (recipe element in selected) {
                 ingredientNames.add(element.name);
               }
-              widget.model.addSubs(ingredientNames);
+              // widget.model.addSubs(ingredientNames);
               Navigator.pop(context);
             })
       ],
