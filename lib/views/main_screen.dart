@@ -12,6 +12,7 @@ import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
+import 'package:modolar_recipe/Widgets/util.dart' as util;
 // import 'package:modolar_recipe/views/recipe_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -184,7 +185,7 @@ class _MainScreenState extends State<MainScreen> {
 
       jsonData["hits"].forEach(
         (hit) {
-          addToFB(hit["recipe"]);
+          util.addRecipe(hit["recipe"]);
           recipes.add(RecipeTile(
             recipeModel: RecipeModel.fromJson(hit["recipe"]),
             UID: UID,
@@ -204,23 +205,22 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  addToFB(Map<String, dynamic> recipe) {
-    CollectionReference collection =
-        FirebaseFirestore.instance.collection("recipes");
-    // DocumentReference doc = collection.document();
-    var formatRecipe = format(recipe);
-    String recID = recipe['uri'].split("#")[1];
-    collection.firestore.collection('wow').add(formatRecipe);
-
-    collection
-        .doc(recID)
-        .set(recipe)
-        .then((value) => print('recipe $recID Added'))
-        .catchError((error) => print('Add failed: $error'));
-    // recipe['ingredients'] = toIngredientList(recipe['ingredients']);
-    // .add({recID: recipe});
-    // collection.add({recID: recID});
-  }
+  // addToFB(Map<String, dynamic> recipe) {
+  //   CollectionReference collection =
+  //       FirebaseFirestore.instance.collection("recipes");
+  //   // DocumentReference doc = collection.document();
+  //   var formatRecipe = format(recipe);
+  //   String recID = recipe['uri'].split("#")[1];
+  //   collection.firestore.collection('wow').add(formatRecipe);
+  //   collection
+  //       .doc(recID)
+  //       .set(recipe)
+  //       .then((value) => print('recipe $recID Added'))
+  //       .catchError((error) => print('Add failed: $error'));
+  //   // recipe['ingredients'] = toIngredientList(recipe['ingredients']);
+  //   // .add({recID: recipe});
+  //   // collection.add({recID: recID});
+  // }
 
   dynamic format(dynamic doc) {
     doc['uri'] = stringFormat(doc['uri']);
