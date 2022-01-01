@@ -8,6 +8,7 @@ class IngredientCard extends StatefulWidget {
     required this.quantity,
     required this.unit,
     required this.edit,
+    required this.removedList,
     this.removed = false,
   });
   final String name;
@@ -15,6 +16,7 @@ class IngredientCard extends StatefulWidget {
   final String unit;
   final bool edit;
   bool removed;
+  List<String> removedList;
   @override
   _IngredientCardState createState() => _IngredientCardState();
 }
@@ -38,6 +40,12 @@ class _IngredientCardState extends State<IngredientCard> {
               onPressed: () {
                 setState(() {
                   widget.removed = !widget.removed;
+                  if (widget.removed) {
+                    widget.removedList.add(widget.name);
+                  } else {
+                    widget.removedList.remove(widget.name);
+                  }
+                  // widget.removedList.add('value');
                 });
               },
             ),

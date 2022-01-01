@@ -18,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class FullViewScreen extends StatefulWidget {
   FullViewScreen({Key? key}) : super(key: key);
-  List<String> added = [], removed = [], instructions = [];
+  List<String> added = [], removed = [];
   static const String idScreen = "detail_recipe";
   String applicationId = "41ca25af",
       applicationKey = "ab51bad1b862188631ce612a9b1787a9";
@@ -31,18 +31,51 @@ class _FullViewScreenState extends State<FullViewScreen> {
   int _selectedIndex = 0;
   String ApplicationID = '1e2b1681',
       ApplicationKey = '47e224016bc268ada433484688f019cf';
+  SubModel sub = SubModel();
+  List<String> added = [], removedInstructions = [], removedIngredients = [];
+  List<SubView> subList = [];
+  // Map<String, dynamic> sub = {
+  //   'added': [],
+  //   'removed': [],
+  //   'rate': [],
+  //   'ratesNum': [],
+  // };
 
   var url = '';
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
+  List<String> newIngredientNames = [], instructions = [];
   @override
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final model = routeArgs['Model'];
+    RecipeModel model = routeArgs['Model'];
+    List<ingrident> selected = [];
 
     url = model.url;
+    TextEditingController txtController = TextEditingController();
+    List<IngredientCard> ingredientsList = List.generate(
+      model.ingredients.length,
+      (int i) => IngredientCard(
+          edit: editView,
+          name: model.ingredients[i].name,
+          quantity: model.ingredients[i].quantity.toString(),
+          unit: model.ingredients[i].unit,
+          removedList: removedIngredients),
+    );
+    List<ingrident> ingredientComp = [];
+    print('44444444444444444444444');
+    print('removed Ingrident ${removedIngredients.toString()}');
+    print('removed Instructions ${removedInstructions.toString()}');
+    print('instructions = ${instructions.toString()}');
+    print('added ${added.toString()}');
+    print('44444444444444444444444');
+
+    model.subs.forEach((sub) {
+      subList.add(SubView(
+        subModel: sub,
+      ));
+    });
 
     return Scaffold(
       backgroundColor: HexColor('#998fb3'),
@@ -50,10 +83,299 @@ class _FullViewScreenState extends State<FullViewScreen> {
         child: Column(
           children: <Widget>[
             HeaderCard(model: model),
-            InfoCard(
-                model: model,
-                editView: editView,
-                instructions: widget.instructions),
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 25.0,
+                  right: 25.0,
+                  top: 30.0,
+                ),
+                margin: EdgeInsets.only(top: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(50.0),
+                  ),
+                ),
+                child: ListView(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          model.name,
+                          style: TextStyle(
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Quicksand",
+                          ),
+                        ),
+                        if (model.cookingTime != 0.0)
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                model.cookingTime.toInt().toString(),
+                                style: TextStyle(
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFBFBFBF),
+                                ),
+                              ),
+                              Icon(Icons.timer,
+                                  color: Color(0xFFBFBFBF), size: 30),
+                            ],
+                          )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Ingredients',
+                      style: TextStyle(
+                        color: Color(0xff909090),
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Quicksand",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      children: ingredientsList,
+                    ),
+                    if (editView)
+                      Row(
+                        children: <Widget>[
+                          // search
+                          Expanded(
+                            child: TextField(
+                              controller: txtController,
+                              decoration: InputDecoration(
+                                  hintText: "Start Typeing Ingrideint name",
+                                  hintStyle: TextStyle(
+                                    fontSize: 18,
+                                  )),
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (txtController.text.isNotEmpty) {
+                                await fetchIngredients(
+                                  txtController.text,
+                                  ingredientComp,
+                                );
+                                setState(() {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        scrollable: true,
+                                        title: Text('Add Ingredient'),
+                                        content: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Form(
+                                            child: Column(
+                                              children: <Widget>[
+                                                MultiSelectBottomSheetField(
+                                                  initialChildSize: 0.4,
+                                                  listType:
+                                                      MultiSelectListType.CHIP,
+                                                  searchable: true,
+                                                  buttonText:
+                                                      Text("Choose ingredient"),
+                                                  title: Text("Ingredients"),
+                                                  items: ingredientComp
+                                                      .map((ingredient) =>
+                                                          MultiSelectItem<
+                                                                  ingrident>(
+                                                              ingredient,
+                                                              ingredient.name))
+                                                      .toList(),
+                                                  onConfirm: (values) {
+                                                    ingredientComp.removeWhere(
+                                                        (e) => !(values
+                                                                .indexOf(e) >=
+                                                            0));
+                                                    for (ingrident element
+                                                        in ingredientComp) {
+                                                      newIngredientNames
+                                                          .add(element.name);
+                                                    }
+                                                  },
+                                                  chipDisplay:
+                                                      MultiSelectChipDisplay(
+                                                    onTap: (value) {
+                                                      setState(() {
+                                                        selected.remove(value);
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        actions: [
+                                          RaisedButton(
+                                            child: Text("Add"),
+                                            onPressed: () {
+                                              Navigator.pop(
+                                                  context, newIngredientNames);
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  ).then(
+                                    (val) {
+                                      setState(
+                                        () {
+                                          if (val != null) added.addAll(val);
+                                        },
+                                      );
+                                    },
+                                  );
+                                });
+                              }
+                            },
+                            child: Icon(Icons.search, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    // if (widget.model.instructions.isEmpty)
+                    if (model.instructions
+                        .isNotEmpty) //instructions.isNotEmpty) // && widget.editView)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Additional Instructions',
+                            style: TextStyle(
+                              color: Color(0xff909090),
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Quicksand",
+                            ),
+                          ),
+                          Column(
+                            children: <Widget>[
+                              for (String s in model.instructions)
+                                StepEntry(
+                                  text: s,
+                                  edit: editView,
+                                  removedList: removedInstructions,
+                                ),
+                              if (editView)
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  tooltip: 'add instruction',
+                                  onPressed: () {
+                                    setState(
+                                      () {
+                                        int instructionLen =
+                                            model.instructions.length;
+                                        showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AddInstruction(
+                                                    model: model,
+                                                    instrucion: instructions,
+                                                  );
+                                                })
+                                            //     .then(
+                                            //   (val) {
+                                            //     setState(
+                                            //       () {
+                                            //         print(val);
+                                            //         if (val != null) {
+                                            //           instructions.add(val);
+                                            //         }
+                                            //       },
+                                            //     );
+                                            //   },
+                                            // )
+                                            ;
+                                        if (instructionLen !=
+                                            model.instructions.length) {
+                                          setState(() {});
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
+                            ],
+                          )
+                        ],
+                      ),
+                    if (editView)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Additional Instructions',
+                            style: TextStyle(
+                              color: Color(0xff909090),
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Quicksand",
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            tooltip: 'add instruction',
+                            onPressed: () {
+                              setState(
+                                () {
+                                  showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AddInstruction(
+                                              model: model,
+                                              instrucion: instructions,
+                                            );
+                                          })
+                                      //     .then(
+                                      //   (val) {
+                                      //     setState(
+                                      //       () {
+                                      //         if (val != null) {
+                                      //           instructions.add(val);
+                                      //         }
+                                      //       },
+                                      //     );
+                                      //   },
+                                      // )
+                                      ;
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    if (editView)
+                      TextButton.icon(
+                        onPressed: () {
+                          model.addSub(added, removedIngredients, instructions);
+                          model.addToFB({});
+                        },
+                        icon: Icon(Icons.save, size: 30),
+                        label: Text("SUBMIT"),
+                      ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -82,13 +404,13 @@ class _FullViewScreenState extends State<FullViewScreen> {
           switch (index) {
             case 0:
               _launchURL(url);
-              print('0 $index');
+              // print('0 $index');
               break;
             case 1:
-              print('1 $index');
+              // print('1 $index');
               break;
             case 2:
-              print('2 $index');
+              // print('2 $index');
 
               setState(() {
                 editView = !editView;
@@ -98,6 +420,45 @@ class _FullViewScreenState extends State<FullViewScreen> {
         },
       ),
     );
+  }
+
+  // buildIngredientsList(List<IngredientCard> ingredientsList, dynamic model) {
+  //   ingredientsList = List.generate(
+  //   model.ingredients.length,
+  //   (int i) => IngredientCard(
+  //     edit: editView,
+  //     name: model.ingredients[i].name,
+  //     quantity: model.ingredients[i].quantity.toString(),
+  //     unit: model.ingredients[i].unit,
+  //   ),
+  // );}
+  Future<List<ingrident>> fetchIngredients(
+      String query, List<ingrident> ingredientComp) async {
+    String applicationId = "2051cf6b",
+        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+    String queryUrl =
+        "https://api.edamam.com/auto-complete?app_id=1e2b1681&app_key=47e224016bc268ada433484688f019cf&q=$query";
+    // 'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
+    final response = await http.get(Uri.parse(queryUrl));
+
+    if (response.statusCode == 200) {
+      // recipes.clear();
+      List<String> jsonData = jsonDecode(response.body).cast<String>();
+      int i = 0;
+      jsonData.forEach(
+        (ingredient) {
+          ingredientComp.add(ingrident(
+            id: ++i,
+            name: ingredient,
+          ));
+        },
+      );
+
+      return ingredientComp;
+    } else {
+      throw Exception(
+          'Failed to load ingredients. response statusCode = ${response.statusCode}');
+    }
   }
 }
 
@@ -175,236 +536,11 @@ class HeaderCard extends StatelessWidget {
   }
 }
 
-class InfoCard extends StatefulWidget {
-  InfoCard(
-      {Key? key,
-      required this.model,
-      required this.editView,
-      required this.instructions})
-      : super(key: key);
-  final RecipeModel model;
-  final bool editView;
-  List<String> instructions;
-  @override
-  _InfoCardState createState() => _InfoCardState();
-}
-
-class _InfoCardState extends State<InfoCard> {
-  TextEditingController txtController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    // widget.instructions = [
-    //   'do A',
-    //   'do B',
-    //   'asfasdfs dafasdf  as dfasfsdafasdfasfasdf s dafasdf  as dfasfs dafasdf asfasdfs dafasdf  as dfasfsdafasdf'
-    // ];
-    List<IngredientCard> ingredientsList = List.generate(
-      widget.model.ingredients.length,
-      (int i) => IngredientCard(
-        edit: widget.editView,
-        name: widget.model.ingredients[i].name,
-        quantity: widget.model.ingredients[i].quantity.toString(),
-        unit: widget.model.ingredients[i].unit,
-      ),
-    );
-    List<recipe> ingredientComp = [];
-    return Expanded(
-      flex: 2,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: 25.0,
-          right: 25.0,
-          top: 30.0,
-        ),
-        margin: EdgeInsets.only(top: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(50.0),
-          ),
-        ),
-        child: ListView(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  widget.model.name,
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Quicksand",
-                  ),
-                ),
-                if (widget.model.cookingTime != 0.0)
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        widget.model.cookingTime.toInt().toString(),
-                        style: TextStyle(
-                          fontFamily: "Quicksand",
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFBFBFBF),
-                        ),
-                      ),
-                      Icon(Icons.timer, color: Color(0xFFBFBFBF), size: 30),
-                    ],
-                  )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'Ingredients',
-              style: TextStyle(
-                color: Color(0xff909090),
-                fontWeight: FontWeight.w700,
-                fontFamily: "Quicksand",
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Column(
-              children: ingredientsList,
-            ),
-            if (widget.editView)
-              Row(
-                children: <Widget>[
-                  // search
-                  Expanded(
-                    child: TextField(
-                      controller: txtController,
-                      decoration: InputDecoration(
-                          hintText: "Start Typeing Ingrideint name",
-                          hintStyle: TextStyle(
-                            fontSize: 18,
-                          )),
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      if (txtController.text.isNotEmpty) {
-                        print('in search damn!');
-                        await fetchIngredients(
-                          txtController.text,
-                          ingredientComp,
-                        );
-                        setState(() {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AddIngredient(
-                                  model: widget.model, options: ingredientComp);
-                            },
-                          );
-                        });
-                      } else {}
-                    },
-                    child: Icon(Icons.search, color: Colors.black),
-                  ),
-                ],
-              ),
-            SizedBox(
-              height: 20,
-            ),
-            // if (widget.model.instructions.isEmpty)
-            if (widget.instructions.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Additional Instructions',
-                    style: TextStyle(
-                      color: Color(0xff909090),
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "Quicksand",
-                    ),
-                  ),
-                  Column(
-                    children: <Widget>[
-                      for (String s in widget.instructions)
-                        StepEntry(text: s, edit: widget.editView),
-                      if (widget.editView)
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          tooltip: 'add instruction',
-                          onPressed: () {
-                            setState(() {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AddInstruction(model: widget.model);
-                                  });
-                            });
-                          },
-                        ),
-                    ],
-                  )
-                ],
-              ),
-            SizedBox(
-              height: 20,
-            ),
-            if (widget.editView)
-              TextButton.icon(
-                // style: ButtonStyle(
-                //     textStyle: TextStyle(
-                //   color: Colors.black,
-                // )),
-                onPressed: () {
-                  // Respond to button press
-                },
-                icon: Icon(Icons.save, size: 30),
-                label: Text("SUBMIT"),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<List<recipe>> fetchIngredients(
-      String query, List<recipe> ingredientComp) async {
-    String applicationId = "2051cf6b",
-        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
-    String queryUrl =
-        "https://api.edamam.com/auto-complete?app_id=1e2b1681&app_key=47e224016bc268ada433484688f019cf&q=$query";
-    // 'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
-    final response = await http.get(Uri.parse(queryUrl));
-
-    if (response.statusCode == 200) {
-      // recipes.clear();
-      List<String> jsonData = jsonDecode(response.body).cast<String>();
-      int i = 0;
-      jsonData.forEach(
-        (ingredient) {
-          ingredientComp.add(recipe(
-            id: ++i,
-            name: ingredient,
-          ));
-        },
-      );
-
-      return ingredientComp;
-    } else {
-      throw Exception(
-          'Failed to load ingredients. response statusCode = ${response.statusCode}');
-    }
-  }
-}
-
-class recipe {
+class ingrident {
   final int id;
   final String name;
 
-  recipe({
+  ingrident({
     required this.id,
     required this.name,
   });
@@ -420,10 +556,13 @@ class recipe {
 }
 
 class AddIngredient extends StatefulWidget {
-  AddIngredient({Key? key, required this.model, required this.options})
-      : super(key: key);
+  AddIngredient({
+    Key? key,
+    required this.model,
+    required this.options,
+  }) : super(key: key);
   final RecipeModel model;
-  List<recipe> options;
+  List<ingrident> options;
 
   @override
   State<AddIngredient> createState() => _AddIngredientState();
@@ -432,7 +571,7 @@ class AddIngredient extends StatefulWidget {
 class _AddIngredientState extends State<AddIngredient> {
   TextEditingController txtController = TextEditingController();
   bool autoComplete = true;
-  List<recipe> selected = [];
+  List<ingrident> selected = [];
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -443,20 +582,6 @@ class _AddIngredientState extends State<AddIngredient> {
         child: Form(
           child: Column(
             children: <Widget>[
-              // MultiSelectDialogField(
-              // items: _recipes
-              //     .map((recipe) =>
-              //         MultiSelectItem<recipe>(recipe, recipe.name))
-              //     .toList(),
-              //   onConfirm: (values) {
-              //     print(values.toString());
-              //   },
-              //   // items: _recipes.map((e) => MultiSelectItem(e, e.name)).toList(),
-              //   // listType: MultiSelectListType.CHIP,
-              //   // onConfirm: (values) {
-              //   //   _selectedrecipes = values;
-              //   // },
-              // ),
               MultiSelectBottomSheetField(
                 initialChildSize: 0.4,
                 listType: MultiSelectListType.CHIP,
@@ -465,11 +590,10 @@ class _AddIngredientState extends State<AddIngredient> {
                 title: Text("Ingredients"),
                 items: widget.options
                     .map((ingredient) =>
-                        MultiSelectItem<recipe>(ingredient, ingredient.name))
+                        MultiSelectItem<ingrident>(ingredient, ingredient.name))
                     .toList(),
                 onConfirm: (values) {
-                  print('save to DB the values ${values.toString()}');
-                  selected.addAll(values as List<recipe>);
+                  widget.options.removeWhere((e) => !(values.indexOf(e) >= 0));
                 },
                 chipDisplay: MultiSelectChipDisplay(
                   onTap: (value) {
@@ -497,10 +621,17 @@ class _AddIngredientState extends State<AddIngredient> {
             child: Text("Add"),
             onPressed: () {
               List<String> ingredientNames = [];
-              for (recipe element in selected) {
+              for (ingrident element in selected) {
                 ingredientNames.add(element.name);
               }
               // widget.model.addSubs(ingredientNames);
+              for (var e in selected) {
+                print(e.name); //
+                // if (!(widget.options.indexOf(e) >= 0)) {
+                //   widget.options.remove(e);
+                // }
+              }
+              widget.options = selected;
               Navigator.pop(context);
             })
       ],
@@ -509,16 +640,17 @@ class _AddIngredientState extends State<AddIngredient> {
 }
 
 class AddInstruction extends StatelessWidget {
-  AddInstruction({Key? key, required this.model}) : super(key: key);
+  AddInstruction({Key? key, required this.model, required this.instrucion})
+      : super(key: key);
   RecipeModel model;
-
+  List<String> instrucion;
   TextEditingController txtController = TextEditingController();
   // final String name;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text('Add Instruction'),
+      title: Text('Add Instruction!'),
       content: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
@@ -537,12 +669,14 @@ class AddInstruction extends StatelessWidget {
       ),
       actions: [
         RaisedButton(
-            child: Text("Add"),
-            onPressed: () {
-              if (txtController.text.isNotEmpty)
-                model.instructions.add(txtController.text);
-              // push to fire base
-            })
+          child: Text("Add"),
+          onPressed: () {
+            if (txtController.text.isNotEmpty) {
+              instrucion.add(txtController.text);
+            }
+            Navigator.pop(context, txtController.text);
+          },
+        ),
       ],
     );
   }
@@ -560,8 +694,12 @@ class StepEntry extends StatefulWidget {
   final String text;
   final bool initialStep;
   final bool edit;
-  const StepEntry(
-      {required this.text, this.initialStep: false, required this.edit});
+  List<String> removedList = [];
+  StepEntry(
+      {required this.text,
+      this.initialStep: false,
+      required this.edit,
+      required this.removedList});
 
   @override
   State<StepEntry> createState() => _StepEntryState();
@@ -612,6 +750,11 @@ class _StepEntryState extends State<StepEntry> {
                       onPressed: () {
                         setState(() {
                           removed = !removed;
+                          if (removed) {
+                            widget.removedList.add(widget.text);
+                          } else {
+                            widget.removedList.remove(widget.text);
+                          }
                         });
                       },
                     )

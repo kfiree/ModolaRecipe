@@ -309,31 +309,6 @@ class InitialRecipe extends StatelessWidget {
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
-
-        // if (snapshot.connectionState == ConnectionState.done) {
-        //   List<RecipeMediumView> recipeWidgets = [];
-        //   Map<String, dynamic> data =
-        //       snapshot.data!.data() as Map<String, dynamic>;
-
-        //   data.forEach((key, recipe) {
-        //     print("  ====   Key : $key, Value : $recipe   ====   ");
-        //     recipeWidgets.add(RecipeMediumView(
-        //       UID: UID,
-        //       recipeModel: RecipeModel.fromJson(recipe),
-        //     ));
-        //   });
-        //   return SizedBox(
-        //     height: 400,
-        //     child: ListView(
-        //       scrollDirection: Axis.horizontal,
-        //       //TODO stack overflow: Overflow.clip
-
-        //       children: recipeWidgets,
-        //     ),
-        //   );
-        // }
-        // return Loading();
-        // ==================
         if (snapshot.hasError) {
           return Text("Something went wrong");
         }
