@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modolar_recipe/Widgets/ingredients.dart';
 import 'dart:math';
+import 'dart:math';
 
 import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/profile_screen.dart';
@@ -163,22 +164,21 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<List<RecipeTile>> fetchRecipes(
       String query, List<RecipeTile> recipes, String UID) async {
-       Map<String, dynamic> jsonData = await util.getRecipes(query);
+    Map<String, dynamic> jsonData = await util.getRecipes(query);
 
-      jsonData["hits"].forEach(
-        (hit) {
-          util.addRecipes(hit["recipe"]);
-          recipes.add(RecipeTile(
-            recipeModel: RecipeModel.fromJson(hit["recipe"]),
-            UID: UID,
-          ));
-        },
-      );
+    jsonData["hits"].forEach(
+      (hit) {
+        util.addRecipes(hit["recipe"]);
+        recipes.add(RecipeTile(
+          recipeModel: RecipeModel.fromJson(hit["recipe"]),
+          UID: UID,
+        ));
+      },
+    );
 
+    setState(() => {loading = false});
 
-      setState(() => {loading = false});
-
-      return recipes;
+    return recipes;
   }
 
   dynamic format(dynamic doc) {

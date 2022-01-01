@@ -13,14 +13,12 @@ import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
 
-  Future<Map<String, dynamic>> getRecipes(String query) async {
-
-    // if there are no results in our FB then we'll get them here
-    // List <dynamic> results = collection.where()
-    // else we'll reach the API
-    // then we'll get the new recipes and while process then to RecipeModel
-    // we'll add them to our FB
-
+Future<Map<String, dynamic>> getRecipes(String query) async {
+  // if there are no results in our FB then we'll get them here
+  // List <dynamic> results = collection.where()
+  // else we'll reach the API
+  // then we'll get the new recipes and while process then to RecipeModel
+  // we'll add them to our FB
 
   CollectionReference collection =
       FirebaseFirestore.instance.collection("recipes");
@@ -43,6 +41,7 @@ addRecipes(Map<String, dynamic> recipe) {
   CollectionReference collection =
       FirebaseFirestore.instance.collection("recipes");
   // DocumentReference doc = collection.document();
+
   var formatRecipe = format(recipe);
   String recID = recipe['uri'].split("#")[1];
   collection.firestore.collection('wow').add(formatRecipe);
