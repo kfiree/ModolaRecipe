@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, non_constant_identifier_names
+// ignore_for_file: prefer_const_literals_to_create_immutables, non_constant_identifier_names, must_be_immutable, deprecated_member_use
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,8 +7,6 @@ import 'package:modolar_recipe/Styles/constants.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import 'package:modolar_recipe/Views/main_screen.dart';
-// import 'package:modolar_recipe/Styles/constants.dart';
-// import 'package:flutter/foundation.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Widgets/buttons.dart';
 import 'package:modolar_recipe/Widgets/ingredients.dart';
@@ -30,28 +28,22 @@ class _FullViewScreenState extends State<FullViewScreen> {
   bool editView = false;
   int _selectedIndex = 0;
   String ApplicationID = '1e2b1681',
-      ApplicationKey = '47e224016bc268ada433484688f019cf';
+      ApplicationKey = '47e224016bc268ada433484688f019cf',
+      url = '';
   SubModel sub = SubModel();
-  List<String> added = [], removedInstructions = [], removedIngredients = [];
-  // Map<String, dynamic> sub = {
-  //   'added': [],
-  //   'removed': [],
-  //   'rate': [],
-  //   'ratesNum': [],
-  // };
+  List<String> added = [],
+      removedInstructions = [],
+      removedIngredients = [],
+      newIngredientNames = [],
+      instructions = [];
 
-  var url = '';
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  List<String> newIngredientNames = [], instructions = [];
   @override
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     RecipeModel model = routeArgs['Model'];
     final UID = routeArgs['UID'];
-    List<ingrident> selected = [];
-
+    List<Ingrident> selected = [];
     url = model.url;
     TextEditingController txtController = TextEditingController();
     List<IngredientCard> ingredientsList = List.generate(
@@ -63,18 +55,10 @@ class _FullViewScreenState extends State<FullViewScreen> {
           unit: model.ingredients[i].unit,
           removedList: removedIngredients),
     );
-    List<ingrident> ingredientComp = [];
-    // print('44444444444444444444444');
-    // print('removed Ingrident ${removedIngredients.toString()}');
-    // print('removed Instructions ${removedInstructions.toString()}');
-    // print('instructions = ${instructions.toString()}');
-    // print('added ${added.toString()}');
-    // print('44444444444444444444444');
-
+    List<Ingrident> ingredientComp = [];
     List<SubView> recipeWidgets = [];
 
     for (var sub in model.subs) {
-      print('UID is $UID');
       recipeWidgets.add(
         SubView(
           subModel: sub,
@@ -197,16 +181,15 @@ class _FullViewScreenState extends State<FullViewScreen> {
                                                   items: ingredientComp
                                                       .map((ingredient) =>
                                                           MultiSelectItem<
-                                                                  ingrident>(
+                                                                  Ingrident>(
                                                               ingredient,
                                                               ingredient.name))
                                                       .toList(),
                                                   onConfirm: (values) {
                                                     ingredientComp.removeWhere(
                                                         (e) => !(values
-                                                                .indexOf(e) >=
-                                                            0));
-                                                    for (ingrident element
+                                                            .contains(e)));
+                                                    for (Ingrident element
                                                         in ingredientComp) {
                                                       newIngredientNames
                                                           .add(element.name);
@@ -285,27 +268,13 @@ class _FullViewScreenState extends State<FullViewScreen> {
                                         int instructionLen =
                                             model.instructions.length;
                                         showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AddInstruction(
-                                                    model: model,
-                                                    instrucion: instructions,
-                                                  );
-                                                })
-                                            //     .then(
-                                            //   (val) {
-                                            //     setState(
-                                            //       () {
-                                            //         print(val);
-                                            //         if (val != null) {
-                                            //           instructions.add(val);
-                                            //         }
-                                            //       },
-                                            //     );
-                                            //   },
-                                            // )
-                                            ;
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AddInstruction(
+                                                model: model,
+                                                instrucion: instructions,
+                                              );
+                                            });
                                         if (instructionLen !=
                                             model.instructions.length) {
                                           setState(() {});
@@ -337,25 +306,13 @@ class _FullViewScreenState extends State<FullViewScreen> {
                               setState(
                                 () {
                                   showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AddInstruction(
-                                              model: model,
-                                              instrucion: instructions,
-                                            );
-                                          })
-                                      //     .then(
-                                      //   (val) {
-                                      //     setState(
-                                      //       () {
-                                      //         if (val != null) {
-                                      //           instructions.add(val);
-                                      //         }
-                                      //       },
-                                      //     );
-                                      //   },
-                                      // )
-                                      ;
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AddInstruction(
+                                          model: model,
+                                          instrucion: instructions,
+                                        );
+                                      });
                                 },
                               );
                             },
@@ -363,8 +320,7 @@ class _FullViewScreenState extends State<FullViewScreen> {
                         ],
                       ),
                     SizedBox(
-                      height:
-                          20, //http://www.edamam.com/ontologies/edamam.owl#recipe_0b0103f67d752e4681d3c3458aa96f5a
+                      height: 20,
                     ),
                     Text(
                       'Versions',
@@ -382,7 +338,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
                     if (editView)
                       TextButton.icon(
                         onPressed: () {
-                          print('model.subs -  ${model.subs}');
                           model.addSub(added, removedIngredients, instructions);
                           model.addToFB({});
                           setState(() {
@@ -418,8 +373,7 @@ class _FullViewScreenState extends State<FullViewScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor:
-            _selectedIndex == 1 ? Colors.red : Colors.purple, //amber[800],
+        selectedItemColor: _selectedIndex == 1 ? Colors.red : Colors.purple,
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;
@@ -427,7 +381,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
           switch (index) {
             case 0:
               _launchURL(url);
-              // print('0 $index');
               break;
             case 1:
               if (UID == "0") {
@@ -445,10 +398,8 @@ class _FullViewScreenState extends State<FullViewScreen> {
                   ),
                 );
               }
-              // print('1 $index');
               break;
             case 2:
-              // print('2 $index');
               if (UID == "0") {
                 showDialog<String>(
                   context: context,
@@ -478,26 +429,23 @@ class _FullViewScreenState extends State<FullViewScreen> {
     );
   }
 
-  Future<List<ingrident>> fetchIngredients(
-      String query, List<ingrident> ingredientComp) async {
-    String applicationId = "2051cf6b",
-        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+  Future<List<Ingrident>> fetchIngredients(
+      String query, List<Ingrident> ingredientComp) async {
+    String applicationId = "1e2b1681",
+        applicationKey = "47e224016bc268ada433484688f019cf";
     String queryUrl =
-        "https://api.edamam.com/auto-complete?app_id=1e2b1681&app_key=47e224016bc268ada433484688f019cf&q=$query";
-    // 'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
+        "https://api.edamam.com/auto-complete?app_id=$applicationId&app_key=$applicationKey&q=$query";
     final response = await http.get(Uri.parse(queryUrl));
 
     if (response.statusCode == 200) {
       List<String> jsonData = jsonDecode(response.body).cast<String>();
       int i = 0;
-      jsonData.forEach(
-        (ingredient) {
-          ingredientComp.add(ingrident(
-            id: ++i,
-            name: ingredient,
-          ));
-        },
-      );
+      for (var ingredient in jsonData) {
+        ingredientComp.add(Ingrident(
+          id: ++i,
+          name: ingredient,
+        ));
+      }
 
       return ingredientComp;
     } else {
@@ -556,10 +504,7 @@ class HeaderCard extends StatelessWidget {
               ],
             ),
           ),
-          //TODO Need to figure out how to do overlapping oversized photos so we can follow the design
           Stack(
-            //            overflow: Overflow.clip,
-            // children: <Widget>[
             clipBehavior: Clip.hardEdge,
             children: <Widget>[
               Padding(
@@ -581,11 +526,11 @@ class HeaderCard extends StatelessWidget {
   }
 }
 
-class ingrident {
+class Ingrident {
   final int id;
   final String name;
 
-  ingrident({
+  Ingrident({
     required this.id,
     required this.name,
   });
@@ -607,7 +552,7 @@ class AddIngredient extends StatefulWidget {
     required this.options,
   }) : super(key: key);
   final RecipeModel model;
-  List<ingrident> options;
+  List<Ingrident> options;
 
   @override
   State<AddIngredient> createState() => _AddIngredientState();
@@ -616,7 +561,7 @@ class AddIngredient extends StatefulWidget {
 class _AddIngredientState extends State<AddIngredient> {
   TextEditingController txtController = TextEditingController();
   bool autoComplete = true;
-  List<ingrident> selected = [];
+  List<Ingrident> selected = [];
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -635,10 +580,10 @@ class _AddIngredientState extends State<AddIngredient> {
                 title: Text("Ingredients"),
                 items: widget.options
                     .map((ingredient) =>
-                        MultiSelectItem<ingrident>(ingredient, ingredient.name))
+                        MultiSelectItem<Ingrident>(ingredient, ingredient.name))
                     .toList(),
                 onConfirm: (values) {
-                  widget.options.removeWhere((e) => !(values.indexOf(e) >= 0));
+                  widget.options.removeWhere((e) => !(values.contains(e)));
                 },
                 chipDisplay: MultiSelectChipDisplay(
                   onTap: (value) {
@@ -648,7 +593,7 @@ class _AddIngredientState extends State<AddIngredient> {
                   },
                 ),
               ),
-              (selected == null || selected.isEmpty)
+              (selected.isEmpty)
                   ? Container(
                       padding: EdgeInsets.all(10),
                       alignment: Alignment.centerLeft,
@@ -666,15 +611,8 @@ class _AddIngredientState extends State<AddIngredient> {
             child: Text("Add"),
             onPressed: () {
               List<String> ingredientNames = [];
-              for (ingrident element in selected) {
+              for (Ingrident element in selected) {
                 ingredientNames.add(element.name);
-              }
-              // widget.model.addSubs(ingredientNames);
-              for (var e in selected) {
-                print(e.name); //
-                // if (!(widget.options.indexOf(e) >= 0)) {
-                //   widget.options.remove(e);
-                // }
               }
               widget.options = selected;
               Navigator.pop(context);
@@ -690,7 +628,7 @@ class AddInstruction extends StatelessWidget {
   RecipeModel model;
   List<String> instrucion;
   TextEditingController txtController = TextEditingController();
-  // final String name;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -741,10 +679,12 @@ class StepEntry extends StatefulWidget {
   final bool edit;
   List<String> removedList = [];
   StepEntry(
-      {required this.text,
-      this.initialStep: false,
+      {Key? key,
+      required this.text,
+      this.initialStep = false,
       required this.edit,
-      required this.removedList});
+      required this.removedList})
+      : super(key: key);
 
   @override
   State<StepEntry> createState() => _StepEntryState();
@@ -765,17 +705,6 @@ class _StepEntryState extends State<StepEntry> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              // Expanded(
-              //   flex: 1,
-              //   child: Container(
-              //     width: 5.0,
-              //     height: initialStep ? 0 : 40,
-              //     decoration: BoxDecoration(
-              //       color: HexColor('#F9AF9C'),
-              //       borderRadius: BorderRadius.circular(10.0),
-              //     ),
-              //   ),
-              // ),
               Expanded(
                 flex: 69,
                 child: SizedBox(
@@ -829,7 +758,7 @@ class _StepEntryState extends State<StepEntry> {
 }
 
 class SubsScrooll extends StatelessWidget {
-  SubsScrooll({Key? key, required this.recipeWidgets}) : super(key: key);
+  const SubsScrooll({Key? key, required this.recipeWidgets}) : super(key: key);
   final List<SubView> recipeWidgets;
 
   @override

@@ -1,4 +1,5 @@
-// import 'package:flutter/cupertino.dart';
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/HexColor.dart';
 
@@ -12,8 +13,6 @@ class AddScreen extends StatefulWidget {
   @override
   _AddState createState() => _AddState();
 }
-
-//Todo fix the shape of the buttons + the elevation.
 
 class _AddState extends State<AddScreen> {
   @override
@@ -149,36 +148,31 @@ class Input extends StatelessWidget {
             SizedBox(
               height: 5.0,
             ),
-            //Todo can extract this widget later for the next entries.
             Row(
               children: <Widget>[
-                Container(
-                  child: Text(
-                    "All purpose flour",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 17,
-                    ),
+                Text(
+                  "All purpose flour",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17,
                   ),
                 ),
                 SizedBox(
                   width: 180.0,
                 ),
-                Container(
-                  child: Text(
-                    "2 cups",
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 17,
-                    ),
+                Text(
+                  "2 cups",
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 17,
                   ),
                 ),
               ],
             ),
-            new Container(
+            Container(
               padding:
                   const EdgeInsets.only(left: 40.0, right: 30.0, top: 20.0),
-              child: new RaisedButton(
+              child: RaisedButton(
                 elevation: 100.0,
                 hoverColor: HexColor("#FFECD9"),
                 disabledColor: Colors.grey.shade200,
@@ -205,7 +199,6 @@ class Input extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            //Todo use this row as a "steps widget" to add for each new step.
             Row(
               children: <Widget>[
                 Text(
@@ -227,10 +220,10 @@ class Input extends StatelessWidget {
                 ),
               ],
             ),
-            new Container(
+            Container(
               padding:
                   const EdgeInsets.only(left: 40.0, right: 30.0, top: 20.0),
-              child: new RaisedButton(
+              child: RaisedButton(
                 elevation: 100.0,
                 hoverColor: HexColor("#FFECD9"),
                 disabledColor: Colors.grey.shade200,
@@ -250,7 +243,7 @@ class Input extends StatelessWidget {
             Container(
                 padding:
                     const EdgeInsets.only(left: 40.0, right: 30.0, top: 20.0),
-                child: new RaisedButton(
+                child: RaisedButton(
                   hoverColor: HexColor("#FFECD9"),
                   disabledColor: HexColor('#F9AF9C'),
                   child: const Text(

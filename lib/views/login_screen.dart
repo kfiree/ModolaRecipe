@@ -1,18 +1,15 @@
-// ignore_for_file: unused_import, deprecated_member_use
+// ignore_for_file: deprecated_member_use
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'package:modolar_recipe/views/main_screen.dart';
-import 'package:modolar_recipe/views/signup.dart';
+import 'package:modolar_recipe/views/signup_screen.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
 import 'package:modolar_recipe/Widgets/loading.dart';
-
 import '../main.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,17 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-        // Container(
-        //   height: MediaQuery.of(context).size.height,
-        //   width: MediaQuery.of(context).size.width,
-        //   decoration: const BoxDecoration(
-        //     gradient: LinearGradient(colors: [
-        //       Colors.white,
-        //       Color.fromARGB(255, 248, 191, 176),
-        //     ]),
-        //   ),
-        // ),
-
         Container(
           padding: EdgeInsets.symmetric(
               vertical: Platform.isIOS ? 60 : 30, horizontal: 30),
@@ -100,13 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 30,
               ),
               buildLoginButton(),
-              // SizedBox(
-              //   height: 30,
-              // ),
-
-              // SizedBox(
-              //   height: 30,
-              // ),
             ],
           ),
         ),
@@ -374,7 +353,6 @@ class _LoginScreenState extends State<LoginScreen> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return Loading();
-          ;
         });
     final User? firebaseUser = (await _firebaseAuth
             .signInWithEmailAndPassword(

@@ -1,22 +1,27 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
 import 'package:modolar_recipe/Styles/constants.dart';
 
 class IngredientCard extends StatefulWidget {
   IngredientCard({
+    Key? key,
     required this.name,
     required this.quantity,
     required this.unit,
     required this.edit,
     required this.removedList,
     this.removed = false,
-  });
+  }) : super(key: key);
+
   final String name;
   final String quantity;
   final String unit;
   final bool edit;
   bool removed;
   List<String> removedList;
+
   @override
   _IngredientCardState createState() => _IngredientCardState();
 }
@@ -45,7 +50,6 @@ class _IngredientCardState extends State<IngredientCard> {
                   } else {
                     widget.removedList.remove(widget.name);
                   }
-                  // widget.removedList.add('value');
                 });
               },
             ),
@@ -78,72 +82,6 @@ class _IngredientCardState extends State<IngredientCard> {
       ),
     );
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   String dropdownValue = widget.name;
-  //   List<String> subs = [widget.name, 'sub2', 'sub3', 'sub4', 'sub5'];
-  //   // String dropdownValue = 'All Porpuse Flour';
-  //   // subs[0] = widget.name;
-  //   return Padding(
-  //     padding: const EdgeInsets.only(
-  //       bottom: 10,
-  //       left: 10,
-  //     ),
-  //     child: Row(
-  //       children: <Widget>[
-  //         DropdownButton<String>(
-  //           value: dropdownValue,
-  //           icon: const Icon(Icons.arrow_drop_down),
-  //           elevation: 16,
-  //           style: const TextStyle(
-  //             fontFamily: "Quicksand",
-  //             fontWeight: FontWeight.w700,
-  //             color: Colors.black,
-  //           ),
-  //           onChanged: (String? newValue) {
-  //             setState(() {
-  //               dropdownValue = newValue!;
-  //             });
-  //           },
-  //           items: //<String>['All Porpuse Flour', 'Two', 'three', 'Four']
-  //               subs.map<DropdownMenuItem<String>>((String value) {
-  //             return DropdownMenuItem<String>(
-  //               value: value,
-  //               child: Text(value),
-  //             );
-  //           }).toList(),
-  //         ),
-  //         // DropDownList(),
-  //         Expanded(
-  //           child: Align(
-  //             alignment: Alignment.centerRight,
-  //             child: Text(
-  //               widget.quantity,
-  //               style: TextStyle(
-  //                 fontFamily: "Quicksand",
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Color(0xFFBFBFBF),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           child: Align(
-  //             alignment: Alignment.centerRight,
-  //             child: Text(
-  //               widget.unit,
-  //               style: TextStyle(
-  //                 fontFamily: "Quicksand",
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Color(0xFFBFBFBF),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 /*

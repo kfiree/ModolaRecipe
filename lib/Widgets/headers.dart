@@ -54,10 +54,11 @@ class SubHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          style: TextStyle(fontSize: size, color: Colors.white),
-        ));
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: TextStyle(fontSize: size, color: Colors.white),
+      ),
+    );
   }
 }

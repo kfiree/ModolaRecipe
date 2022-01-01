@@ -4,7 +4,9 @@ class CircleNetworkImage extends StatelessWidget {
   final double radius;
   final String imageURL;
 
-  CircleNetworkImage({required this.radius, required this.imageURL});
+  const CircleNetworkImage(
+      {Key? key, required this.radius, required this.imageURL})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,9 @@ class CircleAvatarImage extends StatelessWidget {
   final double radius;
   final String imageURL;
 
-  CircleAvatarImage({required this.radius, required this.imageURL});
+  const CircleAvatarImage(
+      {Key? key, required this.radius, required this.imageURL})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +51,3 @@ class CircleAvatarImage extends StatelessWidget {
     );
   }
 }
-// CircleAvatar(
-//   backgroundImage: AssetImage(
-//     'assets/shaniProfile.png',
-//     // "https://www.trendrr.net/wp-content/uploads/2017/06/Deepika-Padukone-1.jpg",
-//   ),
-//   radius: 50.0,
-// ),

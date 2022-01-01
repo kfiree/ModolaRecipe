@@ -1,39 +1,38 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 import 'package:modolar_recipe/views/profile_screen.dart';
-import 'package:modolar_recipe/views/login.dart';
-import 'package:modolar_recipe/views/add_recipe.dart';
+import 'package:modolar_recipe/views/login_screen.dart';
+import 'package:modolar_recipe/views/add_screen.dart';
 
 class CircleButton extends StatelessWidget {
   const CircleButton({
+    Key? key,
     required this.icon,
     required this.callback,
     required this.color,
-    /*required this.size*/
-  });
+  }) : super(key: key);
 
   final IconData icon;
   final VoidCallback callback;
   final Color color;
-  // final double size;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Ink(
-        decoration: ShapeDecoration(
-          color: Colors.white,
-          shape: CircleBorder(),
-        ),
-        child: IconButton(
-            icon: Icon(
-              icon,
-              color: color, //HexColor('##785ac7'),
-            ),
-            color: Colors.white,
-            iconSize: 40,
-            onPressed: callback),
+    return Ink(
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: CircleBorder(),
       ),
+      child: IconButton(
+          icon: Icon(
+            icon,
+            color: color,
+          ),
+          color: Colors.white,
+          iconSize: 40,
+          onPressed: callback),
     );
   }
 }
@@ -62,8 +61,8 @@ class LogOut extends StatelessWidget {
 }
 
 class Profile extends StatelessWidget {
-  const Profile({Key? key, this.UID}) : super(key: key);
-  final UID;
+  const Profile({Key? key, required this.UID}) : super(key: key);
+  final String UID;
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +87,8 @@ class Profile extends StatelessWidget {
 }
 
 class NewRecipe extends StatelessWidget {
-  const NewRecipe({Key? key, this.UID}) : super(key: key);
-  final UID;
+  const NewRecipe({Key? key, required this.UID}) : super(key: key);
+  final String UID;
 
   @override
   Widget build(BuildContext context) {

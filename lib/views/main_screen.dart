@@ -1,27 +1,20 @@
-import 'dart:convert';
+// ignore_for_file: non_constant_identifier_names, must_be_immutable
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modolar_recipe/Widgets/ingredients.dart';
-import 'dart:math';
-import 'dart:math';
 
 import 'package:modolar_recipe/Widgets/loading.dart';
-import 'package:modolar_recipe/views/profile_screen.dart';
 import 'package:modolar_recipe/Widgets/buttons.dart';
-import 'package:modolar_recipe/views/login.dart';
-import 'package:modolar_recipe/views/add_recipe.dart';
+import 'package:modolar_recipe/views/login_screen.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
 import 'package:modolar_recipe/Widgets/util.dart' as util;
-// import 'package:modolar_recipe/views/recipe_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "main_screen";
-  // final String applicationId = "2051cf6b",
-  //     applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -31,7 +24,6 @@ class _MainScreenState extends State<MainScreen> {
   bool loading = false, searchMode = false;
   double headerSize = 40;
   List<RecipeTile> tiles = [];
-
   TextEditingController txtController = TextEditingController();
 
   @override
@@ -78,53 +70,51 @@ class _MainScreenState extends State<MainScreen> {
                     searchMode: searchMode,
                     mainSize: searchMode ? 45 : 40,
                   ),
-                  Container(
-                    child: Row(
-                      children: <Widget>[
-                        // search
-                        Expanded(
-                          child: TextField(
-                            controller: txtController,
-                            decoration: InputDecoration(
-                                hintText: "Enter Ingrideints",
-                                hintStyle: TextStyle(
-                                  fontSize: 18,
-                                )),
-                            style: TextStyle(fontSize: 18),
-                          ),
+                  Row(
+                    children: <Widget>[
+                      // search
+                      Expanded(
+                        child: TextField(
+                          controller: txtController,
+                          decoration: InputDecoration(
+                              hintText: "Enter Ingrideints",
+                              hintStyle: TextStyle(
+                                fontSize: 18,
+                              )),
+                          style: TextStyle(fontSize: 18),
                         ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            if (txtController.text.isNotEmpty) {
-                              setState(
-                                () => {
-                                  loading = true,
-                                },
-                              );
-                              await fetchRecipes(
-                                  txtController.text, tiles, UID);
-                              setState(
-                                () => {
-                                  searchMode = true,
-                                  loading = false,
-                                },
-                              );
-                            } else {
-                              setState(
-                                () => {
-                                  searchMode = false,
-                                },
-                              );
-                            }
-                          },
-                          child: Icon(Icons.search, color: Colors.white),
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          if (txtController.text.isNotEmpty) {
+                            setState(
+                              () => {
+                                loading = true,
+                              },
+                            );
+                            await fetchRecipes(txtController.text, tiles, UID);
+                            setState(
+                              () => {
+                                searchMode = true,
+                                loading = false,
+                              },
+                            );
+                          } else {
+                            setState(
+                              () => {
+                                searchMode = false,
+                              },
+                            );
+                          }
+                        },
+                        child: Icon(Icons.search, color: Colors.white),
+                      ),
+                    ],
                   ),
+
                   //recipe views
                   Container(
                     child: searchMode
@@ -151,6 +141,7 @@ class _MainScreenState extends State<MainScreen> {
                 child: Loading(),
               ),
             ),
+
           //buttons
           LogOut(),
           if (UID != "0") Profile(UID: UID),
@@ -194,7 +185,6 @@ class _MainScreenState extends State<MainScreen> {
     doc['mealType'] = ListFormat(doc['mealType']);
     doc['dishType'] = ListFormat(doc['dishType']);
     doc['instructions'] = ListFormat(doc['instructions']);
-    // doc['ingredients'] = toIngredientList(doc['ingredients']);
     return doc;
   }
 
@@ -213,7 +203,6 @@ class _MainScreenState extends State<MainScreen> {
     return element.cast<String>();
   }
 
-//List<Map<String, dynamic>> ingredientsJson) {
   List<IngredientModel> toIngredientList(dynamic element) {
     if (element == null) {
       return [];
@@ -224,35 +213,10 @@ class _MainScreenState extends State<MainScreen> {
         {ingredientList.add(IngredientModel.fromJson(ingredient))});
     return ingredientList;
   }
-
-  // // return recipes
-  // Future<List<Widget>> fetchRecipes(
-  //     String query, List<Widget> recipes, String UID,
-  //     {int from = 0, required bool search}) async {
-  //   String queryUrl =
-  //       'https://api.edamam.com/search?q=$query&from=$from&to=${from + 15}&app_id=${widget.applicationId}&app_key=${widget.applicationKey}';
-  //   final response = await http.get(Uri.parse(queryUrl));
-  //   if (response.statusCode == 200) {
-  //     // recipes.clear();
-  //     Map<String, dynamic> jsonData = jsonDecode(response.body);
-  //     jsonData["hits"].forEach(
-  //       (hit) {
-  //         recipes.add((RecipeMediumView(
-  //           UID: UID,
-  //           recipeModel: RecipeModel.fromJson(hit["recipe"]),
-  //         )));
-  //       },
-  //     );
-  //     return recipes;
-  //   } else {
-  //     throw Exception(
-  //         'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
-  //   }
-  // }
 }
 
 class InitialRecipe extends StatelessWidget {
-  final UID;
+  final String UID;
   CollectionReference collection =
       FirebaseFirestore.instance.collection("recipes");
 
@@ -261,7 +225,7 @@ class InitialRecipe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
-      future: collection.get(), //.doc('VRWodus2pN2wXXHSz8JH').get(),
+      future: collection.get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return Text("Something went wrong");
@@ -274,25 +238,22 @@ class InitialRecipe extends StatelessWidget {
           List<RecipeMediumView> recipeWidgets = [];
 
           if (recipeWidgets.length < 15) {
-            snapshot.data!.docs.forEach((recipe) {
+            for (var recipe in snapshot.data!.docs) {
               var recipeMap = recipe.data() as Map<String, dynamic>;
               recipeWidgets.add(RecipeMediumView(
                 UID: UID,
                 recipeModel: RecipeModel.fromJson(recipeMap),
               ));
-            });
+            }
           }
           return SizedBox(
             height: 400,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              //TODO stack overflow: Overflow.clip
-
               children: recipeWidgets,
             ),
           );
         }
-
         return Loading();
       },
     );

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 
@@ -15,8 +17,8 @@ class _RateRecipeState extends State<RateRecipe> {
       RatingDialog(
         title: Text('Rate this recipe 😍'),
         onSubmitted: (response) {
-          print('rating: ${response.rating}, ');
-          print('comment: ${response.comment}');
+          // print('rating: ${response.rating}, ');
+          // print('comment: ${response.comment}');
         },
         submitButtonText: 'Submit',
         onCancelled: () => print('cancelled'),

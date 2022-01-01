@@ -2,7 +2,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -58,8 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    // ignore: prefer_const_literals_to_create_immutables
-                    colors: [
+                    colors: const [
                       Color(0xff65b0bb),
                       Color(0xff5a9ea8),
                       Color(0xff508c95),
@@ -418,7 +416,6 @@ class _SignupScreenState extends State<SignupScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
-      // child: Image.asset("assets/facebook.png"),
     );
   }
 
@@ -429,7 +426,6 @@ class _SignupScreenState extends State<SignupScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
-      // child: Image.asset("assets/google.png"),
     );
   }
 
@@ -451,8 +447,6 @@ class _SignupScreenState extends State<SignupScreen> {
         .user;
 
     if (firebaseUser != null) {
-      // User created succesffully.
-      // Insert to DB.
       Map userDataMap = {
         "name": nameTextEdittingController.text.trim(),
         "phone": phoneTextEdittingController.text.trim(),
@@ -461,16 +455,13 @@ class _SignupScreenState extends State<SignupScreen> {
       usersRef.child(firebaseUser.uid).set(userDataMap);
 
       displayToastMessage("New user created succesffuly!", context);
-      // Navigator.pushNamedAndRemoveUntil(
-      //     context, enterScreen.idScreen, (route) => false);
       Navigator.of(context).pushNamed(
-            MainScreen.idScreen,
-            arguments: {'UID': firebaseUser.uid},
+        MainScreen.idScreen,
+        arguments: {'UID': firebaseUser.uid},
       );
     } else {
-      //Error accured.
       Navigator.of(context).pushNamed(
-            SignupScreen.idScreen,
+        SignupScreen.idScreen,
       );
       displayToastMessage("New user has not been created.", context);
     }

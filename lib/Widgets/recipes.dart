@@ -1,86 +1,20 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: non_constant_identifier_names, must_be_immutable, avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:hexcolor/hexcolor.dart';
-import 'package:modolar_recipe/Widgets/ingredients.dart';
-import 'dart:convert';
 
+import 'package:modolar_recipe/Widgets/ingredients.dart';
 import 'package:modolar_recipe/Widgets/circle_image.dart';
 import 'package:modolar_recipe/Styles/constants.dart';
-import 'package:modolar_recipe/Widgets/loading.dart';
 import 'package:modolar_recipe/views/recipe_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
-
-// class StepEntry extends StatelessWidget {
-//   final String text;
-//   final bool initialStep;
-
-//   const StepEntry({Key? key, required this.text, this.initialStep = false})
-//       : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: EdgeInsets.only(
-//         right: 25,
-//         left: 10.0,
-//         top: 0.0,
-//       ),
-//       child: Column(
-//         children: <Widget>[
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: <Widget>[
-//               Expanded(
-//                 flex: 1,
-//                 child: Container(
-//                   width: 5.0,
-//                   height: initialStep ? 0 : 40,
-//                   decoration: BoxDecoration(
-//                     color: HexColor('#998fb3'),
-//                     borderRadius: BorderRadius.circular(10.0),
-//                   ),
-//                 ),
-//               ),
-//               Expanded(
-//                 flex: 69,
-//                 child: SizedBox(
-//                   height: 10.0,
-//                 ),
-//               )
-//             ],
-//           ),
-//           Row(
-//             children: <Widget>[
-//               Container(
-//                 height: 5.0,
-//                 width: 5.0,
-//                 decoration: BoxDecoration(
-//                   color: HexColor('#998fb3'),
-//                   shape: BoxShape.circle,
-//                 ),
-//               ),
-//               SizedBox(
-//                 width: 40.0,
-//               ),
-//               Flexible(
-//                 child: Text(text),
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class RecipeMediumView extends StatelessWidget {
   const RecipeMediumView({
+    Key? key,
     required this.recipeModel,
     required this.UID,
-  });
+  }) : super(key: key);
 
   final RecipeModel recipeModel;
   final String UID;
@@ -212,7 +146,7 @@ class RecipeTile extends StatelessWidget {
               alignment: Alignment.bottomLeft,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      colors: [Colors.white30, Colors.white],
+                      colors: const [Colors.white30, Colors.white],
                       begin: FractionalOffset.centerRight,
                       end: FractionalOffset.centerLeft)),
               child: Padding(
@@ -232,7 +166,6 @@ class RecipeTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         color: Colors.black54,
-                        // fontFamily: 'OverpassRegular'
                       ),
                     )
                   ],
@@ -246,40 +179,6 @@ class RecipeTile extends StatelessWidget {
   }
 }
 
-// class FullRecipe {
-//   final String label, image, source, url, uri, cuisineType;
-//   final double calories;
-//   final int cookingTime;
-//   final List<Map<String, dynamic>> ingredients;
-//   final List<String> cautions;
-
-//   FullRecipe(
-//       {required this.label,
-//       required this.image,
-//       required this.source,
-//       required this.url,
-//       required this.uri,
-//       required this.calories,
-//       required this.cookingTime,
-//       required this.ingredients,
-//       required this.cuisineType,
-//       required this.cautions});
-
-//   factory FullRecipe.fromJson(Map<String, dynamic> json) {
-//     return FullRecipe(
-//         label: json['label'],
-//         image: json['image'],
-//         source: json['source'],
-//         url: json['url'],
-//         uri: json['uri'],
-//         calories: json['calories'],
-//         cookingTime: json['cookingTime'],
-//         ingredients: json['ingredients'],
-//         cuisineType: json['cuisineType'],
-//         cautions: json['cautions']);
-//   }
-// }
-
 class RecipeModel {
   final String name, image, source, url, uri;
   final List<dynamic> mealType,
@@ -289,7 +188,6 @@ class RecipeModel {
       cuisineType,
       cautions,
       instructions;
-  // List<String> subs = [], removed = [];
 
   List<SubModel> subs = [];
 
@@ -313,30 +211,9 @@ class RecipeModel {
     required this.dishType,
     required this.instructions,
     required this.subs,
-    // required this.removed,
   });
 
-  // addSubs(List<String> ingredientsNames) {
-  //   for (String e in ingredientsNames) {
-  //     subs.add(e);
-  //   }
-  // }
-
-  // addRemoved(List<String> ingredientsNames) {
-  //   for (String e in ingredientsNames) {
-  //     removed.add(e);
-  //   }
-  // }
-
-  // deleteIngredients(List<IngredientModel> ingredientsList) {
-  //   for (IngredientModel e in ingredientsList) {
-  //     ingredients.remove(e);
-  //   }
-  // }
-
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
-    // json = format(json);
-    // addToFB(json);
     return RecipeModel(
       uri: stringFormat(json['uri']),
       name: stringFormat(json['label']),
@@ -390,7 +267,6 @@ class RecipeModel {
     doc['dishType'] = ListFormat(doc['dishType']);
     doc['instructions'] = ListFormat(doc['instructions']);
     doc['subs'] = formatSubs(doc['subs']);
-    // doc['ingredients'] = toIngredientList(doc['ingredients']);
     return doc;
   }
 
@@ -400,30 +276,7 @@ class RecipeModel {
         SubModel(added: _added, removed: _removed, instructions: _instructions);
 
     subs.add(newSub);
-    // save();
   }
-
-  // save() {
-  //   Map<String, dynamic> recipeMap = toMap();
-  //   CollectionReference collection =
-  //       FirebaseFirestore.instance.collection("recipes");
-
-  //   String recID = recipeMap['uri'].split("#")[1];
-
-  //   collection
-  //       .doc(recID)
-  //       .set(recipeMap)
-  //       .then((value) => print('recipe $recID Added'))
-  //       .catchError((error) => print('Add failed: $error'));
-  // }
-
-  // rateSub(int newRate, int id) {
-  //   double currentRate = subs[id]!['rate'];
-  //   int ratesNum = subs[id]!['ratesNum'] + 1;
-
-  //   subs[id]!['rate'] = (currentRate + newRate) / ratesNum;
-  //   subs[id]!['ratesNum'] = ratesNum;
-  // }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = {};
@@ -463,68 +316,6 @@ class RecipeModel {
   }
 }
 
-// class RecipeGrid extends StatelessWidget {
-//   const RecipeGrid({Key? key, this.query, this.UID}) : super(key: key);
-//   final query, UID;
-// // List<RecipeTile>
-//   Future<List<RecipeModel>> fetchFromAPI(String query) async {
-//     String applicationId = "2051cf6b",
-//         applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
-//     String queryUrl =
-//         'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
-//     final response = await http.get(Uri.parse(queryUrl));
-//     if (response.statusCode == 200) {
-//       // recipes.clear();
-//       Map<String, dynamic> jsonData = jsonDecode(response.body);
-//       List<RecipeModel> recipes = [];
-//       jsonData["hits"].forEach(
-//         (hit) {
-//           recipes.add(
-//             RecipeModel.fromJson(hit["recipe"]),
-//           );
-//         },
-//       );
-//       return recipes;
-//     } else {
-//       throw Exception(
-//           'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
-//     }
-//   }
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder<List<RecipeModel>>(
-//       future: fetchFromAPI(query),
-//       builder:
-//           (BuildContext context, AsyncSnapshot<List<RecipeModel>> snapshot) {
-//         if (snapshot.hasError) {
-//           return Text("Something went wrong");
-//         }
-
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return Loading();
-//         }
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           List<RecipeTile> tiles = [];
-//           snapshot.data?.forEach((model) {
-//             tiles.add(RecipeTile(
-//               recipeModel: model,
-//               UID: UID,
-//             ));
-//           });
-//           return GridView.count(
-//             crossAxisCount: 2,
-//             crossAxisSpacing: 5,
-//             mainAxisSpacing: 10,
-//             children: tiles,
-//           );
-//         } else {
-//           return Text('State: ${snapshot.connectionState}');
-//         }
-//       },
-//     );
-//   }
-// }
-
 String stringFormat(dynamic element) {
   return element ?? 'NULL';
 }
@@ -540,7 +331,6 @@ List<dynamic> ListFormat(dynamic element) {
   return element.cast<String>();
 }
 
-//List<Map<String, dynamic>> ingredientsJson) {
 List<IngredientModel> toIngredientList(dynamic element) {
   if (element == null) {
     return [];
@@ -608,8 +398,6 @@ class SubModel {
   }
 
   factory SubModel.fromJson(Map<String, dynamic> json) {
-    // json = format(json);
-    // addToFB(json);
     return SubModel(
       added: json['added'],
       removed: json['removed'],
@@ -668,8 +456,9 @@ class SubModel {
 
 class SubView extends StatelessWidget {
   SubView({
+    Key? key,
     required this.subModel,
-  });
+  }) : super(key: key);
 
   final SubModel subModel;
   List<Widget> added = [
@@ -752,15 +541,6 @@ class SubView extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Positioned(
-            //   left: 10,
-            //   bottom: 130.0,
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: added,
-            //   ),
-            // ),
           ],
         ),
         SizedBox(
