@@ -13,6 +13,14 @@ import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
 
+dynamic getUserData(dynamic UID){
+  return FirebaseFirestore.instance.collection("user_data").doc(UID).get();
+}
+
+Future<QuerySnapshot> initialRecipes() async {
+  return FirebaseFirestore.instance.collection("recipes").get();
+}
+
 Future<Map<String, dynamic>> getRecipes(String query) async {
   // if there are no results in our FB then we'll get them here
   // List <dynamic> results = collection.where()
@@ -24,6 +32,7 @@ Future<Map<String, dynamic>> getRecipes(String query) async {
       FirebaseFirestore.instance.collection("recipes");
   String applicationId = "2051cf6b",
       applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
+
   String queryUrl =
       'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
   final response = await http.get(Uri.parse(queryUrl));

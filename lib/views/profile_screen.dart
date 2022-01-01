@@ -7,22 +7,23 @@ import 'package:modolar_recipe/Views/main_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modolar_recipe/Widgets/loading.dart';
 
+import 'package:modolar_recipe/Widgets/util.dart' as util;
+
 class ProfileScreen extends StatelessWidget {
-  CollectionReference _firebaseFirestore =
-      FirebaseFirestore.instance.collection("user_data");
+  // CollectionReference _firebaseFirestore =
+  //     FirebaseFirestore.instance.collection("user_data");
   ProfileScreen({Key? key}) : super(key: key);
 
   static const String idScreen = "profile";
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs =
-        ModalRoute.of(context)?.settings.arguments as Map;
+    final routeArgs = ModalRoute.of(context)?.settings.arguments as Map;
     final UID = routeArgs['UID'];
-    var userData = _firebaseFirestore.doc(UID).get();
+    var userData = util.getUserData(UID); //_firebaseFirestore.doc(UID).get();
 
     return FutureBuilder<DocumentSnapshot>(
-      future: _firebaseFirestore.doc(UID).get(),
+      future: userData, // _firebaseFirestore.doc(UID).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
@@ -252,7 +253,8 @@ class ProfileScreen extends StatelessWidget {
                         callback: () => {
                               Navigator.of(context).pushNamed(
                                 MainScreen.idScreen,
-                                arguments: {'UID': UID},)
+                                arguments: {'UID': UID},
+                              )
                             }),
                   ),
                 ),

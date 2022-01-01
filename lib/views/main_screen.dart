@@ -255,15 +255,15 @@ class _MainScreenState extends State<MainScreen> {
 
 class InitialRecipe extends StatelessWidget {
   final UID;
-  CollectionReference collection =
-      FirebaseFirestore.instance.collection("recipes");
+  // CollectionReference collection =
+  //     FirebaseFirestore.instance.collection("recipes");
 
   InitialRecipe(this.UID, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
-      future: collection.get(), //.doc('VRWodus2pN2wXXHSz8JH').get(),
+      future: util.initialRecipes(), // collection.get(), //.doc('VRWodus2pN2wXXHSz8JH').get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return Text("Something went wrong");
