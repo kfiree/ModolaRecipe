@@ -12,6 +12,7 @@ import 'package:modolar_recipe/views/login.dart';
 import 'package:modolar_recipe/views/add_recipe.dart';
 import 'package:modolar_recipe/Widgets/recipes.dart';
 import 'package:modolar_recipe/Widgets/headers.dart';
+import 'package:modolar_recipe/Widgets/util.dart' as util;
 // import 'package:modolar_recipe/views/recipe_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -162,29 +163,11 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<List<RecipeTile>> fetchRecipes(
       String query, List<RecipeTile> recipes, String UID) async {
-    CollectionReference collection =
-        FirebaseFirestore.instance.collection("recipes");
-
-    // if there are no results in our FB then we'll get them here
-    // List <dynamic> results = collection.where()
-
-    // else we'll reach the API
-    // then we'll get the new recipes and while process then to RecipeModel
-    // we'll add them to our FB
-
-    String applicationId = "2051cf6b",
-        applicationKey = "23b5c49d42ef07d39fb68e1b6e04bf42";
-    String queryUrl =
-        'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
-    final response = await http.get(Uri.parse(queryUrl));
-
-    if (response.statusCode == 200) {
-      // recipes.clear();
-      Map<String, dynamic> jsonData = jsonDecode(response.body);
+       Map<String, dynamic> jsonData = await util.getRecipes(query);
 
       jsonData["hits"].forEach(
         (hit) {
-          addToFB(hit["recipe"]);
+          util.addRecipes(hit["recipe"]);
           recipes.add(RecipeTile(
             recipeModel: RecipeModel.fromJson(hit["recipe"]),
             UID: UID,
@@ -192,34 +175,10 @@ class _MainScreenState extends State<MainScreen> {
         },
       );
 
-      List<String> keyWords = query.split(' ');
 
       setState(() => {loading = false});
 
       return recipes;
-    } else {
-      setState(() => loading = false);
-      throw Exception(
-          'Failed to load Recipe. response statusCode = ${response.statusCode}');
-    }
-  }
-
-  addToFB(Map<String, dynamic> recipe) {
-    CollectionReference collection =
-        FirebaseFirestore.instance.collection("recipes");
-    // DocumentReference doc = collection.document();
-    var formatRecipe = format(recipe);
-    String recID = recipe['uri'].split("#")[1];
-    collection.firestore.collection('wow').add(formatRecipe);
-
-    collection
-        .doc(recID)
-        .set(recipe)
-        .then((value) => print('recipe $recID Added'))
-        .catchError((error) => print('Add failed: $error'));
-    // recipe['ingredients'] = toIngredientList(recipe['ingredients']);
-    // .add({recID: recipe});
-    // collection.add({recID: recID});
   }
 
   dynamic format(dynamic doc) {
@@ -380,7 +339,6 @@ class MainHeaders extends StatelessWidget {
     );
   }
 }
-
 // /*
 // ===================== RESPONSE EXAMPLE =====================
 // {
