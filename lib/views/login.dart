@@ -100,15 +100,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 30,
               ),
               buildLoginButton(),
-              SizedBox(
-                height: 30,
-              ),
-              SizedBox(
-                height: 30,
-              ),
+              // SizedBox(
+              //   height: 30,
+              // ),
+
+              // SizedBox(
+              //   height: 30,
+              // ),
             ],
           ),
         ),
+        Positioned(
+          bottom: 0,
+          left: 110,
+          child: SizedBox(
+            height: 110,
+            width: 150,
+            child: buildUnregisteredLoginButton(),
+          ),
+        )
       ]),
     );
   }
@@ -263,6 +273,51 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget buildUnregisteredLoginButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      child: SizedBox(
+        width: double.infinity,
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              MainScreen.idScreen,
+              arguments: {'UID': '0'},
+            );
+          },
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
+          elevation: 0.0,
+          padding: EdgeInsets.all(0.0),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: const [
+                    Color.fromARGB(255, 248, 191, 176),
+                    Color.fromARGB(255, 248, 137, 99),
+                  ]),
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: Container(
+              constraints: BoxConstraints(
+                  maxWidth: 130.0, minHeight: 50.0, maxHeight: 50),
+              alignment: Alignment.center,
+              child: Text(
+                "Guest!",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26.0,
+                    fontWeight: FontWeight.w300),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildLoginButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 25),
@@ -309,33 +364,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-
-      // Container(
-      //   width: double.infinity,
-      //   child: RaisedButton(
-      //     onPressed: () {
-      //       // setState(()=>loading = true);
-      //       if (!emailTextEdittingController.text.contains("@")) {
-      //         displayToastMessage("Email is not valid.", context);
-      //       } else if (passwordTextEdittingController.text.isEmpty) {
-      //         displayToastMessage("Password is missing.", context);
-      //       } else {
-      //         loginUserAndAuthenticate(context);
-      //       }
-      //     },
-      //     elevation: 5,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(15),
-      //     ),
-      //     color: Color(0xff3c6970),
-      //     padding: EdgeInsets.all(30),
-      //     child: Text(
-      //       "Login",
-      //       style: TextStyle(
-      //           fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
-      //     ),
-      //   ),
-      // ),
     );
   }
 

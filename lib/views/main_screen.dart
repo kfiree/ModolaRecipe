@@ -31,9 +31,7 @@ class _MainScreenState extends State<MainScreen> {
   bool loading = false, searchMode = false;
   double headerSize = 40;
   List<RecipeTile> tiles = [];
-  // String query = 'sugar';
 
-  //text controllers
   TextEditingController txtController = TextEditingController();
 
   @override
@@ -155,8 +153,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
           //buttons
           LogOut(),
-          Profile(UID: UID),
-          NewRecipe(UID: UID),
+          if (UID != "0") Profile(UID: UID),
+          if (UID != "0") NewRecipe(UID: UID),
         ],
       ),
     );

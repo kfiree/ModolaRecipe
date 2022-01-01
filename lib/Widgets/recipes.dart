@@ -353,7 +353,7 @@ class RecipeModel {
       dishType: ListFormat(json['dishType']),
       ingredients: toIngredientList(json['ingredients']),
       instructions: ListFormat(json['instructions']),
-      subs: [],
+      subs: getSubs(json['subs']),
     );
   }
 
@@ -465,7 +465,6 @@ class RecipeModel {
 
 // class RecipeGrid extends StatelessWidget {
 //   const RecipeGrid({Key? key, this.query, this.UID}) : super(key: key);
-
 //   final query, UID;
 // // List<RecipeTile>
 //   Future<List<RecipeModel>> fetchFromAPI(String query) async {
@@ -474,12 +473,10 @@ class RecipeModel {
 //     String queryUrl =
 //         'https://api.edamam.com/search?q=$query&app_id=$applicationId&app_key=$applicationKey';
 //     final response = await http.get(Uri.parse(queryUrl));
-
 //     if (response.statusCode == 200) {
 //       // recipes.clear();
 //       Map<String, dynamic> jsonData = jsonDecode(response.body);
 //       List<RecipeModel> recipes = [];
-
 //       jsonData["hits"].forEach(
 //         (hit) {
 //           recipes.add(
@@ -487,14 +484,12 @@ class RecipeModel {
 //           );
 //         },
 //       );
-
 //       return recipes;
 //     } else {
 //       throw Exception(
 //           'Failed to load Recipe. response statusCode = ${response.statusCode} queryUrl = $queryUrl');
 //     }
 //   }
-
 //   @override
 //   Widget build(BuildContext context) {
 //     return FutureBuilder<List<RecipeModel>>(
@@ -568,6 +563,23 @@ List<Map<String, dynamic>> formatSubs(dynamic subMap) {
         'rate': sub.rate,
         'ratesNum': sub.ratesNum,
       },
+    );
+  }
+  return result;
+}
+
+List<SubModel> getSubs(dynamic subList) {
+  List<SubModel> result = [];
+  int len = subList == null ? 0 : subList.length;
+  for (int i = 0; i < len; i++) {
+    result.add(
+      SubModel(
+        added: ListFormat(subList[i]['added']),
+        removed: ListFormat(subList[i]['removed']),
+        instructions: ListFormat(subList[i]['instructions']),
+        rate: subList[i]['rate'],
+        ratesNum: subList[i]['ratesNum'],
+      ),
     );
   }
   return result;
@@ -662,19 +674,19 @@ class SubView extends StatelessWidget {
   final SubModel subModel;
   List<Widget> added = [
         Text(
-          'Added',
+          'Add:',
           style: kMainTextStyle,
         ),
       ],
       removed = [
         Text(
-          'removed',
+          'remove:',
           style: kMainTextStyle,
         ),
       ],
       instructions = [
         Text(
-          'instructions',
+          'Notes:',
           style: kMainTextStyle,
         ),
       ];
@@ -683,54 +695,72 @@ class SubView extends StatelessWidget {
   Widget build(BuildContext context) {
     for (var e in subModel.added) {
       added.add(Text(
-        e,
+        '+ $e',
         style: kSmallTextStyle,
       ));
     }
     for (var e in subModel.removed) {
-      added.add(Text(
-        e,
+      removed.add(Text(
+        '- $e',
         style: kSmallTextStyle,
       ));
     }
     for (var e in subModel.instructions) {
-      added.add(Text(
-        e,
+      instructions.add(Text(
+        '* $e',
         style: kSmallTextStyle,
       ));
     }
     return Row(
       children: <Widget>[
         Stack(
-          alignment: Alignment.bottomRight,
+          alignment: Alignment.center,
           children: <Widget>[
             Container(
               height: 375.0,
               width: 300.0,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50.0),
-                color: HexColor("#f9af9c"),
+                color: HexColor("#d1cae3"),
               ),
             ),
-            Column(children: <Widget>[
-              Column(
-                children: added,
-              ),
-              Column(
-                children: removed,
-              ),
-              Column(
-                children: instructions,
-              ),
-            ]),
             Positioned(
-              left: 10,
+              left: 80,
               bottom: 130.0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: added,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Column(
+                        children: added,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Column(
+                        children: removed,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Column(
+                        children: instructions,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
+
+            // Positioned(
+            //   left: 10,
+            //   bottom: 130.0,
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: added,
+            //   ),
+            // ),
           ],
         ),
         SizedBox(

@@ -33,7 +33,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
       ApplicationKey = '47e224016bc268ada433484688f019cf';
   SubModel sub = SubModel();
   List<String> added = [], removedInstructions = [], removedIngredients = [];
-  List<SubView> subList = [];
   // Map<String, dynamic> sub = {
   //   'added': [],
   //   'removed': [],
@@ -50,6 +49,7 @@ class _FullViewScreenState extends State<FullViewScreen> {
     final routeArgs =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     RecipeModel model = routeArgs['Model'];
+    final UID = routeArgs['UID'];
     List<ingrident> selected = [];
 
     url = model.url;
@@ -64,19 +64,23 @@ class _FullViewScreenState extends State<FullViewScreen> {
           removedList: removedIngredients),
     );
     List<ingrident> ingredientComp = [];
-    print('44444444444444444444444');
-    print('removed Ingrident ${removedIngredients.toString()}');
-    print('removed Instructions ${removedInstructions.toString()}');
-    print('instructions = ${instructions.toString()}');
-    print('added ${added.toString()}');
-    print('44444444444444444444444');
+    // print('44444444444444444444444');
+    // print('removed Ingrident ${removedIngredients.toString()}');
+    // print('removed Instructions ${removedInstructions.toString()}');
+    // print('instructions = ${instructions.toString()}');
+    // print('added ${added.toString()}');
+    // print('44444444444444444444444');
 
-    model.subs.forEach((sub) {
-      subList.add(SubView(
-        subModel: sub,
-      ));
-    });
+    List<SubView> recipeWidgets = [];
 
+    for (var sub in model.subs) {
+      print('UID is $UID');
+      recipeWidgets.add(
+        SubView(
+          subModel: sub,
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: HexColor('#998fb3'),
       body: SafeArea(
@@ -251,9 +255,7 @@ class _FullViewScreenState extends State<FullViewScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    // if (widget.model.instructions.isEmpty)
-                    if (model.instructions
-                        .isNotEmpty) //instructions.isNotEmpty) // && widget.editView)
+                    if (model.instructions.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -361,13 +363,34 @@ class _FullViewScreenState extends State<FullViewScreen> {
                         ],
                       ),
                     SizedBox(
-                      height: 20,
+                      height:
+                          20, //http://www.edamam.com/ontologies/edamam.owl#recipe_0b0103f67d752e4681d3c3458aa96f5a
                     ),
+                    Text(
+                      'Versions',
+                      style: TextStyle(
+                        color: Color(0xff909090),
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Quicksand",
+                      ),
+                    ),
+                    if (model.subs.isNotEmpty)
+                      SubsScrooll(
+                        recipeWidgets: recipeWidgets,
+                      ),
+                    //scroll view here!!
                     if (editView)
                       TextButton.icon(
                         onPressed: () {
+                          print('model.subs -  ${model.subs}');
                           model.addSub(added, removedIngredients, instructions);
                           model.addToFB({});
+                          setState(() {
+                            added = [];
+                            removedIngredients = [];
+                            instructions = [];
+                            editView = false;
+                          });
                         },
                         icon: Icon(Icons.save, size: 30),
                         label: Text("SUBMIT"),
@@ -407,14 +430,47 @@ class _FullViewScreenState extends State<FullViewScreen> {
               // print('0 $index');
               break;
             case 1:
+              if (UID == "0") {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Denied!'),
+                    content: const Text('you need to register to do this..'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'OK'),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }
               // print('1 $index');
               break;
             case 2:
               // print('2 $index');
-
-              setState(() {
-                editView = !editView;
-              });
+              if (UID == "0") {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Denied!'),
+                    content: const Text('you need to register to do this..'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'OK'),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                setState(
+                  () {
+                    editView = !editView;
+                    sub = SubModel();
+                  },
+                );
+              }
               break;
           }
         },
@@ -422,16 +478,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
     );
   }
 
-  // buildIngredientsList(List<IngredientCard> ingredientsList, dynamic model) {
-  //   ingredientsList = List.generate(
-  //   model.ingredients.length,
-  //   (int i) => IngredientCard(
-  //     edit: editView,
-  //     name: model.ingredients[i].name,
-  //     quantity: model.ingredients[i].quantity.toString(),
-  //     unit: model.ingredients[i].unit,
-  //   ),
-  // );}
   Future<List<ingrident>> fetchIngredients(
       String query, List<ingrident> ingredientComp) async {
     String applicationId = "2051cf6b",
@@ -442,7 +488,6 @@ class _FullViewScreenState extends State<FullViewScreen> {
     final response = await http.get(Uri.parse(queryUrl));
 
     if (response.statusCode == 200) {
-      // recipes.clear();
       List<String> jsonData = jsonDecode(response.body).cast<String>();
       int i = 0;
       jsonData.forEach(
@@ -778,6 +823,22 @@ class _StepEntryState extends State<StepEntry> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SubsScrooll extends StatelessWidget {
+  SubsScrooll({Key? key, required this.recipeWidgets}) : super(key: key);
+  final List<SubView> recipeWidgets;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 400,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: recipeWidgets,
       ),
     );
   }
